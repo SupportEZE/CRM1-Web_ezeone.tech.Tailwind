@@ -1,0 +1,1 @@
+import{ka as i}from"./chunk-2NSPOFEK.js";var n=class r{getInitials(e){if(!e)return"";let t=e.split(" ").filter(o=>/^[A-Za-z]/.test(o));return t.length===1?t[0][0].toUpperCase():(t[0][0]+t[t.length-1][0]).toUpperCase()}static \u0275fac=function(t){return new(t||r)};static \u0275prov=i({token:r,factory:r.\u0275fac,providedIn:"root"})};export{n as a};
