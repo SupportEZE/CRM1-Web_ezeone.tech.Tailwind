@@ -1,10 +1,7 @@
 name: Angular CI & Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    workflow_dispatch:
 
 jobs:
   build:
@@ -60,7 +57,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: angular-build
-          path: build/preview
+          path: build/preview/browser
 
       - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
