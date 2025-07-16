@@ -1,0 +1,43 @@
+    <div class="box">
+      <div class="box-body">
+          <div class="text-center">
+              <div class="mb-2">
+                  <span class="avatar avatar-xl avatar-rounded online">
+                      <img  [src]="image" alt="">
+                  </span>
+              </div>
+              <div class="main-profile-info">
+                  <div class="font-semibold mb-1 h6"> {{ name }}
+                      <div class="hs-tooltip ti-main-tooltip">
+                          <span class="text-primarytint2color text-[14px]">
+                              <i class="bi bi-check-circle-fill"></i>
+                              <span
+                                  class="hs-tooltip-content  ti-main-tooltip-content !border-black py-1 px-2 !bg-black !text-xs !font-medium !text-white shadow-sm "
+                                  role="tooltip">
+                                  Verified User
+                              </span>
+                          </span>
+                      </div>
+                  </div>
+                      <p class="text-textmuted dark:text-textmuted/50 mb-2"> {{ title }}</p>
+                      <p class="mb-2">{{description}} </p>
+              </div>
+              <div class="flex gap-1 justify-center mb-2 items-center">
+                @for(link of socialLinks;track $index){
+                  <ng-container>
+                    <i class="{{link.icon}}"></i>
+                  </ng-container>
+                }
+              </div>
+              <div class="flex gap-2 mb-0 flex-wrap flex-xxl-nowrap">
+                  <div class="ti-btn ti-btn-primary ti-btn-sm mb-0 flex-auto">
+                      Message
+                  </div>
+                  <div class="ti-btn ti-btn-secondary ti-btn-sm mb-0 flex-auto">
+                      Follow
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  

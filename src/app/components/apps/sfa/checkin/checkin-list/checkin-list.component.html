@@ -1,0 +1,406 @@
+<app-page-header [title]="'SFA'" [title1]="['Check In']" [activeitem]="'Check In List'"></app-page-header>
+
+<!-- Start:: row-1 -->
+<div class="grid grid-cols-12 gap-x-3">
+    <div class="xxl:col-span-3 lg:col-span-4 col-span-12" *ngIf="activeTab === 'Today'">
+        <div class="box products-navigation-card">
+            <div class="box-header gap-2 items-center pb-3 border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                <span class="avatar avatar-md bg-primary avatar-rounded"><i class="ri-map-pin-user-line text-[1.25rem]"></i></span>
+                <div class="box-title">
+                    Check In List
+                    <span class="text-textmuted dark:text-textmuted/50 block text-xs">{{filter.activity_date ? (filter.activity_date | date:'dd MMM yyyy') : 'Today'}}</span>
+                </div>
+                <button class="ti-btn ti-btn-sm ti-btn-soft-primary ms-auto !rounded-full" matTooltip="Select Date" (click)="picker.open()">
+                    Select <i class="ri-calendar-line"></i>
+                </button>
+                <mat-form-field style="visibility: hidden; height: 0px;">
+                    <input matInput [matDatepicker]="picker" [max]="today" [(ngModel)]="filter.activity_date" name="activity_date" placeholder="Select Date" (ngModelChange)="dateFilter();">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            
+            <div class="box-body p-0">
+                <!-- <div class="p-4 border-b dark:border-defaultborder/10">
+                    <h6 class="font-medium mb-0">Team</h6>
+                    <div class="px-0 py-3 pb-0 scroll-y-200">
+                        <div class="form-check mb-2 !flex items-center" *ngFor="let member of teamMembers">
+                            <input class="form-check-input me-2" type="checkbox"  [id]="'team-' + member._id" name="" [(ngModel)]="member.checked" (ngModelChange)="setFilters('teamMembers');">
+                            <label class="form-check-label !ps-0 text11px font-normal" [for]="'team-' + member._id">
+                                {{ member.user_name || '--' }}
+                            </label>
+                            <span class="badge bg-light text-defaulttextcolor float-end ms-auto">{{ member.count }}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="!teamMembers?.length">
+                        <label class="form-check-label !ps-0 text11px font-normal">
+                            No data available!
+                        </label>
+                    </div>
+                </div> -->
+                <div class="p-4 border-b dark:border-defaultborder/10">
+                    <h6 class="font-medium mb-0">State</h6>
+                    <div class="px-0 py-3 pb-0 scroll-y-200">
+                        <div *ngFor="let location of locations" class="form-check mb-2 !flex items-center">
+                            <input class="form-check-input me-2" type="checkbox"  [id]="'Location-' + location._id" name="" [(ngModel)]="location.checked" (ngModelChange)="setFilters('locations');">
+                            <!-- [checked]="location.checked" -->
+                            <label class="form-check-label !ps-0 text11px font-normal" [for]="'Location-' + location._id">
+                                {{ location.state || '--' }}
+                            </label>
+                            <span class="badge bg-light text-defaulttextcolor float-end ms-auto">{{ location.count | number }}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="!locations?.length">
+                        <label class="form-check-label !ps-0 text11px font-normal">
+                            No data available!
+                        </label>
+                    </div>
+                </div>
+                <div class="p-4 border-b dark:border-defaultborder/10">
+                    <h6 class="font-medium mb-0">Category</h6>
+                    <div class="px-0 py-3 pb-0 scroll-y-200">
+                        <div class="form-check mb-2 !flex items-center" *ngFor="let customer of customers">
+                            <input class="form-check-input me-2" type="checkbox"  [id]="'Customer-' + customer._id" name="" [(ngModel)]="customer.checked" (ngModelChange)="setFilters('customers');">
+                            <!-- [checked]="customer.checked" -->
+                            <label class="form-check-label !ps-0 text11px font-normal" [for]="'Customer-' + customer._id">
+                                {{ customer.customer_type_name || '--' }}
+                            </label>
+                            <span class="badge bg-light text-defaulttextcolor float-end ms-auto">{{ customer.count }}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="!customers?.length">
+                        <label class="form-check-label !ps-0 text11px font-normal">
+                            No data available!
+                        </label>
+                    </div>
+                </div>
+                <div class="p-4 border-b dark:border-defaultborder/10">
+                    <h6 class="font-medium mb-0">Beat</h6>
+                    <div class="px-0 py-3 pb-0 scroll-y-200">
+                        <div class="form-check mb-2 !flex items-center" *ngFor="let beat of beats">
+                            <input class="form-check-input me-2" type="checkbox"  [id]="'Beat-' + beat._id" name="" [(ngModel)]="beat.checked" (ngModelChange)="setFilters('beats');">
+                            <!-- [checked]="beat.checked" -->
+                            <label class="form-check-label !ps-0 text11px font-normal" [for]="'Beat-' + beat._id">
+                                {{ beat.beat_code || '--' }}  {{ beat.beat_code_desc || '--' }}
+                            </label>
+                            <span class="badge bg-light text-defaulttextcolor float-end ms-auto">{{ beat.count }}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="!beats?.length">
+                        <label class="form-check-label !ps-0 text11px font-normal">
+                            No data available!
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-span-12" [ngClass]="{'xxl:col-span-9 lg:col-span-8': activeTab === 'Today', 'xxl:col-span-12 lg:col-span-12': activeTab !== 'Today'}">
+        <div class="box py-3 mb-2 px-4">
+            <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+                <app-listing-tab *ngFor="let tab of mainTabs" [countShow]="false" [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon}]" [activeTab]="activeTab" (tabChange)="onTabChange($event.tab)">
+                </app-listing-tab>
+
+                <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary left-auto" *ngIf="activeTab === 'Timeline'" (click)="openBottomSheet();">
+                <i  class="ri-filter-line font-medium align-middle"></i>
+            </button>
+            </nav>
+            
+        </div>
+        <app-showcode-card [title]="'Map View'" [titleView]="false" [view]="false" [refresBtnShow]="false" [logBtnShow]="false" [overallCountShow]="false" *ngIf="activeTab === 'Map View'">
+            <ng-container *ngFor="let row of locationCount">
+                <button *ngIf="locationCount.length > 0" type="button" class="ti-btn text-white my-1 me-2 cursor-text" 
+                    [ngClass]="row.login_type_id === LOGIN_TYPES.PRIMARY ? 'bg-primary' : row.login_type_id === LOGIN_TYPES.SUB_PRIMARY ? 'bg-primarytint1color' : row.login_type_id === LOGIN_TYPES.SECONDARY ? 'bg-primarytint2color' : row.login_type_id === LOGIN_TYPES.INFLUENCER ? 'bg-primarytint3color' : 'bg-secondary'">
+                    {{row.label}} <span class="badge ms-2 bg-dark/10">{{row.count}}</span>
+                </button>
+            </ng-container>
+            <div id="map" style="height: 400px; width: 100%;"></div>
+        </app-showcode-card>
+        
+        <app-showcode-card [title]="'Today'" [titleView]="true" [boxHeader]="'pt-1 pb-0'" [classbody]="'pt-1'" [overallCountShow]="pagination.total > 0" [overallCount]="pagination.total" [filterBtnShow]="false" (filterClick)="openBottomSheet()" [refresBtnShow]="true" (refresh)="onRefresh('Today')" *ngIf="activeTab === 'Today'">
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="false" [showAction]="false" [columns]="PageHeaders">
+                    <ng-container *ngIf="!skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                            <td>&nbsp;</td>
+                            <td class="sticky-col">
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.name" placeholder="Search..." (keyup.enter)="getDayList()">
+                                        @if (filter.name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.name=''; getDayList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.user_code" placeholder="Search..." (keyup.enter)="getDayList()">
+                                        @if (filter.user_code) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.user_code='';getDayList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.reporting_manager_name" placeholder="Search..." (keyup.enter)="getDayList()">
+                                        @if (filter.reporting_manager_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.reporting_manager_name=''; getDayList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.customer_type_name" placeholder="Search..." (keyup.enter)="getDayList()">
+                                        @if (filter.customer_type_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_type_name='';getDayList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.customer_name" placeholder="Search..." (keyup.enter)="getDayList()">
+                                        @if (filter.customer_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_name=''; getDayList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.remark" placeholder="Search..." (keyup.enter)="getDayList()">
+                                        @if (filter.remark) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.remark=''; getDayList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listingData; let i = index;">
+                            <td class="!text-center">{{i+1}}</td>
+                            <td class="sticky-col">
+                                <div class="flex items-center gap-2">
+                                    <span class="avatar avatar-sm avatar-rounded">
+                                        <img src="./assets/images/faces/12.jpg" alt="">
+                                    </span>
+                                    <div class="">
+                                        <span class="block font-medium"> {{row.user_info?.name || '--'}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td> {{ row.user_info?.user_code || '--' }}</td>
+                            <td>{{row.user_info?.reporting_manager_name || '--'}}</td>
+                            <td>{{row.customer_details?.customer_type_name || '--'}}</td>
+                            <td>
+                                <div class="">
+                                    <span class="block font-medium"> {{row.customer_details?.customer_name || '--'}}</span>
+                                    <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">Mobile: </span> {{row.customer_details?.mobile || '--'}}</span>
+                                </div>
+                            </td>
+                            <td>{{row.visit_start ? (row.visit_start | date:'hh:mm a') : '---'}}</td>
+                            <td>
+                                <span class="ellipsis" matTooltip="{{row.start_location}}">{{row.start_location || '--'}}</span>
+                                <button class="copy-btn" (click)="commonFunction.copy(row?.start_location)" matTooltip="Copy To Clipboard" *ngIf="row?.start_location">
+                                    <i class="material-icons">content_copy</i>
+                                </button>
+                            </td>
+                            <td>{{row.visit_end ? (row.visit_end | date:'hh:mm a') : '---'}}</td>
+                            <td>
+                                <span class="ellipsis" matTooltip="{{row.end_location}}">{{row.end_location || '--'}}</span>
+                                <button class="copy-btn" (click)="commonFunction.copy(row?.end_location)" matTooltip="Copy To Clipboard" *ngIf="row?.end_location">
+                                    <i class="material-icons">content_copy</i>
+                                </button>
+                            </td>
+                            <td>{{row.avarage_meeting_time || '--'}}</td>
+                            <td>{{row.remark || '--'}}
+                                <button class="copy-btn" (click)="commonFunction.copy(row?.remark)" matTooltip="Copy To Clipboard" *ngIf="row?.remark">
+                                    <i class="material-icons">content_copy</i>
+                                </button>
+                            </td>
+                            <td>{{row.check_list || '--'}}</td>
+                            <td class="text-center"><i class="material-icons inline-block" (click)="row?.checkinActivities?.order_id ? goToDetailPage(row?.checkinActivities?.order_id) : ''" [matTooltip]="row?.checkinActivities?.order_id ? 'View Detail' : ''" [ngClass]="row?.checkinActivities?.order_id ? 'text-success cursor-pointer' : 'text-danger'">{{row?.checkinActivities?.order_id ? 'visibility' : 'cancel'}}</i></td>
+                            <td class="text-center"><i class="material-icons inline-block" (click)="row?.checkinActivities?.enquiry_id ? 'cursor-pointer' : ''" [matTooltip]="row?.checkinActivities?.enquiry_id ? 'View Detail' : ''" [ngClass]="row.checkinActivities?.enquiry_id ? 'text-success' : 'text-danger'">{{row.checkinActivities?.enquiry_id ? 'visibility' : 'cancel'}}</i></td>
+                            <td class="text-center"><i class="material-icons inline-block" >{{row.stock_audit ? 'visibility' : 'cancel'}}</i></td>
+                            <td class="text-center"><i class="material-icons inline-block">{{row.photo_gallery ? 'visibility' : 'cancel'}}</i></td>
+                            <td class="text-center"><i class="material-icons inline-block" [matTooltip]="row?.checkinActivities?.followup_id ? 'View Detail' : ''" [ngClass]="row.checkinActivities?.followup_id ? 'text-success' : 'text-danger'">{{row.checkinActivities?.followup_id ? 'visibility' : 'cancel'}}</i></td>
+                            <td class="text-center"><i class="material-icons inline-block">{{row.payment_collection ? 'visibility' : 'cancel'}}</i></td>
+                            <td class="text-center"><i class="material-icons inline-block"  [ngClass]="row.branding_audit ? 'text-success' : 'text-danger'">{{row.branding_audit ? 'visibility' : 'cancel'}}</i></td>
+                            <td class="text-center"><i class="material-icons inline-block" [matTooltip]="row?.checkinActivities?.popgift_id ? 'View Detail' : ''" [ngClass]="row.checkinActivities?.popgift_id ? 'text-success' : 'text-danger'">{{row.checkinActivities?.popgift_id ? 'visibility' : 'cancel'}}</i></td>
+                            <td class="text-center"><i class="material-icons inline-block"  [ngClass]="row.support_ticket ? 'text-success' : 'text-danger'">{{row.support_ticket ? 'visibility' : 'cancel'}}</i></td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                            <td *ngFor="let row of [].constructor(22)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                </spk-reusable-tables>
+                <ng-container *ngIf="!listingData?.length && !skLoading">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listingData.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </app-showcode-card>
+        
+        <app-showcode-card [title]="'Month'" [classbody]="'pt-0'" [titleView]="true" [refresBtnShow]="true" [overallCountShow]="pagination.total > 0" [filterMonth]="true" [max]="maxMonth" (monthChanged)="getMonthList($event)" [selectedMonth]="selectedMonth" [overallCount]="pagination.total" [filterBtnShow]="false" (filterClick)="openBottomSheet()" [refresBtnShow]="true" (refresh)="onRefresh('Month')" *ngIf="activeTab === 'Month'">
+            <!-- <div class="xl:col-span-12 col-span-12 mb-3 text-right">
+                <input  type="month" [(ngModel)]="selectedMonth"  [max]="maxMonth"  name="selectedMonth" (ngModelChange)="getMonthList();">
+            </div> -->
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables  [showCheckbox]="false" [showS_No]="true" [showAction]="false" [showFooter]="false" [columns]="monthListColumn" tableClass="ti-custom-table text-nowrap ti-custom-table-hover">
+                    <ng-container *ngIf="!monthSkLoading">
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td class="!text-center sticky-col">
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.name" placeholder="Search..." (keyup.enter)="this.getMonthList()">
+                                        @if (filter.name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.name='';getMonthList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td class="!text-center">
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.user_code" placeholder="Search..." (keyup.enter)="this.getMonthList()">
+                                        @if (filter.user_code) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.user_code='';getMonthList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td class="!text-center">
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.reporting_manager_name" placeholder="Search..." (keyup.enter)="this.getMonthList()">
+                                        @if (filter.reporting_manager_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.reporting_manager_name='';getMonthList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td class="text-center"><span class="font-bold text-[.9375rem]">{{ monthTotals.total_checkin || 0 }}</span></td>
+                            <td class="text-center"><span class="font-bold text-[.9375rem]">{{ monthTotals.productive || 0 }}</span></td>
+                            <td class="text-center"><span class="font-bold text-[.9375rem]">{{ monthTotals.new_counter || 0 }}</span></td>
+                            <ng-container *ngIf="monthReadData?.length">
+                                <td *ngFor="let total of monthColumnTotals" class="text-center font-semibold">
+                                    <span class="font-bold text-[.9375rem]">{{ total }}</span>
+                                </td>
+                            </ng-container>
+                        </tr>
+                        <tr class="todo-box border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of monthReadData; let i = index">
+                            <td class="!text-center">{{ i + 1 }}</td>
+                            <td class="sticky-col">{{ row?.name || '--' }}</td>
+                            <td class="w150">{{ row?.user_code || '--' }}</td>
+                            <td class="">{{ row?.reporting_manager_name || '--' }} </td>
+                            <td class="w100 text-center bg-secondary text-white">{{ row?.total_checkin || '0' }} </td>
+                            <td class="w100 text-center bg-success text-white">{{ row?.productive || '0' }} </td>
+                            <td class="w100 text-center bg-warning text-white">{{ row?.new_counter || '0' }} </td>
+                            <ng-container *ngFor="let item of row.month">
+                                <td class="text-center">
+                                    <span [ngClass]="item?.count ? 'font-semibold text-primary underline cursor-pointer' : ''" (click)="item?.count ? monthViewFilter(item.startDate,row._id) : ''">{{item?.count}}</span>
+                                </td>
+                            </ng-container>
+                        </tr>
+                    </ng-container>
+                    
+                    <ng-container *ngIf="monthSkLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                            <td *ngFor="let cell of monthListColumn">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </spk-reusable-tables>
+                
+                <ng-container *ngIf="!monthSkLoading && monthReadData?.length === 0">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+        </app-showcode-card>
+        
+        
+        <!-- TIme Line Start -->
+        <ng-container *ngIf="activeTab === 'Timeline'">
+            <!-- //--skeleton--// -->
+            <ng-container *ngIf="skLoading">
+                <div class="xl:col-span-12 col-span-12" *ngFor="let card of [].constructor(8)">
+                    <app-skeleton [class]="'wp100 h40 mb-3'"></app-skeleton>
+                </div>
+            </ng-container>
+            <!-- //--skeleton--// -->
+            <ng-container *ngIf="!skLoading">    
+                <app-timeline  [listingData]="listingData"></app-timeline>
+                
+            </ng-container>
+            
+        </ng-container>
+        <!-- TIme Line End -->
+        
+        
+        <!-- Analytics Start -->
+        <ng-container *ngIf="activeTab === 'Analytics'">
+            <!-- //--skeleton--// -->
+            <ng-container *ngIf="skLoading">
+                <div class="xl:col-span-12 col-span-12" *ngFor="let card of [].constructor(8)">
+                    <app-skeleton [class]="'wp100 h40 mb-3'"></app-skeleton>
+                </div>
+            </ng-container>
+            <!-- //--skeleton--// -->
+            <ng-container *ngIf="!skLoading">
+                <ng-container *ngIf="analyticsReqSent && chartReqSent">
+                    <app-analytics [analyticsData]="analyticsData" [chartData]="chartData"></app-analytics>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+        <!-- Analytics End -->
+    </div>
+</div>
+<!-- End:: row-1 -->

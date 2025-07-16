@@ -1,0 +1,27 @@
+<div class="box-header flex items-center justify-between flex-wrap gap-4 pb-0 {{class}}">
+    <div class="box-title">
+        {{ pageTitle }}<span class="badge bg-primary rounded ms-2 text-xs align-middle" *ngIf="listLength">{{listLength}}</span>
+    </div>
+    <div class="flex gap-2 items-center flex-wrap">
+        <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="handleRefresh()" *ngIf="btnShow">
+            <i class="ri-refresh-line font-medium align-middle"></i>
+            {{ refreshLabel }}
+        </button>
+        
+        <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="openModal()" *ngIf="btnShow1">
+            <i class="{{btnShow1Icon}} font-medium align-middle"></i>
+            {{ logsLabel }}
+        </button>
+        
+        <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="button1.emit()" *ngIf="btnShow2">
+            <i class="{{btnShow2Icon}} font-medium align-middle"></i>
+            {{ addBtnLabel }}
+        </button>
+
+        <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="importBtn.emit()" *ngIf="btnShow3">
+            <i class="{{importIcon}} font-medium align-middle"></i>
+            {{ importLabel }}
+        </button>
+        
+    </div>
+</div>

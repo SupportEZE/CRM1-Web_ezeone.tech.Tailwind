@@ -1,0 +1,525 @@
+<app-page-header [title]="'IRP'" [title1]="['QR List']" [activeitem]="'QR List'" [btnShow1]="accessRight?.modifyRight" *ngIf="!detail_page_active"></app-page-header>
+
+<div class="box py-3 px-4">
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist" *ngIf="!detail_page_active">
+        <app-listing-tab *ngFor="let tab of mainTabs"
+        [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon}]"
+        [activeTab]="activeTab"
+        [countShow]="false"
+        (tabChange)="onTabChange($event.tab)">
+    </app-listing-tab>
+</nav>
+<div class="row">
+    <div class="col-xl-12">
+        <app-page-sub-header [pageTitle]="textFormat.formatText(activeTab) +' QR List'"  [listLength]="pagination.total ? pagination.total : 0" [refreshLabel]="'Refresh'" [btnShow]="true" [btnShow2]="!detail_page_active && accessRight?.addRight" [addBtnLabel]="'Generate  QR'" [class]="'p-0 pt-3'" (onRefresh)="onRefresh()" (button1)="goToPage()"></app-page-sub-header>
+
+
+        <!-- <button (click)="goToStock()">Stock Transfer List</button> -->
+        
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <spk-reusable-tables
+            tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" 
+            [columns]="getColumns()"
+            [showCheckbox]="false">
+            <ng-container *ngIf="!skLoading">
+                
+                <ng-container *ngIf="['point_category', 'box', 'item'].includes(activeTab)">
+                    <tr class="border-b ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap">
+                        <td class="w50">&nbsp;</td>
+                        <td class="w120">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="getQrData()">
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>  
+                            </div>
+                        </td>
+                        <td class="w150">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text"
+                                    [(ngModel)]="filter.created_name"
+                                    placeholder="Search..."
+                                    (keyup.enter)="getQrData()">
+                                    @if (filter.created_name) {
+                                        <button matSuffix mat-icon-button
+                                        aria-label="Clear"
+                                        (click)="filter.created_name='';getQrData()">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td *ngIf="activeTab === 'item'">
+                        <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text"
+                                    [(ngModel)]="filter.qr_box_code"
+                                    placeholder="Search..."
+                                    (keyup.enter)="getQrData()">
+                                    @if (filter.qr_box_code) {
+                                        <button matSuffix mat-icon-button
+                                        aria-label="Clear"
+                                        (click)="filter.qr_box_code='';getQrData()">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td class="w160">
+                        <ng-container *ngIf="activeTab === 'item' || activeTab === 'point_category'">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text"
+                                    [(ngModel)]="filter.qr_item_code"
+                                    placeholder="Search..."
+                                    (keyup.enter)="getQrData()">
+                                    @if (filter.qr_item_code) {
+                                        <button matSuffix mat-icon-button
+                                        aria-label="Clear"
+                                        (click)="filter.qr_item_code='';getQrData()">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="activeTab === 'box'">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text"
+                                [(ngModel)]="filter.qr_box_code"
+                                placeholder="Search..."
+                                (keyup.enter)="getQrData()">
+                                @if (filter.qr_box_code) {
+                                    <button matSuffix mat-icon-button
+                                    aria-label="Clear"
+                                    (click)="filter.qr_box_code='';getQrData()">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            }
+                        </mat-form-field>
+                    </div>
+                </ng-container>
+            </td>
+            <td>
+                <ng-container *ngIf="activeTab === 'item' || activeTab === 'box'">
+                    <div class="table-search-filters">
+                        <mat-form-field class="table-input">
+                            <input matInput type="text"
+                            [(ngModel)]="filter.product_name"
+                            placeholder="Search..."
+                            (keyup.enter)="getQrData()">
+                            @if (filter.product_name) {
+                                <button matSuffix mat-icon-button
+                                aria-label="Clear"
+                                (click)="filter.product_name='';getQrData()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        }
+                    </mat-form-field>
+                </div>
+            </ng-container>
+        </td>
+        <td class="w50" *ngIf="activeTab === 'box'">&nbsp;</td>
+        <td class="w60">&nbsp;</td>
+    </tr>
+    <tr *ngFor="let row of qrList; let i = index;"   [class.bg-gray-400]="isHighlighted(row._id)">
+        <td class="w50">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+        <td class="w120">{{row.created_at ?  (row.created_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</td>
+        <td class="w150">{{row.created_name ? (row.created_name | titlecase) : ''}}</td>
+        <td class="w150" *ngIf="activeTab === 'item'">{{row.qr_box_code ? (row.qr_box_code) : ''}}</td>
+        <td class="w160">
+            <ng-container *ngIf="activeTab === 'item' || activeTab === 'point_category'">
+                {{row.qr_item_code ? row.qr_item_code: ''}}
+            </ng-container>
+            <ng-container *ngIf="activeTab === 'box'">
+                {{row.qr_box_code ? row.qr_box_code: ''}}
+            </ng-container>
+        </td>
+        <td>
+            <ng-container *ngIf="activeTab === 'item' || activeTab === 'box'">
+                {{row.product_data ? ((row.product_data.product_name | titlecase)) : '---'}}
+                {{row.product_data ? ('('+row.product_data.product_code+')') : '---'}}
+                
+            </ng-container>
+            <ng-container *ngIf="activeTab === 'point_category'">
+                {{row.product_data ? ((row.product_data.point_category_name | titlecase)) : '---'}}
+            </ng-container>
+            
+        </td>
+        <td class="w50" *ngIf="activeTab === 'box'">
+            <a class="link-primary underline"   matTooltip="View Item" (click)="openModal(row)">
+                {{row.box_items_count? row.box_items_count:''}}
+            </a>
+        </td>
+        <td class="w60 text-right">
+          <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" [matTooltip]="'Delete'"  (clickEvent)="delete(row._id, 'qr-code/delete-qr', 'Qr Code')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+    </td>
+    </tr>
+</ng-container>
+
+<ng-container *ngIf="activeTab === 'scan_history'">
+    <tr class="border-b ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap">
+        <td class="w50">&nbsp;</td>
+        <td class="w120">
+            <div class="table-search-filters">
+                <mat-form-field class="table-input">
+                    <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="getScanQr()">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>  
+            </div>
+        </td>
+        <td class="w120">&nbsp;</td>
+        <td class="w150">
+            <div class="table-search-filters">
+                <mat-form-field class="table-input">
+                    <input matInput type="text"
+                    [(ngModel)]="filter.created_name"
+                    placeholder="Search..."
+                    (keyup.enter)="getScanQr()">
+                    @if (filter.created_name) {
+                        <button matSuffix mat-icon-button
+                        aria-label="Clear"
+                        (click)="filter.created_name='';getScanQr()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                }
+            </mat-form-field>
+        </div>
+    </td>
+    <td class="w150">
+        <div class="table-search-filters">
+            <mat-form-field class="table-input">
+                <input matInput type="text"
+                [(ngModel)]="filter.customer_type_name"
+                placeholder="Search..."
+                (keyup.enter)="getScanQr()">
+                @if (filter.customer_type_name) {
+                    <button matSuffix mat-icon-button
+                    aria-label="Clear"
+                    (click)="filter.customer_type_name='';getScanQr()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+</td>
+<td class="w150">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.customer_mobile"
+            placeholder="Search..."
+            (keyup.enter)="getScanQr()">
+            @if (filter.customer_mobile) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.customer_mobile='';getScanQr()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w150">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.qrcode_type"
+            placeholder="Search..."
+            (keyup.enter)="getScanQr()">
+            @if (filter.qrcode_type) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.qrcode_type='';getScanQr()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.box_qr_code"
+            placeholder="Search..."
+            (keyup.enter)="getScanQr()">
+            @if (filter.box_qr_code) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.box_qr_code='';getScanQr()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.qr_code"
+            placeholder="Search..."
+            (keyup.enter)="getScanQr()">
+            @if (filter.qr_code) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.qr_code='';getScanQr()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.point_category_name"
+            placeholder="Search..."
+            (keyup.enter)="getScanQr()">
+            @if (filter.point_category_name) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.point_category_name='';getScanQr()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"  [(ngModel)]="filter.product_name" placeholder="Search..." 
+            (keyup.enter)="getScanQr()">
+            @if (filter.product_name) {
+                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.product_name='';getScanQr()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text" [(ngModel)]="filter.state" placeholder="Search..." (keyup.enter)="getScanQr()">
+            @if (filter.state) {
+                <button matSuffix mat-icon-button aria-label="Clear"  (click)="filter.state='';getScanQr()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+    <td class="w160 text-right">&nbsp;</td>
+    <td class="w160 text-right">&nbsp;</td>
+</tr>
+<tr *ngFor="let row of scanQrList; let i = index;"   [class.bg-gray-400]="isHighlighted(row._id)">
+    <td class="w50">
+        {{(pagination.cur_page - 1) * pagination.limit + i + 1 }}
+    </td>
+    <td class="w120">{{row.created_at ?  (row.created_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</td>
+    <td class="w120">{{row.is_manual_scan ? 'Manual': 'Scanning'}}</td>
+    <td class="w150">{{row.created_name ? (row.created_name | titlecase) : ''}}</td>
+    <td class="w150">{{row.customer_type_name ? (row.customer_type_name | titlecase) : ''}}</td>
+    <td class="w150">{{row.customer_mobile ? (row.customer_mobile | titlecase) : ''}}</td>
+    <td class="w150">{{row.qrcode_type ? (row.qrcode_type | titlecase) : ''}}</td>
+    <td class="w160">{{row.box_qr_code ? row.box_qr_code: '---'}}</td>
+    <td class="w160">{{row.qr_code ? row.qr_code: '---'}}</td>
+    <td class="w160">{{row.point_category_name ? row.point_category_name: '---'}}</td>
+    <td class="w160">{{row.product_name ? row.product_name: '---'}} {{row.product_code ? ('('+row.product_code+')'): ''}}</td>
+    <td class="w160">{{row.state ? row.state: '---'}}</td>
+    <td class="w160 text-right"><strong>{{row.total_points ? (row.total_points + 'PT'): '---'}}</strong></td>
+    <td class="w160 text-right">
+        <a class="link-primary underline"   matTooltip="View Geo Location" (click)="redirectToMap(row.lattitude,row.longitude)">View Location</a>
+    </td>
+    <td class="w160 text-right">
+        <app-icon-button [icon]="'ri-history-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-info waves-effect waves-light'"  matTooltip="Reopen QR Code" (clickEvent)="reopen(row._id)"> </app-icon-button>
+    </td>
+    
+</tr>
+</ng-container>
+
+
+<ng-container *ngIf="activeTab === 'generate_history'">
+    <tr class="border-b ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap">
+        <td class="w50">&nbsp;</td>
+        <td class="w120">
+            <div class="table-search-filters">
+                <mat-form-field class="table-input">
+                    <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="getGenHisQr()">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>  
+            </div>
+        </td>
+        <td class="w150">
+            <div class="table-search-filters">
+                <mat-form-field class="table-input">
+                    <input matInput type="text"
+                    [(ngModel)]="filter.created_name"
+                    placeholder="Search..."
+                    (keyup.enter)="getScanQr()">
+                    @if (filter.created_name) {
+                        <button matSuffix mat-icon-button
+                        aria-label="Clear"
+                        (click)="filter.created_name='';getGenHisQr()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                }
+            </mat-form-field>
+        </div>
+    </td>
+    <td class="w150">
+        <div class="table-search-filters">
+            <mat-form-field class="table-input">
+                <input matInput type="text"
+                [(ngModel)]="filter.qrcode_type"
+                placeholder="Search..."
+                (keyup.enter)="getScanQr()">
+                @if (filter.qrcode_type) {
+                    <button matSuffix mat-icon-button
+                    aria-label="Clear"
+                    (click)="filter.qrcode_type='';getGenHisQr()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+</td>
+<td class="w150">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.paper_size"
+            placeholder="Search..."
+            (keyup.enter)="getScanQr()">
+            @if (filter.paper_size) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.paper_size='';getGenHisQr()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w150">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.product_name"
+            placeholder="Search..."
+            (keyup.enter)="getGenHisQr()">
+            @if (filter.product_name) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.product_name='';getGenHisQr()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w80">&nbsp;</td>
+<td class="w80">&nbsp;</td>
+<td class="w80">&nbsp;</td>
+</tr>
+<tr *ngFor="let row of generateQr; let i = index;" [class.bg-gray-400]="isHighlighted(row._id)">
+    <td class="w50">
+        {{(pagination.cur_page - 1) * pagination.limit + i + 1 }}
+    </td>
+    <td class="w120">{{row.created_at ?  (row.created_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</td>
+    <td class="w150">{{row.created_name ? (row.created_name | titlecase) : ''}}</td>
+    <td class="w150">{{row.qrcode_type ? (row.qrcode_type.replaceAll('_',' ') | titlecase) : ''}}</td>
+    <td class="w150">{{row.paper_size ? (row.paper_size) : ''}}</td>
+    <td class="w150">{{row.product_data ? (row.product_data.product_name ? (row.product_data.product_name +  ('('+row.product_data.product_code+')')) : row.product_data.point_category_name): '---'}}</td>
+    <td class="w80">{{row.qrcode_qty ? row.qrcode_qty: '---'}}</td>
+    <td class="w80">
+        <span [ngClass]="row.is_printed ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'" 
+        class=" text-[11px] badge">
+             {{row.is_printed ? 'Print' : 'Not Print'}}
+    </span>
+    </td>
+    <td class="w80 text-right">
+        <div>
+            <app-icon-button [icon]="'ri-eye-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-success waves-effect waves-light'" [matTooltip]="'View Detail'" (clickEvent)="goToDetail(row._id)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+            <app-icon-button [icon]="'ri-download-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-info waves-effect waves-light'"  [matTooltip]="'Download'" (clickEvent)="goToDetail(row._id)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+            <app-icon-button [icon]="'ri-delete-bin-line'" [disabled]="row.is_printed" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" [matTooltip]="row.is_printed ? 'Disabled' : 'Delete'" (clickEvent)=" delete(row._id, 'qr-code/delete-history', 'Qr Code')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+        </div>
+    </td>
+</tr>
+</ng-container>
+
+</ng-container>
+
+<ng-container *ngIf="skLoading && ['point_category', 'box', 'item'].includes(activeTab)">
+    <tr *ngFor="let row of [].constructor(10);">
+        <td class="w50"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w120"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150" *ngIf="activeTab === 'item'"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w50"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w50" *ngIf="activeTab === 'box'"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w60"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+    </tr>
+</ng-container>
+
+<ng-container *ngIf="skLoading && activeTab === 'scan_history'">
+    <tr *ngFor="let row of [].constructor(10);">
+        <td class="w50"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w120"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w120"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w120"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+    </tr>
+</ng-container>
+
+
+<ng-container *ngIf="skLoading && activeTab === 'generate_history'">
+    <tr *ngFor="let row of [].constructor(10);">
+        <td class="w50"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w120"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+    </tr>
+</ng-container>
+
+
+</spk-reusable-tables>
+</div>
+
+<ng-container *ngIf="((qrList.length === 0 && !skLoading) && ['point_category', 'box', 'item'].includes(activeTab)) || 
+((scanQrList.length === 0 && !skLoading) && activeTab == 'scan_history') || ((generateQr.length === 0 && !skLoading) && activeTab == 'generate_history')">
+    <app-data-not-found></app-data-not-found>
+</ng-container>
+
+
+<app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="((qrList.length > 0 && !skLoading) && ['point_category', 'box', 'item'].includes(activeTab)) || 
+((scanQrList.length > 0 && !skLoading) && activeTab == 'scan_history') || ((generateQr.length > 0 && !skLoading) && activeTab == 'generate_history')" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+</div>
+</div>
+</div>

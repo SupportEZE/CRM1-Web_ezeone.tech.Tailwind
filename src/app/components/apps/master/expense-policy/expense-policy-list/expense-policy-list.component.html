@@ -1,0 +1,69 @@
+<app-page-header 
+[title]="'Master Modules'" 
+[title1]="['Expense Policy']"
+[activeitem]="'Expense Policy'"
+[buttonText]="'Header Config'" 
+[icon]="'settings'"
+[btnShow]="false" 
+[buttonValue]="''"
+[buttonText1]="'Form Config'"
+[icon1]="'settings'" 
+[btnShow]="accessRight?.modifyRight" 
+[btnShow1]="accessRight?.modifyRight" 
+[buttonValue1]="''"
+(buttonClick)="openHeaderSettingModal()"
+(buttonClick1)="openModal($event)">
+</app-page-header>
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <!-- [btnShow2]="accessRight?.addRight" [addBtnLabel]="'Add Expense Policy'" (button1)="updateExpensePolicy('')" -->
+            <app-page-sub-header [pageTitle]="'Expense Policy List'" [listLength]="listing.length" [refreshLabel]="'Refresh'" [logsLabel]="'Logs'" [btnShow]="true" [btnShow1]="true" (logBtn)="openMainLogModal('')"(onRefresh)="onRefresh()"></app-page-sub-header>
+            
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="true" [showAction]="true" [columns]="visibleHeaders" (selectionChange)="handleSelectionChange($event)" (textSearchChange)="updateSearchFilter($event)" (dateChange)="handleDateChange($event)" #reusableTable>
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                                <td class="!text-center">{{i+1}}</td>
+                                <ng-container *ngFor="let header of visibleHeaders">
+                                    <td>
+                                        <span *ngIf="header.type !== 'CHECKBOX_SELECT'">{{ row[header?.actual_name || header?.name] ?? (row['form_data']?.[header?.name]) ?? '--' }}</span>
+                                        <span *ngIf="header.type === 'CHECKBOX_SELECT'">
+                                            <input type="checkbox" [(ngModel)]="row.form_data[header.name]" class="form-check-input" [id]="header.name + i" [disabled]="true">
+                                        </span>
+                                        <!-- <span *ngIf="header.type === 'SHORT_TEXT'">
+                                            <input type="text" [(ngModel)]="row.form_data[header.name]" id="input-placeholder-{{i}}" placeholder="Enter value" class="form-control">
+                                        </span> -->
+                                    </td>
+                                </ng-container>
+                                <td class="!text-center">
+                                    <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                        <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)" matTooltip="View Logs"> </app-icon-button>
+                                        <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'"  (clickEvent)="updateExpensePolicy(row)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </spk-reusable-tables>
+
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(16)">
+                            <td class="w120" *ngFor="let row of [].constructor(8)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="!listing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

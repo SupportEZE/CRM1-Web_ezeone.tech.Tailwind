@@ -1,0 +1,31 @@
+<div class="box">
+  <div class="box-body">
+      <div class="flex items-center gap-2 mb-3"> 
+          <div class="flex items-center gap-1 flex-wrap">
+              <div class="leading-none">
+                  <span class="avatar avatar-sm avatar-rounded">
+                      <img [src]="avatarUrl" alt="">
+                  </span>
+              </div>
+              <div>
+                  <div class="">{{name}}</div>
+                  <div class="text-textmuted dark:text-textmuted/50 text-[10px]">{{timestamp}}</div>
+              </div>
+          </div>
+          <spk-dropdowns [Customclass]="'dropdown'" class="ms-auto" [class]="'ti-btn bg-light ti-btn-icons ti-btn-sm text-textmuted dark:text-textmuted/50 ti-dropdown-toggle hs-dropdown-toggle'"  [Icon]="true" [IconClass]="'fe fe-more-vertical'"
+          [Menuclass]="'dropdown-menu'"  >
+                  <li><a class="ti-dropdown-item" href="javascript:void(0);">Edit</a></li>
+                  <li><a class="ti-dropdown-item" href="javascript:void(0);">Delete</a></li>
+                  <li><a class="ti-dropdown-item" href="javascript:void(0);">View Details</a></li>
+          </spk-dropdowns>
+      </div>
+      <p class="font-medium mb-1 text-[14px]">{{companyName}}</p>
+      <p class="font-medium mb-4"><span class="text-textmuted dark:text-textmuted/50 font-normal">{{amountType}}:</span> ${{amount}}</p>
+      <div class="deal-description">
+          <div class="">
+              <a href="javascript:void(0);" class="company-name">{{additionalCompanyName}}</a>
+          </div>
+          
+      </div>
+  </div>
+</div>

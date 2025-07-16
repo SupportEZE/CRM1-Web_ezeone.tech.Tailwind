@@ -1,0 +1,12 @@
+<div [ngClass]="['box', backgroundClass, isDarkTheme ? backgroundClass : '']">
+  <div class="box-body" [ngClass]="isDarkTheme ? 'text-white' : ''">
+    <blockquote class="blockquote mb-0 text-center">
+      <h6 [ngClass]="isDarkTheme ? 'text-white' : ''">{{ quote }}</h6>
+      <footer aria-label="footer" class="blockquote-footer mt-2 text-[14px] !ps-0" [ngClass]="isDarkTheme ? '!text-white opacity-70' : ''"  >
+        <a (click)="buttonClick.emit()">
+        {{ author }} in <cite title="Source Title">{{ source }}</cite> 
+        </a>
+      </footer>
+    </blockquote>
+  </div>
+</div>

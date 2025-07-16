@@ -1,0 +1,197 @@
+<app-page-header [title]="'Loyalty'" [title1]="['Gift Gallery']" [activeitem]="'Voucher Details'" [buttonText]="'Add New Voucher'" [icon]="'local_activity'"  (buttonClick)="openModal('add')" [btnShow]="false" [buttonValue]="''"></app-page-header>
+
+<!-- Start:: Row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12">
+        <app-showcode-card [title]="'Basic Detail'"  [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true"  [actionIcons]="false" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'"  [classbody]="'pt-0'"  [iconName]="'ri-pencil-line'">
+            <!-- (action)="updateStatus('bonus-basic-detail')" -->
+            <div *ngIf="!skLoading">
+                <div class="grid grid-cols-12 gap-x-6">
+                    <div class="xxl:col-span-9 xl:col-span-9 lg:col-span-9 md:col-span-9 col-span-9">
+                        <div class="flex gap-5 mb-1 flex-wrap">
+                            <div class="flex items-center gap-2">
+                                <div>
+                                    <span
+                                    class="block text-[14px] font-medium">{{giftDetail.created_at | date : 'dd MMM yyyy hh:mm a'}}</span>
+                                    <span
+                                    class="text-xs text-textmuted dark:text-textmuted/50">Created At</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div>
+                                    <span class="block text-[14px] font-medium">{{giftDetail.created_name}}</span>
+                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Created By Name</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div>
+                                    <span class="block text-[14px] font-medium">{{giftDetail.title}}</span>
+                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Title </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div>
+                                    <span class="block text-[14px] font-medium">{{giftDetail.customer_type_name}}</span>
+                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Customer Category</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-2">
+                                <div>
+                                    <span  class="block text-[14px] font-medium">{{giftDetail.point_value ? (giftDetail.point_value + 'PT') : '---'}}</span>
+                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Eligible Points	</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 gap-3 flex-wrap">
+                                <div>
+                                    
+                                    <div class="flex gap-2">
+                                        <span [ngClass]="giftDetail.status === 'Active' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'" 
+                                        class=" text-[11px] badge">{{giftDetail.status}}</span>
+                                        <app-toggle [class]="'ti-switch-custom'" [checked]="giftDetail.status === 'Active' ? true: false" 
+                                        (checkedChange)="onToggleChange($event, id, giftDetail.status)"></app-toggle>
+                                    </div>
+                                    
+                                    <span class="text-textmuted block dark:text-textmuted/50 font-medium">Status</span>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="flex items-center gap-2"
+                            *ngIf="giftDetail.updated_name">
+                            <div>
+                                <span class="block text-[14px] font-medium">
+                                    {{giftDetail.updated_name ? (giftDetail.updated_name | titlecase) : '---'}}
+                                </span>
+                                <span class="text-xs text-textmuted dark:text-textmuted/50">Updated By</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2"
+                        *ngIf="giftDetail.updated_at">
+                        <div>
+                            <span class="block text-[14px] font-medium">
+                                {{giftDetail.updated_at ? (giftDetail.updated_at | date : 'dd MMM yyyy hh:mm a') : '---'}}
+                            </span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Updated At</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span [innerHTML]="giftDetail.description || '--'"></span>
+                            <span class="text-xs block text-textmuted dark:text-textmuted/50">Description</span>
+                        </div>
+                    </div>
+                    
+                </div>  
+                
+            </div>
+            <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-3 col-span-3">
+                <ng-container *ngFor="let row of giftDetail.files">
+                    <a data-gallery="gallery1" class="box glightbox mb-0"><img alt="image" src="{{row.signed_url}}" style="cursor: pointer;">
+                    </a>
+                </ng-container>
+                
+                
+            </div>
+        </div>
+    </div>     
+    <!-- Loading Start -->
+    <div *ngIf="skLoading">
+        <div class="flex gap-2 mb-1 flex-wrap">
+            <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                <app-skeleton [class]="'w180'"></app-skeleton>
+            </div>
+        </div>
+    </div>
+    <!-- Loading End -->
+</app-showcode-card>
+</div>
+
+
+<div class="xl:col-span-12 col-span-12">
+    <app-showcode-card [title]="'Basic Detail'"  [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="false"  [actionIcons]="false" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'"  [classbody]="'pt-0'"  [iconName]="'ri-pencil-line'">
+        <div class="flex mt-3 mb-3 flex-wrap gap-2 justify-between flex-auto" *ngIf="skLoading">
+            <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light  bg-secondary-transparent">
+                <span>Total Voucher</span>
+                <p class="font-medium text-[14px] mb-0">
+                    {{(tabCount.used_count ? tabCount.used_count : 0) +  (tabCount.available_count ? tabCount.available_count : 0)}}
+                </p>
+            </div>
+            <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light bg-danger-transparent">
+                <span>Redeem Voucher</span>
+                <p class="font-medium text-[14px] mb-0">
+                    {{tabCount.used_count ? tabCount.used_count : '0'}}
+                </p>
+            </div>
+            <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light bg-success-transparent">
+                <span>Balance Voucher</span>
+                <p class="font-medium text-[14px] mb-0">
+                    {{tabCount.available_count ? tabCount.available_count : '0'}}
+                </p>
+            </div>
+        </div>
+        <div >
+            <div class="box-title">Redeem Voucher List</div>
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables  [columns]="getColumns()" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [showS_No]="true">
+                    <ng-container *ngIf="!skLoading">
+                        <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of vouhcer; let i = index;"   [class.bg-gray-400]="isHighlighted(row._id)">
+                            <td class="text-center w50">{{i+1}}</td>
+                            <td class="w150">{{row.created_at ? (row.created_at | date : 'dd MMM yyyy hh:mm a'): '---'}}</td>
+                            <td class="w110">{{row.created_name ?  row.created_name : '---'}}</td>
+                            <td class="w110">{{row.voucher_code ?  maskService.maskValue(row.voucher_code) : '---'}}</td>
+                            <td class="w150">{{row.expiry_date ? (row.expiry_date | date : 'dd MMM yyyy'): '---'}}</td>
+                            <td class="w150">
+                                <a class="text-primary font-medium underline" [routerLink]="['/apps/customer/customer-detail/'+row.login_type_name + '/'+ row.login_type_id + '/'+ row.customer_type_name + '/' + row.customer_type_id + '/' + row.customer_id]"  matTooltip="View Profile"  (click)="setHighLight(row._id)">
+                                   
+                                    {{row.customer_name ? (row.customer_name): '---'}}
+                                </a>
+                            </td>
+                            <td class="w100">{{row.customer_type_name ? (row.customer_type_name): '---'}}</td>
+                            <td class="w150">
+                                <span class="primary-text">{{row.req_id ? row.req_id: '---'}}</span>
+                            </td>
+                            <td class="w150">{{row.updated_at ? (row.updated_at | date : 'dd MMM yyyy'): '---'}}</td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                            <td *ngFor="let row of [].constructor(9)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                </spk-reusable-tables>
+                <ng-container *ngIf="!vouhcer.length && !skLoading">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+            
+            <app-pagination-footer
+            [currentPage]="pagination.cur_page"
+            [totalPage]="pagination.total_pages"
+            [pageLimit]="pagination.limit"
+            [listLength]="vouhcer.length"
+            [preBtn]="!pagination.prev"
+            [nextBtn]="!pagination.next"
+            (preButtonClick)="changeToPagination('Previous')"
+            (nextButtonClick)="changeToPagination('Next')"
+            (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </div>
+    </app-showcode-card>
+</div>
+</div>
+
+
+
+<!-- <div class="grid grid-cols-12 gap-x-6" *ngIf="!skLoading">
+    <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+        <app-logs [logList]="logList" [closeBtn]="false"></app-logs>
+    </div> 
+</div> -->
+
+<!-- End:: Row-1 -->

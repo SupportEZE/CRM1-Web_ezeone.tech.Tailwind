@@ -1,0 +1,197 @@
+ 
+ <app-page-header [title]="'Invoice'" [title1]="['Invoice Details']" [activeitem]="'Invoice Details'"></app-page-header>
+ <!-- Start::row-1 -->
+ <div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        <app-showcode-card  [titleView]="false"  [view]="false">
+            
+            <div *ngIf="skLoading">
+                <div class="flex gap-2 mb-1 flex-wrap">
+                    <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                        <app-skeleton [class]="'w180'"></app-skeleton>
+                    </div>
+                </div>
+            </div>
+            
+            <ng-container *ngIf="!skLoading">
+                <div class="md:flex block">
+                    <div class="h5 mb-0 sm:flex block items-center">
+                        <div class="sm:ms-2 ms-0 sm:mt-0 mt-2">
+                            <div class="h6 font-medium mb-0">INVOICE NO. : <span class="text-primary">{{invoiceDetail.invoice_number ? invoiceDetail.invoice_number : ''}}</span></div>
+                        </div>
+                    </div>
+                    <div class="ms-auto mt-md-0 mt-2">
+                        <app-icon-button [icon]="'ri-mail-line'" [buttonClass]="'ti-btn ti-btn-icon bg-primary/10 text-primary !border hover:bg-primary hover:text-white !rounded-full btn-wave'"> </app-icon-button>
+                        <app-icon-button [icon]="'ri-whatsapp-line'" [buttonClass]="'ti-btn ti-btn-icon bg-secondary/10 text-secondary hover:bg-secondary hover:text-white !rounded-full btn-wave'"> </app-icon-button>
+                        <app-icon-button [icon]="'ri-file-pdf-line'" [buttonClass]="'ti-btn ti-btn-icon bg-primary/10 text-primary !border hover:bg-primary hover:text-white !rounded-full btn-wave'"> </app-icon-button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-12 sm:gap-x-6 gap-y-3">
+                    <div class="xl:col-span-12 col-span-12">
+                        <div class="grid grid-cols-12 gap-x-6">
+                            <div class="xl:col-span-4 lg:col-span-4 md:col-span-5 sm:col-span-12 col-span-12">
+                                <p class="text-textmuted dark:text-textmuted/50 mb-2">
+                                    Customer Details :
+                                </p>
+                                <p class="font-bold mb-1">
+                                    {{invoiceDetail.customer_name ? invoiceDetail.customer_name : '---'}} {{invoiceDetail.customer_type_name ? ( '(' + invoiceDetail.customer_type_name + ")") : '---'}}
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    <span class="text-[11px]">Account Code:</span> {{invoiceDetail.customer_code ? invoiceDetail.customer_code : '---'}}
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    <span class="text-[11px]">Contact Person:</span> {{invoiceDetail.contact_person_name ? invoiceDetail.contact_person_name : '---'}}
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    <span class="text-[11px]">Mobile:</span> {{invoiceDetail.customer_mobile ? invoiceDetail.customer_mobile : '---'}}
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    <span class="text-[11px]">Address:</span> {{invoiceDetail.full_address ? invoiceDetail.full_address : '---'}}
+                                </p>
+                            </div>
+                            <div class="xl:col-span-4 lg:col-span-4 md:col-span-2 sm:col-span-12 col-span-12"></div>
+                            <div class="xl:col-span-4 lg:col-span-4 md:col-span-5 sm:col-span-12 col-span-12 text-right">
+                                <p class="text-textmuted dark:text-textmuted/50 mb-2">
+                                    Invoice Details :
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    <span class="text-[11px]">Invoice Date:</span>  {{invoiceDetail.billing_date ? (invoiceDetail.billing_date | date : 'dd MMM yyyy') : '---'}}
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    <span class="text-[11px]">Total Item:</span> 
+                                    {{invoiceDetail.total_item_count ? (invoiceDetail.total_item_count) : '---'}}
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    <span class="text-[11px]">Total Qty:</span> {{invoiceDetail.total_item_quantity ? (invoiceDetail.total_item_quantity) : '---'}}
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    <span class="text-[11px]">Net Amount:</span> 
+                                    ₹ {{invoiceDetail.net_amount_with_tax ? (invoiceDetail.net_amount_with_tax) : '0'}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xl:col-span-12 col-span-12">
+                        <div class="table-responsive overflow-auto table-bordered-default">
+                            <spk-reusable-tables  tableClass="ti-custom-table ti-custom-table-head mt-3 border border-defaultborder dark:border-defaultborder/10"  [columns]="invoiceColumns"
+                            [showCheckbox]="false" >
+                            <tr *ngFor="let row of invoiceDetail.item_info; let i = index" class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                
+                                <td class="w80">
+                                    <div class="font-medium">
+                                        {{i+1}}
+                                    </div>
+                                </td>
+                                
+                                <td>
+                                    <div class="font-medium">
+                                        {{ row.product_name ? row.product_name : '---' }}
+                                    </div>
+                                </td>
+                                <td class="w130">
+                                    <div class="text-textmuted dark:text-textmuted/50 ">
+                                        {{ row.product_code ? row.product_code : '---' }}
+                                    </div>
+                                </td>
+                                <td class="text-right w130">
+                                    ₹ {{ row.unit_price ? row.unit_price : '0' }}
+                                </td>
+                                <td class="product-quantity-container text-center w80">
+                                    {{row.total_quantity ? row.total_quantity : '---' }}
+                                </td>
+                                <td class="text-right w100">
+                                    ₹ {{ row.gross_amount ? row.gross_amount : '---' }}
+                                </td>
+                                <td class="text-right w100">
+                                    ₹ {{ row.discount_amount ? row.discount_amount : '---' }} 
+                                    {{row.discount_percent ? ('(' + row.discount_percent + '%)') : ''}}
+                                </td>
+                                 <td class="text-right w100">
+                                    ₹{{row.net_amount_before_tax ? row.net_amount_before_tax : '---'}}
+                                </td>
+                                 <td class="text-right w120">
+                                    ₹ {{ row.gst_amount ? row.gst_amount : '---' }} 
+                                    {{row.gst_percent ? ('(' + row.gst_percent + '%)') : ''}}
+                                </td>
+                               
+                                <td class="text-right w110">
+                                    ₹{{row.net_amount_with_tax ? row.net_amount_with_tax : '---'}}
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                <td colspan="7">
+                                    <!-- <div class="xl:col-span-12 col-span-12">
+                                        <label class="form-label">Terms & Conditions<span class="text-red-500">*</span></label>
+                                        <div id="product-features" class="ngx-editor-custom editor-height500">
+                                            <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+                                            <ngx-editor [editor]="editor" class="overflow-auto"></ngx-editor>
+                                        </div>
+                                    </div> -->
+                                </td>
+                                <td colspan="3">
+                                    <spk-reusable-tables  tableClass="table table-sm text-nowrap mb-0 table-borderless" [showCheckbox]="false" >
+                                        <tr  class="border-b !border-transparent">
+                                            <th scope="row">
+                                                <p class="mb-0 font-medium text-[15px]">Total Price :</p>
+                                            </th>
+                                            <td>
+                                                <p class="mb-0 font-medium text-[15px]">₹ {{invoiceDetail.gross_amount ? invoiceDetail.gross_amount : '0'}}</p>
+                                            </td>
+                                        </tr>
+                                        <tr  class="border-b !border-transparent">
+                                            <th scope="row">
+                                                <p class="mb-0 font-medium text-[15px]">Discount : 
+                                                    
+                                                </p>
+                                            </th>
+                                            <td>
+                                                <p class="mb-0 font-medium text-[15px]">₹ {{ invoiceDetail.discount_amount ? invoiceDetail.discount_amount : '---' }} 
+                                                    {{invoiceDetail.discount_percent ? ('('+invoiceDetail.discount_percent + '%)') : ''}}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr  class="border-b !border-transparent">
+                                            <th scope="row">
+                                                <p class="mb-0 font-medium text-[15px]">Sub Total :</p>
+                                            </th>
+                                            <td>
+                                                <p class="mb-0 font-medium text-[15px]">
+                                                    ₹  {{ invoiceDetail.net_amount_before_tax ? invoiceDetail.net_amount_before_tax : '---' }} 
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr  class="border-b !border-transparent">
+                                            <th scope="row">
+                                                <p class="mb-0 font-medium text-[15px]">GST:</p>
+                                            </th>
+                                            <td>
+                                                <p class="mb-0 font-medium text-[15px]">
+                                                    ₹ {{ invoiceDetail.gst_amount ? invoiceDetail.gst_amount : '---' }} 
+                                                    {{invoiceDetail.gst_percent ? ('('+invoiceDetail.gst_percent + '%)') : ''}} 
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr  class="border-b !border-transparent">
+                                            <th scope="row">
+                                                <p class="mb-0 text-[14px] font-medium text-[15px]">Net Amount :</p>
+                                            </th>
+                                            <td>
+                                                <p class="mb-0 font-medium text-[1rem] text-success"
+                                                >
+                                                ₹ {{invoiceDetail.net_amount_with_tax ? invoiceDetail.net_amount_with_tax : '---' }}
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </spk-reusable-tables>
+                            </td>
+                        </tr>
+                    </spk-reusable-tables>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</app-showcode-card>
+</div>
+</div>
+<!--End::row-1 -->

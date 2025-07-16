@@ -1,0 +1,207 @@
+<div *ngIf="field" [formGroup]="form">
+  <!-- Label -->
+  <label *ngIf="(field.type !== fieldTypes.TOGGLE) && (field.type != fieldTypes.SINGLE_SELECT) && (field.type != fieldTypes.MULTI_SELECT)" [for]="field.name" class="form-label">
+    {{ field.label }}
+    <span *ngIf="field.required" class="text-red-500">*</span>
+  </label>
+  
+  <!-- Field Container -->
+  <div [ngSwitch]="field.type">
+    
+    <!-- [maxlength]="field.max_length" [minlength]="field.min_length" -->
+    <!-- Short Text -->
+    <ng-container *ngSwitchCase="fieldTypes.SHORT_TEXT">
+      <input
+      [type]="getInputType()"
+      [id]="field.name"
+      [name]="field.name"
+      [formControlName]="field.name"
+      [placeholder]="field.placeholder ?? ''"
+      (input)="emitValueChange($event)"
+      class="form-control"
+      
+      [class.border-red-500]="form.get(field.name)?.invalid && (form.get(field.name)?.touched || form.get(field.name)?.dirty)">
+    </ng-container>
+    
+    <!-- Textarea -->
+    <textarea *ngSwitchCase="fieldTypes.TEXT_AREA"
+    [id]="field.name"
+    [name]="field.name"
+    [formControlName]="field.name"
+    [placeholder]="field.placeholder ?? ''"
+    rows="3"
+    class="form-control"
+    (input)="emitValueChange($event)"
+    [class.border-red-500]="form.get(field.name)?.invalid && (form.get(field.name)?.touched || form.get(field.name)?.dirty)">
+  </textarea>
+  
+  <!-- [maxlength]="field.max_length" [minlength]="field.min_length" -->
+  <!-- Number Input -->
+  <ng-container *ngSwitchCase="fieldTypes.NUMBER">
+    <input
+    type="number"
+    [id]="field.name"
+    [name]="field.name"
+    [formControlName]="field.name"
+    [placeholder]="field.placeholder ?? ''"
+    (input)="emitValueChange($event)"
+    
+    class="form-control"
+    [class.border-red-500]="form.get(field.name)?.invalid && (form.get(field.name)?.touched || form.get(field.name)?.dirty)">
+  </ng-container>
+  
+  <!-- Email Input -->
+  <input *ngSwitchCase="fieldTypes.EMAIL"
+  type="email"
+  [id]="field.name"
+  [name]="field.name"
+  [formControlName]="field.name"
+  [placeholder]="field.placeholder ?? 'Enter your email'"
+  (input)="emitValueChange($event)"
+  class="form-control"
+  [class.border-red-500]="form.get(field.name)?.invalid && (form.get(field.name)?.touched || form.get(field.name)?.dirty)">
+  
+  <!-- Single Select -->
+  <spk-ng-select
+  *ngSwitchCase="fieldTypes.SINGLE_SELECT"
+  [formControlName]="field.name"
+  [options]="field.options ?? []"
+  [multiple]="false"
+  [search]="field.search"
+  [disabled]="field.disabled ?? false"
+  [label]="field.label"
+  [fieldReq]="field.required"
+  (selectedChange)="onSingleSelectChange($event)"
+  (searchChanged)="onsearchChange($event)"
+  (valueChange)="onValueChange($event)">
+</spk-ng-select>
+
+<!-- Multi Select -->
+<spk-ng-select
+*ngSwitchCase="fieldTypes.MULTI_SELECT"
+[formControlName]="field.name"
+[options]="field.options ?? []"
+[search]="field.search"
+[multiple]="true"
+[label]="field.label"
+[fieldReq]="field.required"
+(selectedChange)="onSingleSelectChange($event)"
+(searchChanged)="onsearchChange($event)"
+(valueChange)="onValueChange($event)">
+</spk-ng-select>
+
+<!-- Date Picker -->
+<spk-flatpickr *ngSwitchCase="fieldTypes.DATE"
+[placeholder]="field.placeholder ?? 'Select Date'"
+class="form-control custom-datepickr"
+[formControlName]="field.name"
+[max]="field.max_period ?? ''"
+[min]="field.min_period ?? ''"
+(dateChange)="onDateSelected($event, field.name)"
+[dateFormat]="'Y-m-d'">
+</spk-flatpickr>
+
+<!-- Toggle -->
+<div *ngSwitchCase="fieldTypes.TOGGLE" class="custom-toggle-switch flex items-center mb-4">
+  <input type="checkbox"
+  [id]="field.name"
+  [name]="field.name"
+  [formControlName]="field.name"
+  (change)="onToggleSwitch($event)">
+  <label [for]="field.name" class="label-primary"></label>
+  <span class="ms-3">{{ field.label }}</span>
+</div>
+
+<!-- Radio Select -->
+<div *ngSwitchCase="fieldTypes.RADIO_SELECT"
+class="grid grid-cols-12 gap-4">
+<div *ngFor="let option of field.options"
+class="xl:col-span-6 col-span-12">
+<!-- {{option.value}} -->
+<div class="flex form-check items-center">
+  <input type="radio"
+  class="form-check-input"
+  [id]="field.name + '_' + option.value"
+  [value]="option.value"
+  [name]="field.name"
+  (change)="onRadioSelect($event)">
+  <label class="form-check-label whitespace-nowrap"
+  [for]="field.name + '_' + option.value">
+  {{ option.label }}
+</label>
+</div>
+</div>
+</div>
+
+
+
+<!-- Checkbox Select -->
+<div *ngSwitchCase="fieldTypes.CHECKBOX_SELECT" class="grid grid-cols-12 gap-4">
+  <div *ngFor="let option of field.options ?? []" class="xl:col-span-6 col-span-12">
+    <div class="flex form-check items-center">
+      <input type="checkbox"
+      class="form-check-input"
+      [id]="field.name + '_' + option.value"
+      [name]="field.name"
+      [formControlName]="field.name"
+      (change)="onCheckboxChange($event)">
+      <label [for]="field.name + '_' + option.value" class="form-check-label whitespace-nowrap">
+        {{ option.label }}
+      </label>
+    </div>
+  </div>
+</div>
+
+
+<!-- Editor -->
+<div *ngSwitchCase="fieldTypes.EDITOR" id="product-features"
+class="ngx-editor-custom">
+<form [formGroup]="form">
+  <ngx-editor-menu [editor]="editor" [toolbar]="toolbar">
+  </ngx-editor-menu>
+  <ngx-editor [editor]="editor" class="overflow-auto">
+  </ngx-editor>
+</form>
+</div>
+
+<!-- File Upload -->
+<file-pond *ngSwitchCase="fieldTypes.UPLOAD" multiple
+class="filepond basic-filepond"  data-allow-reorder="true"
+data-max-file-size="3MB" data-max-files="6"
+[options]="pondOptions"
+[files]="pondFiles"
+(onremovefile)="onFileRemove($event, field.label)" 
+(onprocessfile)="onFileProcessed($event, field.label)">
+
+</file-pond>
+
+<!-- (onremovefile)="pondHandleRemoveFile($event)" -->
+</div>
+
+<!-- Hint Text -->
+<!-- <div *ngIf="field.hint" class="form-label mt-1 text-xs text-gray-500">
+  *{{ field.hint }}
+</div> -->
+
+<!-- Error Messages -->
+<ng-container *ngIf="(field.type != fieldTypes.SINGLE_SELECT) && (field.type != fieldTypes.DATE) && (field.type != fieldTypes.MULTI_SELECT)">
+  <div *ngIf="form.get(field.name)?.invalid && (form.get(field.name)?.touched || form.get(field.name)?.dirty)"
+  class="mt-1 text-xs text-red-500 text-right">
+  <p *ngIf="form.get(field.name)?.hasError('required')">
+    {{ field.label }} is required
+  </p>
+  <p *ngIf="form.get(field.name)?.hasError('invalidEmail')">
+    Please enter a valid email
+  </p>
+  <p *ngIf="form.get(field.name)?.hasError('min') || form.get(field.name)?.hasError('minlength')">
+    Minimum required length is {{ field.min_length ?? 0 }} characters.
+  </p>
+  <p *ngIf="form.get(field.name)?.hasError('max') || form.get(field.name)?.hasError('maxlength')">
+    Maximum allowed length is {{ field.max_length ?? 0 }} characters.
+  </p>
+  <p *ngIf="form.get(field.name)?.hasError('pattern')">
+    Enter a valid {{ field.label }}
+  </p>
+</div>
+</ng-container>
+</div>

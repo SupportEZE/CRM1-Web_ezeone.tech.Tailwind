@@ -1,0 +1,154 @@
+<app-page-header [title]="'Payment Collection'" [title1]="['Payment Collection']" [activeitem]="'Payment Collection List'"></app-page-header>
+
+<div class="box py-3 px-4">
+    <ng-container *ngIf="!skLoading">
+        <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+            <app-listing-tab *ngFor="let tab of mainTabs" [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon, count: tab.count}]" [activeTab]="activeTab" (tabChange)="onTabChange($event.tab)">
+            </app-listing-tab>
+        </nav>
+    </ng-container>
+    
+    <ng-container *ngIf="skLoading">
+        <div class="flex items-center gap-3">
+            <app-skeleton [class]="'w100 h30 bg-skeleton'" *ngFor="let row of [].constructor(4)"></app-skeleton>
+        </div>
+    </ng-container>
+</div>
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12"> 
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Payment Collection List'" [listLength]="listing.length" [btnShow]="true" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()" [btnShow1]="showChangeStatusBtn" [logsLabel]="'Change Status'" (logBtn)="onChangeStatusAll('change-status')" [btnShow2]="accessRight?.approveRight" [addBtnLabel]="'Add Payment Collection'"  (button1)="openModal('add')"></app-page-sub-header>
+            
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [columns]="PageHeaders">
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                <td>
+                                    <ng-container *ngIf="hasPendingRows && accessRight?.approveRight">
+                                        <input type="checkbox" class="form-check-input" [(ngModel)]="allTasksChecked" (change)="handleToggleSelectAll(allTasksChecked)">
+                                    </ng-container>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput [matDatepicker]="picker" [(ngModel)]="filter.created_at" placeholder="Created At" (ngModelChange)="getList()"/>
+                                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.created_name" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.created_name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.created_name=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput [matDatepicker]="picker1" [(ngModel)]="filter.payment_date" placeholder="Payment Date" (ngModelChange)="getList()"/>
+                                            <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker1></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.payment_no" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.payment_no) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.payment_no=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.customer_type_name" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.customer_type_name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_type_name=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.collected_from_name" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.collected_from_name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.collected_from_name=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.payment_mode" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.payment_mode) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.payment_mode=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                                <td class="task-checkbox">
+                                    <input class="form-check-input" type="checkbox" [(ngModel)]="row.checked" (change)="toggleRowChecked(row)" *ngIf="row.status === 'Pending' && accessRight?.approveRight">
+                                </td>
+                                <td>{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                                <td>{{ row.created_at ? (row.created_at | date:'d MMM yyyy, hh:mm a') : '--' }}</td>
+                                <td>{{row.created_name || '--'}}</td>
+                                <td>{{ row.payment_date ? (row.payment_date | date:'d MMM yyyy') : '--' }}</td>
+                                <td><a class="text-primary font-semibold underline" (click)="goToDetailPage(row._id)">{{row.payment_no || '--'}}</a></td>
+                                <td>{{row.customer_type_name || '--'}}</td>
+                                <td>{{row.collected_from_name || '--'}}</td>
+                                <td class="text-right">{{CURRENCY_SYMBOLS.RUPEE}} {{row.amount || '--'}}</td>
+                                <td class="text-center">
+                                    <span class="font-semibold" [ngClass]="{'text-primary': row.payment_mode === 'Online', 'text-secondary': row.payment_mode === 'Cash', 'text-primarytint2color': row.payment_mode === 'Cheque'}">{{row.payment_mode || '--'}}</span>
+                                </td>
+                                <td>{{row.transaction_id || '--'}}</td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                <td *ngFor="let row of [].constructor(11)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!listing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+            
+            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

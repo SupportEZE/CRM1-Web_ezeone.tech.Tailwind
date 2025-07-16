@@ -1,0 +1,518 @@
+
+<!-- Start::page-header -->
+<div class="flex items-center justify-between page-header-breadcrumb flex-wrap gap-2">
+    <div>
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0);">
+                    Dashboards
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Sales</li>
+        </ol>
+        <h1 class="page-title font-medium text-lg mb-0">Sales Dashboard</h1>
+    </div>
+    <div class="flex gap-2 flex-wrap align-middle">
+        <div class="form-group">
+            <div class="input-group breadcrumb-datepicker">
+                <div class="input-group-text bg-white dark:bg-bodybg border"> <i class="ri-calendar-line leading-[1]"></i> </div>
+                <!-- <spk-flatpickr [placeholder]="'2024-05-01 to 2024-05-30'" [mode]="'range'" [dateFormat]="'Y-m-d'" [altInput]="false" [enableTime]="false"  [convertModelValue]="true"></spk-flatpickr> -->
+            </div>
+        </div>
+        <div class="ti-btn-list">
+            <button class="ti-btn bg-white dark:bg-bodybg border border-defaultborder dark:border-defaultborder/10 btn-wave !my-0 !m-0 !me-[0.35rem]">
+                <i class="ri-filter-3-line align-middle leading-none"></i> Filter
+            </button>
+            <button class="ti-btn ti-btn-primary btn-wave !border-0 me-0 !m-0">
+                <i class="ri-share-forward-line"></i> Share
+            </button>
+        </div>
+    </div>
+</div>
+<!-- End::page-header -->
+
+<!-- Start::Row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-8 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            @for(card of cardData;track $index){
+                <div class="xxl:col-span-3 xl:col-span-6 col-span-12">
+                    <spk-sales-cards [card]="card"></spk-sales-cards>
+                </div>
+            }
+            <div class="xxl:col-span-8 xl:col-span-6 col-span-12">
+                <div class="box">
+                    <div class="box-header justify-between">
+                        <div class="box-title">
+                            Sales Overview
+                        </div>
+                        <spk-dropdowns [Customclass]="'dropdown'" [title]="'Sort By'" [class]="'ti-btn ti-btn-light ti-btn-sm text-textmuted dark:text-textmuted/50 ti-dropdown-toggle hs-dropdown-toggle'" 
+                        [Menuclass]="'dropdown-menu'" [Icon]="true" [IconClass]="'ri-arrow-down-s-line align-middle fs-13 d-inline-block'">
+                        <li><a class="ti-dropdown-item" href="javascript:void(0);">This Week</a></li>
+                        <li><a class="ti-dropdown-item" href="javascript:void(0);">Last Week</a></li> 
+                        <li><a class="ti-dropdown-item" href="javascript:void(0);">This Month</a></li> 
+                    </spk-dropdowns>
+                </div>
+                <div class="box-body">
+                    <div id="sales-overview">
+                        <spk-apexcharts [chartOptions]="chartOptions"></spk-apexcharts>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="xxl:col-span-4 xl:col-span-6 col-span-12">
+            <div class="box overflow-hidden">
+                <div class="box-header pb-0 justify-between">
+                    <div class="box-title">
+                        Order Statistics
+                    </div>
+                    <spk-dropdowns [Customclass]="'dropdown'"  [class]="'ti-btn ti-btn-light ti-btn-sm ti-btn-icon text-textmuted dark:text-textmuted/50 hs-dropdown-toggle ti-dropdown-toggle'"  [Icon]="true" [IconClass]="'fe fe-more-vertical'"
+                    [Menuclass]="'dropdown-menu'"  >
+                    <li class="ti-dropdown-item"><a href="javascript:void(0);">Today</a></li>
+                    <li class="ti-dropdown-item"><a href="javascript:void(0);">This Week</a></li>
+                    <li class="ti-dropdown-item"><a href="javascript:void(0);">Last Week</a></li>
+                </spk-dropdowns>
+            </div>
+            <div class="box-body py-4 px-3">
+                <div class="flex gap-4 mb-3">
+                    <div class="avatar avatar-md bg-primary/10 !w-[3rem]">
+                        <i class="ti ti-trending-up text-[1.25rem] text-primary"></i>
+                    </div>
+                    <div class="flex-auto flex items-start justify-between w-full flex-wrap">
+                        <div>
+                            <span class="text-[11px] mb-1 block font-medium">TOTAL ORDERS</span> 
+                            <div class="flex items-center justify-between">
+                                <h4 class="mb-0 flex items-center">3,736<span class="text-success text-xs ms-2 inline-flex items-center"><i class="ti ti-trending-up align-middle me-1"></i>0.57%</span></h4>
+                            </div>
+                        </div>
+                        <a href="javascript:void(0);" class="text-success text-xs decoration-solid">Earnings ?</a>
+                    </div>
+                </div>
+                <div id="orders" class="my-2">
+                    <spk-apexcharts [chartOptions]="chartOptions1"></spk-apexcharts>
+                </div>
+            </div>
+            <div class="box-footer border-t border-dashed">
+                <div class="grid">
+                    <button class="ti-btn ti-btn-outline-primary ti-btn-wave btn-wave font-medium waves-effect waves-light table-icon">Complete Statistics<i class="ti ti-arrow-narrow-right ms-2 text-[16px] inline-block"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="xl:col-span-4 col-span-12">
+    <div class="grid grid-cols-12 gap-x-6">
+        <div class="xl:col-span12 col-span-12">
+            <div class="box main-dashboard-banner overflow-hidden">
+                <div class="box-body p-6">
+                    <div class="grid grid-cols-12 justify-between">
+                        <div class="xxl:col-span-7 xl:col-span-5 lg:col-span-5 md:col-span-5 sm:col-span-5 col-span-12">
+                            <h4 class="mb-4 font-medium text-white">Upgrade to get more</h4>
+                            <p class="mb-6 text-white">Maximize sales insights. Optimize performance. Achieve success with pro.</p>
+                            <a href="javascript:void(0);" class="font-medium text-white decoration-solid underline">Upgrade To Pro<i class="ti ti-arrow-narrow-right"></i></a>
+                        </div>
+                        <div class="xxl:col-span-4 xl:col-span-7 lg:col-span-7 md:col-span-7 sm:col-span-7 sm:block hidden text-end my-auto col-span-12">
+                            <img src="./assets/images/media/media-86.png" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="xl:col-span12 col-span-12">
+            <div class="box overflow-hidden">
+                <div class="box-header justify-between pb-1">
+                    <div class="box-title">
+                        Top Selling Categories
+                    </div>
+                    <div class="ti-dropdown hs-dropdown"> 
+                        <a href="javascript:void(0);" class="ti-btn ti-btn-light text-textmuted dark:text-textmuted/50 ti-dropdown-toggle hs-dropdown-toggle ti-btn-sm gap-0" data-bs-toggle="dropdown" aria-expanded="true"> Sort By <i class="ri-arrow-down-s-line align-middle ms-1 inline-block"></i></a>
+                        <ul class="ti-dropdown-menu hs-dropdown-menu hidden" role="menu" data-popper-placement="bottom-end"> 
+                            <li><a class="ti-dropdown-item" href="javascript:void(0);">This Week</a></li>
+                            <li><a class="ti-dropdown-item" href="javascript:void(0);">Last Week</a></li> 
+                            <li><a class="ti-dropdown-item" href="javascript:void(0);">This Month</a></li> 
+                        </ul> 
+                    </div>
+                </div>
+                <div class="box-body p-0">
+                    <div class="p-4 pb-0">
+                        <div class="progress-stacked progress-sm mb-3 flex gap-1">
+                            <div class="progress-bar w-[25%]" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-primarytint1color w-[15%] !rounded-none" role="progressbar" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-primarytint2color !rounded-none w-[15%]" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-primarytint3color !rounded-none w-[20%]" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar !rounded-none !rounded-tr-md !rounded-br-md bg-secondary w-[25%]" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div>Overall Sales</div>
+                            <div class="h6 mb-0"><span class="text-success me-2 text-[11px]">2.74%<i class="ti ti-arrow-narrow-up"></i></span>1,25,875</div>
+                        </div>
+                    </div>
+                    <div class="table-responsive top-categories">
+                        <table class="table text-nowrap">
+                            <tbody>
+                                <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                    <td>
+                                        <span class="font-medium top-category-name one">Clothing</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-medium">31,245</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-textmuted dark:text-textmuted/50 text-xs">25% Gross</span>
+                                    </td>
+                                    <td class="!text-end">
+                                        <span class="badge bg-success me-1"> 0.45% <i class="ti ti-trending-up ms-1"></i></span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                    <td>
+                                        <span class="font-medium top-category-name two">Electronics</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-medium">29,553</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-textmuted dark:text-textmuted/50 text-xs">16% Gross</span>
+                                    </td>
+                                    <td class="!text-end">
+                                        <span class="badge bg-warning me-1"> 0.27% <i class="ti ti-trending-up ms-1"></i></span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                    <td>
+                                        <span class="font-medium top-category-name three">Grocery</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-medium">24,577</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-textmuted dark:text-textmuted/50 text-xs">22% Gross</span>
+                                    </td>
+                                    <td class="!text-end">
+                                        <span class="badge bg-secondary me-1"> 0.63% <i class="ti ti-trending-up ms-1"></i></span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                    <td>
+                                        <span class="font-medium top-category-name four">Automobiles</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-medium">19,278</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-textmuted dark:text-textmuted/50 text-xs">18% Gross</span>
+                                    </td>
+                                    <td class="!text-end">
+                                        <span class="badge bg-primarytint1color me-1"> 1.14% <i class="ti ti-trending-down ms-1"></i></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b-0">
+                                        <span class="font-medium top-category-name five">others</span>
+                                    </td>
+                                    <td class="border-b-0">
+                                        <span class="font-medium">15,934</span>
+                                    </td>
+                                    <td class="text-center border-b-0">
+                                        <span class="text-textmuted dark:text-textmuted/50 text-xs">15% Gross</span>
+                                    </td>
+                                    <td class="!text-end border-b-0">
+                                        <span class="badge bg-primary me-1"> 3.87% <i class="ti ti-trending-up ms-1"></i></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- End::Row-1 -->
+
+<!-- Start::Row-2 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-3 xl:col-span-6 col-span-12">
+        <div class="box overflow-hidden">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                    Latest Transactions
+                </div>
+                <a href="javascript:void(0);" class="ti-btn ti-btn-light btn-wave text-textmuted dark:text-textmuted/50 ti-btn-sm">View All<i class="ti ti-arrow-narrow-right"></i></a>
+            </div>
+            <div class="box-body p-0 pb-1">
+                <div class="table-responsive">
+                    <spk-reusable-tables  [columns]="companiesColumn" tableClass="ti-custom-table text-nowrap"
+                    [showCheckbox]="false" checkboxClass="text-center">
+                    @for(product of products;track $index){
+                        <tr>
+                            <td><div class="flex items-center gap-2">
+                                <div class="leading-none">
+                                    <span class="avatar avatar-sm">
+                                        <img [src]="product.image" alt="{{ product.name }}">
+                                    </span>
+                                </div>
+                                <div class="font-medium">{{ product.name }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="font-medium">{{ product.price }}</span>
+                        </td>
+                        <td>
+                            <span class="badge" [ngClass]="product.badgeClass">{{ product.status }}</span>
+                        </td>
+                    </tr>
+                }
+            </spk-reusable-tables>
+        </div>
+    </div>
+</div>
+</div>
+<div class="xxl:col-span-3 xl:col-span-6 col-span-12">
+    <div class="box">
+        <div class="box-header justify-between">
+            <div class="box-title">
+                Recent Activity
+            </div>
+            <a href="javascript:void(0);" class="ti-ti-btn ti-btn-light btn-wave text-textmuted dark:text-textmuted/50 waves-effect waves-light px-2 py-[0.26rem]">View All</a>
+        </div>
+        <div class="box-body">
+            <ul class="list-none recent-activity-list">
+                <li>
+                    <div>
+                        <div>
+                            <div class="font-medium text-[14px]">Amit Sharma</div>
+                            <span class="text-xs activity-time">
+                                12 Hrs
+                            </span>
+                        </div>
+                        <span class="block text-textmuted dark:text-textmuted/50">
+                            Updated the product description for <span class="text-primary font-medium">Widget X</span>.
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <div>
+                            <div class="font-medium text-[14px]">Priya Mehta</div>
+                            <span class="text-xs activity-time">
+                                4:32pm
+                            </span>
+                        </div>
+                        <span class="block text-textmuted dark:text-textmuted/50">
+                            added a <span class="font-medium text-dark">new user</span> with username <span class="font-medium text-primarytint1color">priyamehta89.</span>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <div>
+                            <div class="font-medium text-[14px]">Ravi Kumar</div>
+                            <span class="text-xs activity-time">
+                                11:45am
+                            </span>
+                        </div>    
+                        <span class="block text-textmuted dark:text-textmuted/50">
+                            Changed the status of order <a href="javascript:void(0);" class="font-medium text-dark decoration-solid">#12345 </a> to <span class="font-medium text-primarytint2color">Shipped.</span>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <div>
+                            <div class="font-medium text-[14px]">Neha Joshi</div>
+                            <span class="text-xs activity-time">
+                                9:27am
+                            </span>
+                        </div>    
+                        <span class="block text-textmuted dark:text-textmuted/50">
+                            added <span class="font-medium text-primarytint3color">Saurabh Singh</span> to academy group this day.
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <div>
+                            <div class="font-medium text-[14px]">Manish Verma</div>
+                            <span class="text-xs activity-time">
+                                8:56pm
+                            </span>
+                        </div>   
+                        <span class="block text-textmuted dark:text-textmuted/50">
+                            added a comment to the task <span class="font-medium text-secondary">Update website layout.</span>
+                        </span> 
+                    </div>
+                </li>
+            </ul>
+            
+        </div>
+    </div>
+</div>
+<div class="xxl:col-span-3 xl:col-span-6 col-span-12">
+    <div class="box">
+        <div class="box-header justify-between">
+            <div class="box-title">
+                Sales Statistics
+            </div>
+            <spk-dropdowns [Customclass]="'dropdown'" [title]="'Sort By'" [class]="'ti-ti-btn ti-btn-light text-textmuted dark:text-textmuted/50 ti-dropdown-toggle gap-0 hs-dropdown-toggle px-2 py-[0.26rem]'" 
+            [Menuclass]="'dropdown-menu'" [Icon]="true" [IconClass]="'ri-arrow-down-s-line align-middle ms-1 inline-block'"  >
+            <li><a class="ti-dropdown-item" href="javascript:void(0);">This Week</a></li>
+            <li><a class="ti-dropdown-item" href="javascript:void(0);">Last Week</a></li> 
+            <li><a class="ti-dropdown-item" href="javascript:void(0);">This Month</a></li> 
+        </spk-dropdowns>
+    </div>
+    <div class="box-body">
+        <div class="flex flex-wrap gap-2 justify-between flex-auto pb-3">
+            <div class="py-4 px-6 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                <span>Total Sales</span>
+                <p class="font-medium text-[14px] mb-0">3.478B</p>
+            </div>
+            <div class="py-4 px-6 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                <span>This Year</span>
+                <p class="text-success font-medium text-[14px] mb-0">4,25,349</p>
+            </div>
+            <div class="py-4 px-6 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                <span>Last Year</span>
+                <p class="text-danger font-medium text-[14px] mb-0">3,41,622</p>
+            </div>
+        </div>
+        <div id="sales-statistics">
+            <spk-apexcharts [chartOptions]="chartOptions2"></spk-apexcharts>
+        </div>
+    </div>
+</div>
+</div>
+<div class="xxl:col-span-3 xl:col-span-6 col-span-12">
+    <div class="box overflow-hidden">
+        <div class="box-header pb-0 justify-between">
+            <div class="box-title">
+                Overall Statistics
+            </div>
+            <a href="javascript:void(0);" class="ti-ti-btn ti-btn-light btn-wave text-textmuted dark:text-textmuted/50 waves-effect waves-light gap-0 px-2 py-[0.26rem]">View All</a>
+        </div>
+        <div class="box-body">
+            <ul class="ti-list-group activity-feed">
+                @for(statistic of statistics;track $index){
+                    <li class="ti-list-group-item !m-0">
+                        <div class="flex items-center justify-between">
+                            <div class="leading-none">
+                                <p class="mb-2 text-[13px] text-textmuted dark:text-textmuted/50">{{statistic.expenses}}</p>
+                                <h6 class="font-medium mb-0">{{statistic.price}}<span class="text-xs text-{{statistic.bg}} ms-2 font-normal inline-block">{{statistic.change}}<i class="ti ti-trending-{{statistic.arrow}} mx-1"></i></span></h6>
+                            </div>
+                            <div class="text-end">
+                                <div id="line-graph1">
+                                    <spk-apexcharts [chartOptions]="statistic.chartOptions"></spk-apexcharts>
+                                </div>
+                                <a href="javascript:void(0);" class="text-xs">
+                                    <span>See more</span>
+                                    <span class="table-icon"><i class="ms-1 inline-block ri-arrow-right-line"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+<!-- End::Row-2 -->
+
+<!-- Start::Row-3 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-9 col-span-12">
+        <div class="box overflow-hidden">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                    Recent Orders
+                </div>
+                <a href="javascript:void(0);" class="ti-btn ti-btn-light btn-wave px-2 py-[0.26rem] text-textmuted dark:text-textmuted/50 waves-effect waves-light">View All</a>
+            </div>
+            <div class="box-body p-0">
+                <div class="table-responsive">
+                    <spk-reusable-tables [columns]="orderColumns" [tableClass]="'ti-custom-table text-nowrap'" checkboxClass="!text-center" [showCheckbox]="true">
+                        @for(order of orders;track $index){
+                            <tr class="border !border-defaultborder dark:!border-defaultborder/10">
+                                <td class="text-center">
+                                    <input class="form-check-input" type="checkbox" id="checkboxNoLabel02" value="" aria-label="..." [checked]="order.checked">
+                                </td>
+                                <td>
+                                    <div class="flex items-center gap-4">
+                                        <div class="leading-none">
+                                            <span class="avatar avatar-sm">
+                                                <img [src]="order.src" alt="">
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span class="block font-medium">{{order.customer}}</span>
+                                            <span class="block text-[11px] text-textmuted dark:text-textmuted/50">{{order.customerMail}}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {{order.product}}
+                                </td>
+                                <td class="text-center">
+                                    {{order.quantity}}
+                                </td>
+                                <td class="text-center">
+                                    {{order.price}}
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{order.bg}}/10 text-{{order.bg}}">{{order.status}}</span>
+                                </td>
+                                <td>
+                                    {{order.date}}
+                                </td>
+                                <td>
+                                    <div class="ti-btn-list">
+                                        <button class="ti-btn ti-btn-sm ti-btn-icon ti-btn-soft-success"><i class="ri-pencil-line"></i></button>
+                                        <button class="ti-btn ti-btn-sm ti-btn-icon ti-btn-soft-danger" (click)="click(order.id)"><i class="ri-delete-bin-line"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </spk-reusable-tables>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="xl:col-span-3 col-span-12">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                    Sales By Region
+                </div>
+                <a href="javascript:void(0);" class="ti-btn ti-btn-light btn-wave px-2 py-[0.26rem] text-textmuted dark:text-textmuted/50 waves-effect waves-light">View All</a>
+            </div>
+            <div class="box-body">
+                <ul class="list-none sales-country-list">
+                    @for(country of countries;track $index){
+                        <li>
+                            <div class="flex items-start gap-4">
+                                <div class="leading-none">
+                                    <span class="avatar avatar-sm p-1 bg-light border dark:border-defaultborder/10">
+                                        <img [src]="country.src" alt="">
+                                    </span>
+                                </div>
+                                <div class="flex-auto w-full">
+                                    <div class="flex items-center justify-between">
+                                        <span class="block font-medium mb-2 leading-none">{{country.name}}</span>
+                                        <span class="text-[14px] font-medium block leading-none">{{country.sales}}</span>
+                                    </div>
+                                    <div class="progress progress-md p-1" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-bar bg-{{country.bg}} !rounded-s-full w-[90%]"  [style.width]="country.progress + '%'">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End::Row-3 -->

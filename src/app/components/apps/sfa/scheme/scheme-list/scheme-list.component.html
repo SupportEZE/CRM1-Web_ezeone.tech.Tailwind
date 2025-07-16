@@ -1,0 +1,145 @@
+<app-page-header [title]="'Scheme'" [title1]="['Scheme']" [activeitem]="'Scheme List'"></app-page-header>
+
+<div class="box py-3 px-4">
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+        <ng-container *ngIf="skLoading">
+            <app-skeleton  *ngFor="let row of [].constructor(2)" [class]="'w100 h25'"></app-skeleton>
+        </ng-container>
+        <ng-container *ngIf="!skLoading">
+            <app-listing-tab *ngFor="let tab of mainTabs"
+            [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon, count: tab.count}]"
+            [activeTab]="activeTab"
+            (tabChange)="onTabChange($event.tab)"></app-listing-tab>
+        </ng-container>
+    </nav>
+    <!-- Start::row-1 -->
+    <div class="row">
+        <div class="col-xl-12">
+            <app-page-sub-header [pageTitle]="'Scheme List'" [btnShow]="true" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()" [btnShow1]="true" [logsLabel]="'Logs'" (logBtn)="openMainLogModal('')" [class]="'p-0 pt-3'" [btnShow2]="true" [addBtnLabel]="'Add Scheme'"  (button1)="goToAddPage()"></app-page-sub-header>
+            
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [showAction]="true" [columns]="PageHeaders">
+                    <ng-container *ngIf="!skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                            <td>&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="onDateChange('created_at', $event)">
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>  
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.created_name" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.created_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.created_name=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.scheme_id" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.scheme_id) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.scheme_id=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput  [matDatepicker]="picker1" [(ngModel)]="filter.date_from" name="date_from" placeholder="Date From" (ngModelChange)="onDateChange('date_from', $event)">
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker1></mat-datepicker>
+                                    </mat-form-field>  
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput  [matDatepicker]="picker2" [(ngModel)]="filter.date_to" name="date_to" placeholder="Date To" (ngModelChange)="onDateChange('date_to', $event)">
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker2></mat-datepicker>
+                                    </mat-form-field>  
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.product_details" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.product_details) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.product_details=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        
+                        <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                            <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                            <td>{{ row.created_at ? (row.created_at | date:'d MMM yyyy, hh:mm a') : '--' }}</td>
+                            <td>{{row.created_name || '--'}}</td>
+                            <td>
+                                <a class="text-primary font-semibold underline" (click)="goToDetailPage(row._id)">{{row.scheme_id}}</a>
+                            </td>
+                            <td>{{ row.date_from ? (row.date_from | date:'d MMM yyyy, hh:mm a') : '--' }}</td>
+                            <td>{{ row.date_to ? (row.date_to | date:'d MMM yyyy, hh:mm a') : '--' }}</td>
+                            <td>
+                                <ng-container *ngIf="row.product_data?.length">
+                                    <span class="block font-medium">
+                                        {{ row.product_data[0]?.product_name || '--' }}
+                                        <ng-container *ngIf="row.product_data.length > 1">
+                                            <a class="avatar avatar-xs bg-primary text-white avatar-rounded">
+                                                +{{ row.product_data.length - 1 }}
+                                            </a>
+                                        </ng-container>
+                                    </span>
+                                </ng-container>
+                                <ng-container *ngIf="!row.product_data?.length">
+                                    --
+                                </ng-container>
+                            </td>                          
+                            <td><span class="ellipsis" matTooltip="{{row.description}}">{{row.description || '--'}}</span></td>
+                            <td>
+                                <!-- <span class="badge" [ngClass]="{'text-success bg-success/10': row.status === 'Active', 'text-danger bg-danger/10': row.status === 'Inactive'}">{{row.status || '--'}}</span> -->
+                                <span class="badge">
+                                    <app-toggle [checked]="row.isChecked" (checkedChange)="onToggleChange($event, row._id, row.status)"></app-toggle>
+                                </span>
+                            </td>
+                            <td class="!text-center">
+                                <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="onDeleteRow(row._id)" matTooltip="Delete"> </app-icon-button>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                            <td *ngFor="let row of [].constructor(10)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                </spk-reusable-tables>
+                <ng-container *ngIf="!listing.length && !skLoading">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </div>
+    </div>
+</div>

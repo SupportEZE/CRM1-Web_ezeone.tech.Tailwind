@@ -1,0 +1,42 @@
+<div class="box-footer py-0 {{class}}" *ngIf="listLength">
+    <div class="flex items-center flex-wrap overflow-auto">
+        <div class="" >
+            Showing <b>{{currentPage}}</b> to <b>{{totalPage}}</b> of <b>{{pageLimit}}</b> entries <i class="bi bi-arrow-right ms-2 font-semibold"></i>
+        </div>
+        <div class="ms-auto my-2">
+            <!-- Pagination Wrapper -->
+            <div class="grid justify-center sm:flex sm:justify-start sm:items-center gap-2 flex-wrap">
+                <!-- Pagination Wrapper -->
+                <nav aria-label="pagination35" class="flex items-center -space-x-px gap-2">
+                    <button  aria-label="button" type="button" class="min-h-[32px] min-w-8 py-1 px-2 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-full last:rounded-e-full border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-white/10 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"  (click)="handlePrevClick()" [disabled]="preBtn">
+                        <i class="ri-arrow-left-s-line align-middle rtl:rotate-180"></i>
+                        <span aria-hidden="true" class="sr-only">Previous</span>
+                    </button>
+                    
+                    <div class="flex justify-center items-center gap-x-5">
+                        <!-- Go To Page -->
+                        <div class="flex justify-center sm:justify-start items-center gap-x-2">
+                            <span class="text-sm text-gray-800 whitespace-nowrap dark:text-white font-medium">
+                                Go to
+                            </span>
+                            <input type="number" class="min-h-[32px] py-1 px-2.5  block w-12 border-gray-200 rounded-md text-sm text-center focus:border-primary focus:ring-primary [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-50 disabled:pointer-events-none dark:bg-bodybg dark:border-white/10 dark:text-gray-400 dark:focus:ring-gray-600" min="1"  [ngModel]="page"
+                            (ngModelChange)="page = $event" (keyup.enter)="onEnterPress()">
+                            <span class="text-sm text-gray-800 whitespace-nowrap dark:text-white font-medium">
+                                page
+                            </span>
+                        </div>
+                        <!-- End Go To Page -->
+                    </div>
+                    
+                    <button  aria-label="button" type="button" class="min-h-[32px] min-w-8 py-1 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-full last:rounded-e-full border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-white/10 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10" (click)="handleNextClick()" [disabled]="nextBtn">
+                        <span aria-hidden="true" class="sr-only">Next</span>
+                        <i class="ri-arrow-right-s-line align-middle rtl:rotate-180"></i>
+                    </button>
+                </nav>
+                <!-- End Pagination -->
+                
+            </div>
+            <!-- End Pagination Wrapper -->
+        </div>
+    </div>
+</div>

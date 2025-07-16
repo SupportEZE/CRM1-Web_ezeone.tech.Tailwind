@@ -1,0 +1,7 @@
+.single-slider{
+    ::ng-deep.noUi-handle-lower {
+        pointer-events: none !important;
+        background-color: #ccc !important; /* Gray it out */
+        cursor: not-allowed !important;
+    }
+}

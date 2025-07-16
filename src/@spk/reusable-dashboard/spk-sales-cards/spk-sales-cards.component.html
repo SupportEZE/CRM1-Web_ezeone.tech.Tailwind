@@ -1,0 +1,33 @@
+<div class="box {{card.cardClass}}">
+    <div class="box-body" [ngClass]="bgOnActive" (click)="handleClick()">
+        <div class="flex items-start justify-between {{card.customClass}}">
+            <div class="{{card.customClass1}}">
+                @if(card.titleClass){
+                    <span class="text-textmuted dark:text-textmuted/50 block mb-1 {{card.titleClass}}">{{card.title}}</span>
+                }
+                @else{
+                    <p class="text-muted fw-medium mb-2">{{card.title}}</p>
+                }
+                <h4 class="{{card.valueClass}}">{{card.value}}</h4>
+            </div>
+            <div class="leading-none">
+                @if(card.icon){
+                    <span class="avatar avatar-md avatar-rounded bg-{{card.bg}}">
+                        <i class="{{card.icon}} text-[1.25rem]"></i>
+                    </span>
+                }
+                @else{
+                    <span class="{{card.svgClass}}"><div [innerHTML]="sanitizeIcon(card.svg)"></div></span>
+                }
+            </div>
+        </div>
+
+        <div class="text-textmuted dark:text-textmuted/50 text-[12px]" *ngIf="!card.bar">{{card.graph}}
+            <span class="text-{{card.color}}">{{card.percentage}}<i [class]="card.percentageIcon"></i></span>
+        </div>
+        
+        <div class="progress h8 mt-2" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" *ngIf="card.bar">
+            <div class="progress-bar progress-bar-striped progress-bar-animated w-[10%]"></div>
+        </div>
+    </div>
+</div>

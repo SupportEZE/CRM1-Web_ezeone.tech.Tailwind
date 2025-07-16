@@ -1,0 +1,145 @@
+<app-page-header [title]="'Master Modules'" [title1]="['Holiday']" [activeitem]="'Holiday List'"></app-page-header>
+
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <div class="box-header flex items-center justify-between flex-wrap gap-4">
+                <div class="box-title">
+                    Holiday List
+                    <!-- <span class="badge bg-primary rounded ms-2 text-xs align-middle">{{pagination.total}}</span> -->
+                </div>
+                <div class="flex gap-2 items-center flex-wrap">
+                    <!-- <ng-container *ngIf="productPageTableData.refreshBtn"> -->
+                        <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="onRefresh()">
+                            <i class="ri-refresh-line font-medium align-middle"></i>
+                            Refresh
+                        </button>
+                    <!-- </ng-container> -->
+                    
+                    <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="openModal()" *ngIf="accessRight?.addRight">
+                        <i class="ri-apps-2-add-line font-medium align-middle"></i>
+                        Add Holiday
+                    </button>
+                    
+                    <!-- <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" [routerLink]="['/apps/master/product-details']" *ngIf="accessRight?.addRight">
+                        <i class="ri-apps-2-add-line font-medium align-middle"></i>
+                        Product Detail
+                    </button> -->
+                    
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="false" [showAction]="true" [columns]="listColumns">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                            <th>&nbsp;</th>
+                            <th>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <mat-date-range-input [rangePicker]="picker" >
+                                            <input matStartDate [(ngModel)]="filter.start_date" name="startDate" placeholder="Start date" (ngModelChange)="onDateChange('start', $event)">
+                                            <input matEndDate [(ngModel)]="filter.end_date" name="endDate" placeholder="End date"  (ngModelChange)="onDateChange('end', $event)">
+                                        </mat-date-range-input>
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-date-range-picker #picker  ></mat-date-range-picker>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th><input type="text" class="form-control" [(ngModel)]="filter.holiday_name" (input)="getList()" placeholder="Search..."></th>
+                            <th>
+                                <input type="text" class="form-control" [(ngModel)]="filter.month" (input)="getList()" placeholder="Search...">
+                            </th>
+                            <th>
+                                <input type="text" class="form-control" [(ngModel)]="filter.year" (input)="getList()" placeholder="Search...">
+                            </th>
+                            <th>
+                                <input type="text" class="form-control" [(ngModel)]="filter.regional_state"  (keyup.enter)="getList()"placeholder="Search...">
+                            </th>
+                            <th>&nbsp;</th>
+                            
+                        </tr>
+                        <ng-container *ngIf="!skLoading">
+                            <ng-container *ngIf="holidayList.length">
+                                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" 
+                                *ngFor="let row of holidayList; let i = index; trackBy: trackByFn">
+                                <td class="!text-center">{{i+1}}</td>
+                                <td>{{ row.holiday_date ? (row.holiday_date | date:'d MMM yyyy') : '--' }}</td>
+                                <td>{{ row.day || '---'}}</td>
+                                <td>{{row.holiday_type ? row.holiday_type : '---'}}</td>
+                                <td>{{row.holiday_name ? row.holiday_name : '---'}}</td>
+                                
+                                <td>{{row.month ? row.month : '---'}}</td>
+                                <td>{{row.year ? row.year : '---'}}</td>
+                                <td>
+                                    <ng-container *ngIf="row?.regional_state?.length > 0; else noState">
+                                        <span class="badge bg-light text-textmuted dark:text-textmuted/50 m-1 border border-defaultborder dark:border-defaultborder/10" *ngFor="let subRow of row.regional_state">{{subRow || 'All States'}}</span>
+                                    </ng-container>
+                                    <ng-template #noState>
+                                        <span class="badge bg-light text-textmuted dark:text-textmuted/50 m-1 border border-defaultborder dark:border-defaultborder/10">
+                                            All States
+                                        </span>
+                                    </ng-template>
+                                </td>
+                                <td class="!text-center">
+                                    <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                        <a aria-label="anchor" (click)="deleteRow(row._id)" class="ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light" *ngIf="accessRight?.deleteRight"><i class="ri-delete-bin-line"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                            <td *ngFor="let row of [].constructor(9)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </spk-reusable-tables>
+                <ng-container *ngIf="!holidayList.length && !skLoading">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+        </div>
+        <div class="box-footer">
+            <div class="flex items-center flex-wrap overflow-auto">
+                <div class="mt-2" *ngIf="holidayList.length">
+                    Showing <b>{{pagination.cur_page}}</b> to <b>{{pagination.total_pages}}</b> of <b>{{pagination.limit}}</b> entries <i class="bi bi-arrow-right ms-2 font-semibold"></i>
+                </div>
+                <div class="ms-auto my-2">
+                    <div class="grid justify-center sm:flex sm:justify-start sm:items-center gap-2 flex-wrap">
+                        <nav aria-label="pagination35" class="flex items-center -space-x-px gap-2">
+                            <button  aria-label="button" type="button" class="min-h-[32px] min-w-8 py-1 px-2 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-full last:rounded-e-full border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-white/10 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"  (click)="changeToPagination('Previous')" [disabled]="!pagination.prev">
+                                <i class="ri-arrow-left-s-line align-middle rtl:rotate-180"></i>
+                                <span aria-hidden="true" class="sr-only">Previous</span>
+                            </button>
+                            
+                            <div class="flex justify-center items-center gap-x-5">
+                                <div class="flex justify-center sm:justify-start items-center gap-x-2">
+                                    <span class="text-sm text-gray-800 whitespace-nowrap dark:text-white font-medium">
+                                        Go to
+                                    </span>
+                                    <input type="number" class="min-h-[32px] py-1 px-2.5  block w-12 border-gray-200 rounded-md text-sm text-center focus:border-primary focus:ring-primary [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-50 disabled:pointer-events-none dark:bg-bodybg dark:border-white/10 dark:text-gray-400 dark:focus:ring-gray-600" min="1"  [(ngModel)]="pagination.cur_page" (keyup.enter)="getList()">
+                                    <span class="text-sm text-gray-800 whitespace-nowrap dark:text-white font-medium">
+                                        page
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <button  aria-label="button" type="button" class="min-h-[32px] min-w-8 py-1 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-full last:rounded-e-full border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-white/10 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10" (click)="changeToPagination('Next')" [disabled]="!pagination.next">
+                                <span aria-hidden="true" class="sr-only">Next</span>
+                                <i class="ri-arrow-right-s-line align-middle rtl:rotate-180"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!--End::row-1 -->

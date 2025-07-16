@@ -1,0 +1,259 @@
+<app-page-header [title]="'Branding'" [title1]="['Branding']" [activeitem]="'Branding List'"></app-page-header>
+
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-8 col-span-12">
+        <app-showcode-card [title]="'Branding Audit/Request Stats'" [boxHeader]="'pt-3'" [classbody]="'pt-0'"  [titleView]="true">
+            <div id="nft-statistics" class="p-4">
+                <spk-apexcharts [chartOptions]="chartOptions"></spk-apexcharts>
+            </div>
+        </app-showcode-card>
+    </div>
+    <div class="xxl:col-span-4 col-span-12">
+        <app-showcode-card [classbody]="'pt-0'"  [titleView]="false">
+            <div class="p-4 my-2 rounded-sm bg-primary text-white bg-crypto-balance">
+                <div class="flex items-center gap-2 justify-between">
+                    <div>
+                        <div class="mb-1 opacity-90">Total Request</div>
+                        <h4 class="text-white mb-1 font-medium me-2">{{listingCount.All}}</h4>
+                        <span class="opacity-70 text-xs">Increased by </span><span
+                        class="badge bg-success mt-2 text-white p-1 text-end ms-1"><i
+                        class="ti ti-trending-up me-2"></i>12.2%</span>
+                    </div>
+                    <div class="ms-auto text-end">
+                        <div class="avatar avatar-lg bg-primarytint1color shadow">
+                            <i class="ri-bank-line !text-[1.5rem] leading-none"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-x-6 border-t border-dashed border-defaultborder g-0 dark:border-defaultborder/10">
+                <div class="xl:col-span-6 col-span-12 border-e border-dashed border-defaultborder dark:border-defaultborder/10">
+                    <div class="p-4">
+                        <div class="flex items-center gap-4">
+                            <span class="avatar avatar-md bg-warning/10 border border-warning">
+                                <i class="ri-time-fill text-xl text-warning"></i>
+                            </span>
+                            <div>
+                                <div class="font-medium text-textmuted dark:text-textmuted/50">Pending</div>
+                                <h5 class="mb-0">{{listingCount.Pending}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="xl:col-span-6 col-span-12">
+                    <div class="p-4">
+                        <div class="flex items-center gap-4">
+                            <span class="avatar avatar-md bg-success/10 border border-success">
+                                <i class="ri-checkbox-circle-fill text-xl text-success"></i>
+                            </span>
+                            <div>
+                                <div class="font-medium text-textmuted dark:text-textmuted/50">Approved</div>
+                                <h5 class="mb-0">{{listingCount.Approved}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="xl:col-span-6 col-span-12">
+                    <div class="p-4">
+                        <div class="flex items-center gap-4">
+                            <span class="avatar avatar-md bg-danger/10 border border-danger">
+                                <i class="ri-close-circle-fill text-xl text-danger"></i>
+                            </span>
+                            <div>
+                                <div class="font-medium text-textmuted dark:text-textmuted/50">Reject</div>
+                                <h5 class="mb-0">{{listingCount.Reject}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="xl:col-span-6 col-span-12">
+                    <div class="p-4">
+                        <div class="flex items-center gap-4">
+                            <span class="avatar avatar-md bg-info/10 border border-info">
+                                <i class="ri-shake-hands-fill text-xl text-info"></i>
+                            </span>
+                            <div>
+                                <div class="font-medium text-textmuted dark:text-textmuted/50">Complete</div>
+                                <h5 class="mb-0">{{listingCount.Complete}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </app-showcode-card>
+    </div>
+</div>
+
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-4 col-span-12">
+        <app-showcode-card [title]="'Audit Request'" [boxHeader]="'pt-0 pb-0'" [classbody]="'pt-0'"  [titleView]="true" [refresBtnShow]="true" (refresh)="onAuditRefresh()" [btn1]="true" [buttonName]="'Audit Request'" [iconName]="'ri-draft-line'" (btnClick)="goToAuditPage()">
+            <div class="table-responsive overflow-auto mb-3">
+                <div class="custom-form-group mb-3">
+                    <input type="text" class="form-control form-control-md" placeholder="Search ..." [(ngModel)]="filter.customer_name" name="customer_name" #customer_name="ngModel" (keyup.enter)="getAuditList()">
+                    <button class="ti-btn bg-primary text-white ti-btn-sm border-0 custom-form-btn" type="button" (click)="filter.customer_name ? getAuditList() : ''">Search</button>
+                </div>
+                <ng-container *ngIf="!skLoading1">
+                    <ul class="ti-list-group list-group-flush scroll-y-500">
+                        <li class="ti-list-group-item pt-0" *ngFor="let row of auditlisting">
+                            <a href="javascript:void(0);">
+                                <div class="flex flex-wrap items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div>
+                                            <p class="font-medium mb-0 block text-[12px]">
+                                                <span class="ellipsis mxw190" matTooltip="{{row.customer_name  || '---'}}">{{row.customer_name  || '---'}}</span>
+                                                <!-- {{ row.customer_name || '---' }} -->
+                                            </p>
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs block">{{ row.username }}</span>
+                                            <span class="badge text-primary bg-primary/10">{{row.customer_type_name || '---'}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="text-[11px] text-textmuted dark:text-textmuted/50">{{row.created_at ?  (row.created_at| date : 'dd MMM yyyy hh:mm a') : '---'}}</span>
+                                        <p class="font-semibold mb-0 bid-amt text-[11px] flex gap-2 justify-end">
+                                            <a class="text-primary font-semibold underline" (click)="goToAuditDetailPage(row._id)">{{ row.brand_audit_id || '--' }}</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </ng-container>
+                <!-- //--skeleton--// -->
+                <ng-container *ngIf="skLoading1">
+                    <div class="p-3" *ngFor="let row of [].constructor(5)">
+                        <app-skeleton [class]="'h30'"></app-skeleton>
+                    </div>
+                </ng-container> 
+                <!-- //--skeleton--// -->
+                <ng-container *ngIf="!auditlisting.length && !skLoading1">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+            <app-pagination-footer [currentPage]="paginationListing.cur_page" [totalPage]="paginationListing.total_pages" [pageLimit]="paginationListing.limit" [listLength]="listing.length" [preBtn]="!paginationListing.prev" [nextBtn]="!paginationListing.next" (preButtonClick)="changeToPagination('Previous', 'audit_request')" (nextButtonClick)="changeToPagination('Next', 'audit_request')" (pageChange)="changeToPage($event, 'audit_request')"></app-pagination-footer>
+        </app-showcode-card>
+    </div>
+    
+    <div class="xxl:col-span-8 col-span-12">
+        <app-showcode-card [title]="'Branding Request'" [boxHeader]="'pt-0 pb-0'" [classbody]="'pt-0'"  [titleView]="true"   [refresBtnShow]="true" (refresh)="onRefresh()" [btn1]="true" [buttonName]="'Add Branding Request'" [iconName]="'ri-draft-line'" (btnClick)="goToAddPage()" [logBtnShow]="true" (logBtn)="openMainLogModal('')" >
+            <div class="table-responsive overflow-auto">
+                <spk-reusable-tables [tableHeight]="'580px'" [columns]="headers" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [showCheckbox]="false" [showAction]="true">
+                    <ng-container *ngIf="!skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                            <td>&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.brand_req_id" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.brand_req_id) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.brand_req_id=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.created_name" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.created_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.created_name=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.customer_name" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.customer_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_name=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.branding_product" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.branding_product) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.branding_product=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.remark" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.remark) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.remark=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.status" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.status) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.status=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                            <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                            <td><a class="text-primary font-semibold underline" (click)="goToDetailPage(row._id)">{{row.brand_req_id  || '---'}}</a></td>
+                            <td>
+                                <div class="flex items-center gap-2">
+                                    <div class="">
+                                        <span class="block">{{row.created_name || '---'}}</span>
+                                        <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">RM: </span>{{row.reporting_manager  || '---'}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="block">{{row.customer_name  || '---'}}</span>
+                                <span class="block text-textmuted dark:text-textmuted/50 text-[11px]">{{row.customer_type_name}}</span>
+                            </td>
+                            <td>{{row.branding_product  || '---'}}</td>
+                            <td><span class="ellipsis" matTooltip="{{row.remark}}">{{row.remark  || '---'}}</span></td>
+                            <td>
+                                <span class="badge" [ngClass]="{'text-success bg-success/10': row.status === 'Approved', 'text-warning bg-warning/10': row.status === 'Pending', 'text-info bg-info/10': row.status === 'Complete', 'text-danger bg-danger/10': row.status === 'Reject'}">{{row.status || '--'}}</span>
+                            </td>
+                            <td>
+                                <app-icon-button [icon]="'ri-edit-line'" matTooltip="Edit" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="statusChange(row._id)" *ngIf="accessRight?.approveRight"> </app-icon-button>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                            <td *ngFor="let row of [].constructor(7)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->    
+                </spk-reusable-tables>
+                <ng-container *ngIf="!listing.length && !skLoading">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous', 'branding_request')" (nextButtonClick)="changeToPagination('Next', 'branding_request')" (pageChange)="changeToPage($event, 'branding_request')"></app-pagination-footer>
+        </app-showcode-card>
+    </div>
+</div>

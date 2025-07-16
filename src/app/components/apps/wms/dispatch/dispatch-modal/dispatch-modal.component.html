@@ -1,0 +1,277 @@
+<!-- ***** Order Planning Status Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'primary-order-detail'">
+    <app-modal-header [title]="'Dispatch Planning'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="dispatchForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6 mb-3">
+                <div class="xxl:col-span-8 xl:col-span-8 lg:col-span-8 md:col-span-12 col-span-12">
+                    <mat-label>Where would you like to dispatch from</mat-label>
+                    <mat-radio-group formControlName="dispatch_from" >
+                        <mat-radio-button value="Company">Company</mat-radio-button>
+                        <mat-radio-button value="Warehouse">Warehouse</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12" *ngIf="dispatchForm.get('dispatch_from')?.value === 'Warehouse'">
+                    <spk-ng-select formControlName="warehouse_id" label="Warehouse" [fieldReq]="true" [search]="false" [options]="commonApi.customerData" [multiple]="false"></spk-ng-select>
+                    
+                </div>
+            </div>
+            
+            <spk-reusable-tables [columns]="getColumn('product')" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary">
+                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of modalData.item; let i = index;">
+                    <td class="text-center w70">{{ i + 1 }}</td>
+                    <td class="cart-items01">
+                        <div class="flex items-center">
+                            <div class="flex-auto">
+                                <div class="text-[12px] font-semibold">{{row?.category_name || '--'}}</div>
+                                <div class="flex-wrap items-center">
+                                    <div>
+                                        <span>Product Name : </span>
+                                        <span  class="font-normal text-textmuted dark:text-textmuted/50">
+                                            {{row?.product_name || '--'}}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span>Code : </span>
+                                        <span class="font-normal text-textmuted dark:text-textmuted/50">
+                                            {{row?.product_code ||'--'}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-center w80"><strong>{{row?.total_quantity || '0'}}</strong></td>
+                    <td class="text-right w130 text-warning"><strong>{{row?.remaining_qty || '0'}}</strong></td>
+                    <td class="text-right w85">
+                        <spk-input  [formControlName]="'inputQty' + i"
+                        class="remove-default-class" [class]="'w80'" type="number" [fieldReq]="false" (valueChange)="dispatchItem(row, i)" *ngIf="row.remaining_qty > 0"></spk-input>
+                        <span class="text-danger" *ngIf="row.inputQty === 0 && row.remaining_qty === 0">0</span>
+                    </td>
+                </tr>
+            </spk-reusable-tables>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'"
+            [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled"
+            [formType]="'add'" [iconClass]="'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- ***** Order Planning Status End ***** -->
+
+
+<!-- ***** Genrate Gatepass Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'gatepass'">
+    <app-modal-header [title]="'Generate Gate Pass'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="gatepassForm" (ngSubmit)="genrateGatepass()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-3 gap-y-3 mb-3">
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Invoice No." formControlName="invoice_number" class="remove-default-class" [fieldReq]="true" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="E-way Bill No." formControlName="e_way_number" class="remove-default-class" [fieldReq]="false" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Driver Name" formControlName="driver_name" class="remove-default-class" [fieldReq]="true" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Driver Mobile No." formControlName="mobile" class="remove-default-class" [fieldReq]="true"  type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Vehicle No." formControlName="vehicle_number" class="remove-default-class" [fieldReq]="true" type="text"></spk-input>
+                </div>
+                
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Transport Mode" formControlName="transportation_mode" class="remove-default-class" [fieldReq]="true" type="text"></spk-input>
+                </div>
+            </div>
+            
+            <spk-reusable-tables [columns]="getColumn('invoice_item')"
+            tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary">
+            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"
+            *ngFor="let row of modalData.item; let i = index;">
+            <td class="w80">{{ i + 1 }}</td>
+            <td class="text-center w100">{{row.order_date ? (row.order_date | date : 'dd MMM yyyy hh:mm a') : '---'}}</td>
+            <td><strong>{{row.company_name ? row.company_name : row.customer_name}}</strong></td>
+            <td class="w130"><strong>{{row?.order_no || '---'}}</strong></td>
+        </tr>
+    </spk-reusable-tables>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'"
+    [label]="'Cancel'"></app-button>
+    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled"
+    [formType]="'add'" [iconClass]="'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</mat-dialog-actions>
+</form>
+</div>
+<!-- ***** Genrate Gatepass End ***** -->
+
+
+
+<!-- ***** Genrate Gatepass Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'dispatch_gatepass' || modalData.lastPage === 'gatepass_edit' || modalData.lastPage === 'bilty_update'">
+    <app-modal-header [title]="modalData.lastPage === 'gatepass_edit' ? 'Update Gate Pass Detail' :  modalData.lastPage === 'bilty_update'? 'Update Bilty Number' :'Gate Pass Detail'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="gatepassForm" (ngSubmit)="genrateGatepass()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-3 gap-y-3 mb-3">
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Invoice No." formControlName="invoice_number" class="remove-default-class"
+                    [fieldReq]="false" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="E-way Bill No." formControlName="e_way_number" class="remove-default-class"
+                    [fieldReq]="false" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Driver Name" formControlName="driver_name" class="remove-default-class"
+                    [fieldReq]="true" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Driver Mobile No." formControlName="mobile" class="remove-default-class"
+                    [fieldReq]="true" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Vehicle No." formControlName="vehicle_number" class="remove-default-class"
+                    [fieldReq]="true" type="text"></spk-input>
+                </div>
+                
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12">
+                    <spk-input label="Transport Mode" formControlName="transportation_mode" class="remove-default-class"
+                    [fieldReq]="true" type="text"></spk-input>
+                </div>
+                
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-12 col-span-12" *ngIf="modalData.lastPage === 'bilty_update'">
+                    <spk-input label="Bilty Number" formControlName="bilty_number" class="remove-default-class"
+                    [fieldReq]="false" type="text"></spk-input>
+                </div>
+            </div>
+            
+            <spk-reusable-tables [columns]="getColumn('invoice_item')"
+            tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary">
+            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"
+            *ngFor="let row of modalData.item; let i = index;">
+            <td class="w80">{{ i + 1 }}</td>
+            <td class="text-center w100">{{row.order_date ? (row.order_date | date : 'dd MMM yyyy hh:mm a') :
+                '---'}}</td>
+                <td><strong>{{row.company_name ? row.company_name : row.customer_name}}</strong></td>
+                <td class="w130"><strong>{{row?.order_no || '---'}}</strong></td>
+            </tr>
+        </spk-reusable-tables>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'"
+        [label]="'Cancel'"></app-button>
+        <app-button [buttonType]="'submit'" [label]="modalData.lastPage === 'bilty_update' ? 'Update': 'Genrate'"  [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled"
+        [formType]="'add'" [iconClass]="'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </mat-dialog-actions>
+</form>
+</div>
+<!-- ***** Genrate Gatepass End ***** -->
+
+
+<!-- ***** Manual Dispatch Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'manual'">
+    <app-modal-header
+    [title]="'Manual Dispatch'"
+    [closeBtn]="true" (close)="closeModal()">
+</app-modal-header>
+<mat-dialog-content class="mat-typography">
+    <spk-reusable-tables [columns]="getColumn('dispatch_packing')"
+    tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary">
+    <ng-container *ngIf="!itemLoading">
+        <ng-container  *ngFor="let row of visibleRows; let i = index;">
+            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"
+            [ngClass]="{'bg-green-500': row.scanned_quantity === row.planned_qty,  'bg-yellow-400': row.scanned_quantity  > 0 && row.scanned_quantity !== row.planned_qty,'bg-red-500': row.scanned_quantity === 0 }" *ngIf="!row.dispatch_info?.qr_genration">
+            <td class="text-center w50">{{i+1}}</td>
+            <td class="whitespace-normal">
+                {{row.product_name ? row.product_name : '---'}}
+            </td>
+            <td class="w100">
+                <div class="" *ngIf="row.planned_qty != row.scanned_quantity">
+                    <mat-form-field class="mat-custom-field w60">
+                        <input type="text" matInput  onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46"  #planned_qty="ngModel" [(ngModel)]="row.planned_qty" type="number">
+                    </mat-form-field>
+                    <app-icon-button [icon]="'ri-save-line'" [matTooltip]="'Manual Dispacth'" [disabled]="btnFlag"
+                    [buttonClass]="'ti-btn ti-btn-icon ti-btn-success  btn-wave ml-2'" (clickEvent)="updateQty(row)">
+                </app-icon-button>
+            </div>
+            <ng-container *ngIf="row.planned_qty === row.scanned_quantity">
+                {{row.planned_qty}}
+            </ng-container>
+        </td>
+        <td class="text-center w50">{{row.scanned_quantity ? row.scanned_quantity : '0'}}</td>
+    </tr>
+</ng-container>
+</ng-container>
+<!-- //--skeleton--// -->
+<ng-container *ngIf="itemLoading">
+    <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(3)">
+        <td *ngFor="let row of [].constructor(4)">
+            <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+        </td>
+    </tr>
+</ng-container>
+<!-- //--skeleton--// -->
+<ng-container *ngIf="visibleRows.length === 0">
+    <app-data-not-found></app-data-not-found>
+</ng-container>
+</spk-reusable-tables>
+</mat-dialog-content>
+</div>
+<!-- ***** Manual Dispatch End ***** -->
+
+
+<!-- ***** Dispacth Item  Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'box-item' || modalData.lastPage === 'item'">
+    <app-modal-header
+    [title]="modalData?.masterbox_number + ' Master Box Detail'"
+    [closeBtn]="true" (close)="closeModal()">
+</app-modal-header>
+<mat-dialog-content class="mat-typography">
+    <spk-reusable-tables [columns]="getColumn('item')"
+    tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary">
+    <ng-container *ngIf="!itemLoading">
+        <ng-container  *ngFor="let row of modalData?.item; let i = index;">
+            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" [ngClass]="(expandedRowIndex === i && expandedQr) ? 'bg-success/80' : ''">
+                <td class="text-center w80">{{i+1}}</td>
+                <td>{{row.product_name ? row.product_name: ''}} - {{row.product_code ? row.product_code: ''}}</td>
+                <td class="text-center w110">
+                    <div class="ti-btn-list m-0 rtl:space-x-reverse">
+                        <button type="button" class="ti-btn  label-ti-btn label-end !rounded"
+                        [ngClass]="(expandedRowIndex === i && expandedQr) ? 'ti-btn-danger' : 'ti-btn-success'"
+                        (click)="toggleExpand(i, row.attached_qr)" [matTooltip]="expandedRowIndex === i && expandedQr ? 'Hide linked QR codes' : 'View linked QR codes'" >
+                        <i class="label-ti-btn-icon m-0 !rounded" [ngClass]="(expandedRowIndex === i && expandedQr) ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i> 
+                        {{row.qty ? row.qty : '0'}}
+                    </button>
+                </div>
+            </td>
+        </tr>
+        <tr *ngIf="expandedRowIndex === i && expandedQr" class="product-list border-b !border-defaultborder dark:!border-defaultborder/10 bg-success/50">
+            <td colspan="3" style="padding:0px !important">
+                <spk-reusable-tables [columns]="getColumn('dispatch_item')" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-success" [showAction]="false">
+                    <ng-container *ngIf="!itemLoading">
+                        <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"
+                        *ngFor="let row of expandedQr; let i = index;">
+                        <td class="text-center w50">{{i+1}}</td>
+                        <td class="w140">{{row.qr_box_code ? row.qr_box_code : 'N/A'}}</td>
+                        <td>{{row.qr_item_code ? row.qr_item_code : 'N/A'}}</td>
+                    </tr>
+                </ng-container>
+            </spk-reusable-tables>
+        </td>
+    </tr>
+</ng-container>
+</ng-container>
+</spk-reusable-tables>
+</mat-dialog-content>
+</div>
+<!-- ***** Dispacth Item  End ***** -->
+
+

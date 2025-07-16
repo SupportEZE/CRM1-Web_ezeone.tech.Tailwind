@@ -1,0 +1,215 @@
+<app-page-header [title]="'Loyalty'" [title1]="['Area Bonus Detail']" [activeitem]="'Bonus Details'" [buttonText]="'Filter'" [icon]="'filter_list'" [btnShow]="false" [buttonValue]="''"></app-page-header>
+
+<!-- Start:: Row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12">
+        <app-showcode-card [title]="'Basic Detail'"  [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true"  [actionIcons]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="updateStatus('bonus-basic-detail')" [classbody]="'pt-0'"  [iconName]="'ri-pencil-line'">
+            <div *ngIf="!skLoading">
+                <div class="flex gap-5 mb-1 flex-wrap">
+                    
+                    
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span
+                            class="block text-[14px] font-medium">{{areaBonusDetail.created_at | date : 'dd MMM yyyy hh:mm a'}}</span>
+                            <span
+                            class="text-xs text-textmuted dark:text-textmuted/50">Created
+                            At</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block text-[14px] font-medium">{{areaBonusDetail.created_name}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Created By Name</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block text-[14px] font-medium">{{areaBonusDetail.title}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Title </span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block text-[14px] font-medium">{{areaBonusDetail.customer_type_name}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Customer Type</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span  class="block text-[14px] font-medium">{{areaBonusDetail.start_date | date : 'dd MMM yyyy hh:mm a'}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Start Date</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block text-[14px] font-medium">{{areaBonusDetail.end_date | date : 'dd MMM yyyy hh:mm a'}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">End Date</span>
+                        </div>
+                    </div>
+                    
+                   
+                <div class="flex items-center me-2 gap-3 flex-wrap">
+                    <div>
+                        
+                        <div class="flex gap-2">
+                            <span [ngClass]="areaBonusDetail.status === 'Active' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'" 
+                            class=" text-[11px] badge">{{areaBonusDetail.status}}</span>
+                            <app-toggle [class]="'ti-switch-custom'" [checked]="areaBonusDetail.status === 'Active' ? true: false" 
+                            (checkedChange)="onToggleChange($event, bonusId, areaBonusDetail.status)"></app-toggle>
+                        </div>
+                        
+                        <span class="text-textmuted dark:text-textmuted/50 font-medium">Status</span>
+                    </div>
+                </div>
+
+
+                 <div class="flex items-center gap-2"
+                    *ngIf="areaBonusDetail.updated_name">
+                    <div>
+                        <span class="block text-[14px] font-medium">
+                            {{areaBonusDetail.updated_name ? (areaBonusDetail.updated_name | titlecase) : '---'}}
+                        </span>
+                        <span class="text-xs text-textmuted dark:text-textmuted/50">Updated By</span>
+                    </div>
+                </div>
+
+                 <div class="flex items-center gap-2"
+                    *ngIf="areaBonusDetail.updated_at">
+                    <div>
+                        <span class="block text-[14px] font-medium">
+                            {{areaBonusDetail.updated_at ? (areaBonusDetail.updated_at | date : 'dd MMM yyyy hh:mm a') : '---'}}
+                        </span>
+                        <span class="text-xs text-textmuted dark:text-textmuted/50">Updated At</span>
+                    </div>
+                </div>
+                
+            </div>  
+        </div>     
+        <!-- Loading Start -->
+        <div *ngIf="skLoading">
+            <div class="flex gap-2 mb-1 flex-wrap">
+                <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                    <app-skeleton [class]="'w180'"></app-skeleton>
+                </div>
+            </div>
+        </div>
+        <!-- Loading End -->
+    </app-showcode-card>
+</div>
+</div>
+
+
+<div class="grid grid-cols-12 gap-x-6" *ngIf="!skLoading">
+    <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+        <app-showcode-card  [titleView]="false">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                    <app-showcode-card [title]="'Selected States'" [boxClass]="'shadow-none'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"
+                    [titleView]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'"
+                    [iconName]="'ri-add-line'">
+                    
+                    <div class="">
+                        <div class="px-0 py-3 pb-0 scroll-y-400">
+                            <ng-container *ngIf="!stateLoading">
+                                <div *ngFor="let state of statList" class="form-check mb-2 !flex items-center border-b pb-2 dark:border-defaultborder/10">
+                                    <input class="form-check-input me-2" type="checkbox"
+                                    [checked]="state.checked"
+                                    [value]="state.value"
+                                    (change)="toggleStateSelection(state)">
+                                    <span class="text-sm">{{ state.label }}</span>
+                                </div>
+                            </ng-container>
+                            
+                            
+                            <ng-container *ngIf="stateLoading">
+                                <div *ngFor="let state of [].constructor(15)" class="form-check mb-2 !flex items-center border-b pb-2 dark:border-defaultborder/10 wp100">
+                                    <app-skeleton  style="width:100%"></app-skeleton>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+            
+            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                <app-showcode-card [title]="'Selected Districts'" [boxClass]="'shadow-none'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"
+                [titleView]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'"
+                [iconName]="'ri-add-line'">
+                
+                <div class="">
+                    <div class="px-0 py-3 pb-0 scroll-y-400">
+                        <ng-container *ngIf="!districtLoading">
+                            <ng-container *ngFor="let state of selectedStates">
+                                
+                                <div class="flex gap-2 items-center mb-2 ng-star-inserted pb-2 border-b-2">
+                                    <input class="form-check-input" type="checkbox" id="selectAllCol3" (change)="selectAll($event,state)" [checked]="selectAllChecked[state]">
+                                    <h6 class="block box-title font-bold font-medium rounded-sm text-[12px] " [ngClass]="selectAllChecked[state] ? 'text-primary': 'text-primarytint1color'">
+                                        Districts of {{ state }}</h6>
+                                    </div>
+                                    
+                                    <div *ngFor="let district of stateDistricts[state]" class="form-check mb-2 !flex items-center border-b pb-2 dark:border-defaultborder/10">
+                                        <input class="form-check-input me-2" type="checkbox" [checked]="district.checked" 
+                                        (change)="toggleDistrictSelection(district, state);">
+                                        <span class="text-sm">{{ district.label }}</span>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                            
+                            
+                            <ng-container *ngIf="districtLoading">
+                                <div *ngFor="let row of [].constructor(15)" class="form-check mb-2 !flex items-center border-b pb-2 dark:border-defaultborder/10 wp100">
+                                    <app-skeleton  style="width:100%"></app-skeleton>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+        </div>
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="flex items-center justify-end col-span-12">                     
+                <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [iconClass]="api.disabled ? 'ri-loader-2-fill animate-spin' : 'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'" (click)="updateArea()"> 
+                </app-button>
+            </div>
+        </div>
+    </app-showcode-card>
+</div>
+
+
+<div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+    <app-showcode-card [title]="'Point Category Bonus Points'"  [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true"  [actionIcons]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="updateBonusPoints('bonus-point-category')" [classbody]="'pt-0'"  [iconName]="'ri-pencil-line'">
+        <table class="ti-custom-table ti-custom-table-head ti-head-secondary w-full">
+            <thead>
+                <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                    <th class="text-start w50">S.No</th>
+                    <th class="text-start">Point Category</th>
+                    <th class="text-start text-right w100">Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of areaBonusDetail?.product_point; let i = index"
+                class="border-b border-defaultborder dark:border-defaultborder/10">
+                <td class="text-start">{{ i + 1 }}</td>
+                <td class="text-start">{{ row.point_category_name }}</td>
+                <td class="text-start text-right">
+                    <strong>
+                        {{ row.point_category_value ? (row.point_category_value + 'PT') : '' }}
+                    </strong>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</app-showcode-card>
+</div> 
+</div>
+
+<div class="grid grid-cols-12 gap-x-6" *ngIf="!skLoading">
+    <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+        <app-logs [logList]="logList" [closeBtn]="false"></app-logs>
+    </div> 
+</div>
+
+<!-- End:: Row-1 -->

@@ -1,0 +1,68 @@
+<app-page-header [title]="'Master Modules'" [title1]="['Leave Policy']" [activeitem]="'Leave Policy List'" 
+
+[btnShow]="accessRight?.modifyRight" 
+[icon]="'settings'" 
+[buttonText]="'Form Config'"
+(buttonClick)="openModal($event)"
+[btnShow1]="accessRight?.modifyRight" 
+[icon1]="'settings'" 
+[buttonText1]="'Header Config'" 
+[dataHsOverlay]="'#leave-header-config'" 
+(buttonClick1)="openHeaderSettingModal()"></app-page-header>
+
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Leave Policy List'"  [listLength]="leaveListing.length" 
+            [btnShow]="true" [refreshLabel]="'Refresh'"  (onRefresh)="onRefresh()"
+            [btnShow1]="true" [logsLabel]="'Logs'" (logBtn)="openMainLogModal('')"
+            [btnShow2]="accessRight?.addRight" [addBtnLabel]="'Add Leave'" (button1)="updateLeaveWiseLeave('')"></app-page-sub-header>
+            
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="true" [showAction]="true" [columns]="visibleHeaders" (sortChanged)="onSortChanged($event)" (selectionChange)="handleSelectionChange($event)" (textSearchChange)="updateSearchFilter($event)" (dateChange)="handleDateChange($event)" (dateRangeChange)="handleDateRangeChange($event)" [subModule]="subModule" #reusableTable>
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="leave-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of leaveListing; let i = index; trackBy: trackByFn">
+                                <td class="!text-center">{{i+1}}</td>
+                                <ng-container *ngFor="let header of visibleHeaders">
+                                    <td>
+                                        <span *ngIf="header.name.includes('date') || header.name.endsWith('_at') || header.name.endsWith('_start') || header.name.endsWith('_end'); elseNonDate">
+                                            {{ (row?.[header.name] || row?.form_data?.[header.name]) | date: 'd MMM yyyy' }}
+                                        </span>
+                                        <span *ngIf="!(header.name.includes('date') || header.name.endsWith('_at') || header.name.endsWith('_start') || header.name.endsWith('_end'))">
+                                            {{ row[header?.actual_name || header?.name] ?? (row['form_data']?.[header?.name]) ?? '--' }}
+                                        </span>
+                                    </td>
+                                </ng-container>
+                                <td class="!text-center relative w135">
+                                    <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                        <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)"> </app-icon-button>
+                                        <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="updateLeaveWiseLeave(row)" *ngIf="accessRight?.modifyRight"></app-icon-button>
+                                        <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave leave-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (click)="delete(row._id, 'leave/delete', 'Delete')" *ngIf="accessRight?.deleteRight"></app-icon-button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                <td *ngFor="let row of [].constructor(8)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!leaveListing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

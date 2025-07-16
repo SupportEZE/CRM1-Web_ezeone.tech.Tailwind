@@ -1,0 +1,56 @@
+<ng-container *ngIf="!skCommentsLoading">
+    <ul class="ti-list-group scroll-y-400" id="commentList">
+        <li class="ti-list-group-item" *ngFor="let row of commentsData">
+            <div class="flex items-center gap-4">
+                <div *ngIf="showAvatar">
+                    <span class="avatar avatar-sm avatar-rounded bg-primary/10 text-primary">
+                        <img src="./assets/images/faces/11.jpg" alt="">
+                    </span>
+                </div>
+                <div class="flex-auto w-50">
+                    <span class="block font-semibold">{{row.created_name}}</span>
+                    <span class="block mb-3">{{row.comment}}</span>
+                    <span class="float-end text-[11px] badge bg-light text-textmuted dark:text-textmuted/50">{{row.created_at}}</span>
+                </div>
+            </div>
+        </li>
+    </ul>
+    
+    <ng-container *ngIf="!commentsData.length">
+        <app-data-not-found></app-data-not-found>
+    </ng-container>
+</ng-container>
+
+<ng-container *ngIf="skCommentsLoading">
+    <div *ngFor="let card of [].constructor(5)">
+        <app-skeleton class="h50 mb-2"></app-skeleton>
+    </div>
+</ng-container>
+
+<div class="p-4 mt-2 bg-light rounded">
+    <div class="sm:flex items-center leading-none">
+        <div class="sm:me-4 mb-2 sm:mb-0" *ngIf="showAvatar">
+            <span class="avatar avatar-md avatar-rounded">
+                <img src="./assets/images/faces/11.jpg" alt="">
+            </span>
+        </div>
+        <div class="flex-auto me-sm-2">
+            <div class="inline-flex input-group">
+                <input type="text" class="form-control shadow-none border !border-e-0" placeholder="Enter Here ..." [(ngModel)]="comment" (keydown.enter)="postComment()">
+                <button type="submit" class="ti-btn ti-btn-primary m-0" [ngClass]="{'ti-btn-loader ti-btn-disabled': api.disabled}" [disabled]="api.disabled || !comment" (click)="postComment()">    
+                    <span class="flex items-center">{{api.disabled ? 'Posting' : 'Post'}} 
+                        <i class="ri-send-plane-fill ms-2 text-[16px]" *ngIf="!api.disabled"></i>
+                    </span>
+                    <span class="loading" *ngIf="api.disabled">
+                        <i class="ri-loader-2-fill text-[1rem] animate-spin"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 
+<p>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, sed!
+</p> -->

@@ -1,0 +1,11 @@
+<swiper-container  #swiperContainer class=" {{swiperClass}}" [spaceBetween]="spaceBetween"
+  [slidesPerView]="slidesPerView"  [direction]="direction"  [pagination]="pagination" 
+  [autoplayDelay]="autoplayDelay"     [navigation]="navigation"  [breakpoints]="breakpoints"
+  [autoplayDisableOnInteraction]="autoplayDisableOnInteraction" >
+  
+  <!-- <swiper-slide> -->
+    <ng-content>
+     
+    </ng-content>
+  <!-- </swiper-slide> -->
+  </swiper-container>

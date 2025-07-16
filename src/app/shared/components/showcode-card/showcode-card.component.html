@@ -1,0 +1,69 @@
+<div class="box {{boxClass}}">
+    <div class="box-header justify-between {{boxHeader}}"  *ngIf="titleView">
+        <div class="flex">
+            <div class="box-title {{class}}"  [innerHTML]="title"></div>
+            @if(overallCountShow){
+                <span class="badge bg-primary rounded ms-1 text-xs align-middle">{{overallCount}}</span>
+            }
+        </div>
+        
+        <div class="prism-toggle flex items-center gap-2">
+            <button type="button" class="ti-btn !py-1 !px-2 ti-btn-soft-primary !text-[0.75rem] !font-medium btn-wave" (click)="toggleShowCode()" *ngIf="view">Show Code
+                <i class="ri-code-{{toggleStatus  ? 's-slash-line' : 'line'}} ms-2 inline-block align-middle"></i>
+            </button>
+            
+            <form [formGroup]="filterForm" *ngIf="filterForm">
+                <spk-ng-select formControlName="select_value" [label]="filterLabel ? labelName :'' " [options]="optionArray" [search]="searchSel" [multiple]="multiple" (searchChanged)="onsearchChangeHanler($event)"
+                (selectedChange)="onSingleSelectChangeHandler($event)"></spk-ng-select>
+            </form>
+
+            <input  type="month" [(ngModel)]="selectedMonth"  [max]="max"  name="selectedMonth" (ngModelChange)="onMonthChange($event)" *ngIf="filterMonth">
+
+            
+            <button type="button" class="{{iconClass}}" *ngIf="actionIcons" [disabled]="disabled" (click)="onActionClick($event)">
+                <i  class="{{iconName}}"></i>
+            </button>
+
+            <div class="custom-form-group mr-1" *ngIf="showSearch">
+                <input type="text" class="form-control form-control-md w300" [placeholder]="searchPlaceholder" [(ngModel)]="searchTerm" (keyup.enter)="onSearchClick()">
+                <button class="ti-btn bg-primary text-white ti-btn-sm border-0 custom-form-btn" type="button" (click)="onSearchClick()">Search</button>
+            </div>
+            
+            <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="onFilterClick()" *ngIf="filterBtnShow">
+                <i class="ri-equalizer-line font-medium align-middle"></i>
+            </button>
+
+            <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="onRefreshClick()" *ngIf="refresBtnShow">
+                <i class="ri-refresh-line font-medium align-middle"></i>
+                Refresh
+            </button>
+            
+            <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="onlogBtnClick()" *ngIf="logBtnShow">
+                <i class="ri-file-list-line font-medium align-middle"></i>
+                Logs
+            </button>
+            
+            <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary m-0" (click)="onBtnClick($event)" *ngIf="btn1">
+                <i class="{{iconName}}"></i>
+                {{buttonName}}
+            </button>
+        </div>
+        
+    </div>
+    @if(!toggleStatus){
+        <div class="box-body {{classbody}}">
+            <ng-content></ng-content>
+        </div>
+    }
+    @else{
+        <div class="box-footer  border-t-0">
+            <pre class="language-html"><code class="language-html" >
+                {{prism}}</code></pre>
+                <!-- Prism Code -->
+            </div>
+        }
+        
+    </div>
+    
+    
+    

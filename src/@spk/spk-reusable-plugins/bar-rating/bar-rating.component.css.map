@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "bar-rating.component.scss"
+    ],
+    "names": [],
+    "file": "bar-rating.component.css"
+}

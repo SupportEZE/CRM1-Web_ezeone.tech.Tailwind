@@ -1,0 +1,84 @@
+<div class="mat-dialoge">
+    <app-modal-header [title]="(pageType | titlecase) + '  Ticket'" [closeBtn]="true" (close)="close()">
+    </app-modal-header>
+    <form [formGroup]="form" (ngSubmit)="submiTicket()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-4 col-span-12 mb-3">
+                    <spk-ng-select 
+                    formControlName="ticket_category" 
+                    label="Category"  
+                    [fieldReq]="true"
+                    [options]="CommonApiService.dropDownData['ticket_category']"></spk-ng-select>
+                </div>
+                
+                <ng-container *ngIf="orgData?.login_type_id === LOGIN_TYPES.ORGANIZATION_ADMIN || orgData?.login_type_id === LOGIN_TYPES.SYSTEM_USER || orgData?.login_type_id === LOGIN_TYPES.FIELD_USER">
+                    <div class="xl:col-span-4 col-span-12 mb-3">
+                        <spk-ng-select 
+                        formControlName="customer_type_id" 
+                        label="Customer Type"
+                        [fieldReq]="true"
+                        [options]="CommonApiService.customerTypeData"
+                        (selectedChange)="CommonApiService.getCustomerData($event)"
+                        (selectedChange)="findName($event, 'customer_category');"></spk-ng-select>
+                    </div>
+                    
+                    <div class="xl:col-span-4 col-span-12 mb-3">
+                        <spk-ng-select 
+                        formControlName="customer_id" 
+                        label="Customer"  
+                        [fieldReq]="true"
+                        [search]="true"
+                        (searchChanged)="onSearch($event , 'customer')"
+                        (selectedChange)="CommonApiService.getAssignUserData($event)"
+                        [options]="CommonApiService.customerData"></spk-ng-select>
+                    </div>
+                </ng-container>
+                
+                <ng-container *ngIf="orgData?.login_type_id === LOGIN_TYPES.ORGANIZATION_ADMIN || orgData?.login_type_id === LOGIN_TYPES.SYSTEM_USER">
+                    <div class="xl:col-span-4 col-span-12 mb-3" *ngIf="orgData?.org?.sfa">
+                        <spk-ng-select 
+                        formControlName="assign_to_user_id"
+                        label="Assign To"  
+                        [options]="CommonApiService.assignUserData"
+                        [search]="true"
+                        (searchChanged)="onSearch($event , 'user')"></spk-ng-select>
+                    </div>
+                </ng-container>
+
+                <div class="xl:col-span-4 col-span-12 mb-3">
+                    <spk-ng-select 
+                    formControlName="ticket_priority" 
+                    label="Priority"  
+                    [fieldReq]="true"
+                    [options]="priorityList"></spk-ng-select>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xxl:col-span-6 md:col-span-6 col-span-6">
+                    <spk-input label="Remark"
+                    [fieldReq]="true"
+                    formControlName="ticket_description" 
+                    class="remove-default-class"
+                    type="textarea"></spk-input>
+                </div>
+                
+                <div class="xxl:col-span-6 md:col-span-6 col-span-6">
+                    <label class="form-label">Upload Image</label>
+                    <file-pond class="filepond basic-filepond" 
+                    [options]="pondOptions" 
+                    [files]="pondFiles" 
+                    (onremovefile)="onFileRemove($event, 'image')"
+                    (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions align="end">
+            <div class="flex items-center gap-2">
+                <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [iconClass]="'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'" [disabled]="api.disabled"></app-button>
+            </div>
+        </mat-dialog-actions>
+    </form>
+</div>

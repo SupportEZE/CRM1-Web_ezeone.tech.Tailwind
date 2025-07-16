@@ -1,0 +1,7 @@
+<ng-container *ngIf="hasLocation; else noData">
+  <div id="map" style="height: 400px; width: 100%;"></div>
+</ng-container>
+
+<ng-template #noData>
+  <app-data-not-found></app-data-not-found>
+</ng-template>

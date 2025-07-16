@@ -1,0 +1,73 @@
+<button *ngFor="let tab of tabs"
+
+type="button"
+class="w-full disabled-mode sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50"
+[id]="'tabs-with-badges-item-' + tab.id"
+[attr.data-hs-tab]="'#tabs-with-badges-' + tab.id"
+[attr.aria-controls]="'tabs-with-badges-' + tab.id"
+[disabled]="activeTab === tab.name"
+[ngClass]="{'active': activeTab === tab.name}"
+(click)="onTabChange(tab.name, tab.subTab, tab.value)">
+
+<i [class]="tab.icon + ' font-medium align-middle'" *ngIf="iconShow"></i>
+{{ tab.label }}
+
+<span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300" *ngIf="countShow">
+    {{ tab.count }}
+</span>
+</button>
+
+
+
+
+
+
+
+
+<!-- <button type="button" class="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50" id="tabs-with-badges-item-1" data-hs-tab="#tabs-with-badges-1" aria-controls="tabs-with-badges-1" [ngClass]="{'active': activeTab === 'Review Pending'}"  (click)="onTabChange('Review Pending','')">
+    <i class="ri-eye-fill font-medium align-middle"></i>
+    Review Pending
+    <span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300">{{EnquiryTabs?.review_pending || '0'}}</span>
+</button>
+<button type="button" class="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50 active" id="tabs-with-badges-item-2" data-hs-tab="#tabs-with-badges-2" aria-controls="tabs-with-badges-2" [ngClass]="{'active': activeTab === 'Inprocess'}"  (click)="onTabChange('Inprocess','Not Assigned')">
+    <i class="ri-hourglass-fill font-medium align-middle"></i>
+    Inprocess
+    <span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300">{{ (EnquiryTabs?.not_assigned || 0) + (EnquiryTabs?.assigned || 0) }}</span>
+</button>
+<button type="button" class="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50" id="tabs-with-badges-item-3" data-hs-tab="#tabs-with-badges-3" aria-controls="tabs-with-badges-3" [ngClass]="{'active': activeTab === 'Close'}"  (click)="onTabChange('Close','Lost')">
+    <i class="ri-shake-hands-fill font-medium align-middle"></i>
+    Close
+    <span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300">{{ (EnquiryTabs?.lost || 0) + (EnquiryTabs?.drop || 0) + (EnquiryTabs?.junk_and_close || 0) }}</span>
+</button>
+<button type="button" class="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50" id="tabs-with-badges-item-4" data-hs-tab="#tabs-with-badges-4" aria-controls="tabs-with-badges-4" [ngClass]="{'active': activeTab === 'Win'}"  (click)="onTabChange('Win','')">
+    <i class="ri-trophy-fill font-medium align-middle"></i>
+    Win
+    <span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300">{{EnquiryTabs?.win || '0'}}</span>
+</button> -->
+
+<!-- <button type="button" class="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50 active" id="tabs-with-badges-item-1" data-hs-tab="#tabs-with-badges-1" aria-controls="tabs-with-badges-1" [ngClass]="{'active': activeSubTab === 'Not Assigned'}"  (click)="onTabChange('Inprocess','Not Assigned')">
+    <i class="ri-hourglass-2-fill font-medium align-middle"></i>
+    Not Assigned
+    <span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300">{{EnquiryTabs?.not_assigned || '0'}}</span>
+</button>
+<button type="button" class="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50" id="tabs-with-badges-item-2" data-hs-tab="#tabs-with-badges-2" aria-controls="tabs-with-badges-2" [ngClass]="{'active': activeSubTab === 'Assigned'}"  (click)="onTabChange('Inprocess','Assigned')">
+    <i class="ri-check-double-fill font-medium align-middle"></i>
+    Assigned
+    <span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300">{{EnquiryTabs?.assigned || '0'}}</span>
+</button> -->
+
+<!-- <button type="button" class="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50" id="tabs-with-badges-item-1" data-hs-tab="#tabs-with-badges-1" aria-controls="tabs-with-badges-1" [ngClass]="{'active': activeSubTab === 'Lost'}"  (click)="onTabChange('Close','Lost')">
+    <i class="ri-hourglass-fill font-medium align-middle"></i>
+    Lost
+    <span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300">{{EnquiryTabs?.lost || '0'}}</span>
+</button>
+<button type="button" class="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50 active" id="tabs-with-badges-item-2" data-hs-tab="#tabs-with-badges-2" aria-controls="tabs-with-badges-2" [ngClass]="{'active': activeSubTab === 'Drop'}"  (click)="onTabChange('Close','Drop')">
+    <i class="ri-delete-bin-7-fill font-medium align-middle"></i>
+    Drop
+    <span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300">{{EnquiryTabs?.drop || '0'}}</span>
+</button>
+<button type="button" class="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-1 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor hover:text-primary dark:text-[#8c9097] dark:text-white/50" id="tabs-with-badges-item-2" data-hs-tab="#tabs-with-badges-2" aria-controls="tabs-with-badges-2" [ngClass]="{'active': activeSubTab === 'Junk & Close'}"  (click)="onTabChange('Close','Junk & Close')">
+    <i class="ri-delete-bin-6-fill font-medium align-middle"></i>
+    Junk & Close
+    <span class="hs-tab-active:bg-primary hs-tab-active:text-white dark:hs-tab-active:bg-primary dark:hs-tab-active:text-white py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800 dark:bg-black/20 dark:text-gray-300">{{EnquiryTabs?.junk_and_close || '0'}}</span>
+</button> -->

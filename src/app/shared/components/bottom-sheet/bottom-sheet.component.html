@@ -1,0 +1,41 @@
+<app-modal-header [title]="'Filter'" [headerClass]="'px-0 py-3'">
+</app-modal-header>
+
+<form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
+    <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3">
+        <spk-ng-select
+        formControlName="user_ids"
+        label="Sales User"
+        [options]="CommonApiService.userData"
+        [multiple]="true"
+        [search]="true"
+        (searchChanged)="onSearch($event , 'user')"
+        (selectedChange)="onSingleSelectChange($event); findName($event, 'user')"
+        ></spk-ng-select>
+    </div>
+    <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3">
+        <spk-flatpickr 
+        placeholder="Start Date"
+        label="Start Date"
+        [fieldReq]="false" 
+        [max]="today"
+        class="form-control custom-datepickr"
+        formControlName="start_date"
+        (dateChange)="onDateChange()"></spk-flatpickr>
+    </div>
+    
+    <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3">
+        <spk-flatpickr 
+        placeholder="End Date"
+        label="End Date"
+        [min]="filterForm.value.start_date"
+        [max]="today"
+        [fieldReq]="false" 
+        class="form-control custom-datepickr"
+        formControlName="end_date"></spk-flatpickr>
+    </div>    
+    
+    <div class="flex items-center justify-end mt-4">  
+        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [label]="'Apply Filter'" [iconClass]="api.disabled ? 'ri-loader-2-fill animate-spin' : 'ri-save-line'" [disabled]="api.disabled" [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </div>
+</form>

@@ -1,0 +1,81 @@
+<div class="grid grid-cols-12 gap-x-6" >
+    <div class="xxl:col-span-12 col-span-12">
+        <div class="tab-pane show active border-0 p-0 mb-5">
+            <div class="box" *ngIf="skLoading">
+                <div class="p-4">
+                    <div class="grid grid-cols-12 gap-x-6">
+                        <div class="xl:col-span-12 col-span-12 mb-4" *ngFor="let card of [].constructor(3)">
+                            <app-skeleton></app-skeleton>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion accordion-customicon1 accordion-primary accordions-items-seperate" id="accordionFAQ1" *ngIf="!skLoading">
+                <div class="hs-accordion-group" *ngFor="let row of dropDown; let i = index">
+                    <div class="hs-accordion bg-white dark:bg-bodybg border dark:border-defaultborder/10 border-defaultborder mt-[0.5rem] rounded-sm active" id="faq-one">
+                        <button type="button" class=" dark:border-defaultborder/10  justify-between inline-flex items-center w-full font-semibold text-start text-[0.85rem] transition py-3 px-4 dark:text-gray-200 dark:hover:text-white/80" [ngClass]="{ 'hs-accordion-toggle hs-accordion-active:!text-primary hs-accordion-active:border hs-accordion-active:border-transparent hs-accordion-active:bg-primary/10   dark:hs-accordion-active:!text-primary dark:hs-accordion-active:border ': openIndex === i }" aria-controls="faq-collapse-one" (click)="toggleCollapse(i); getOptions(row._id); row.dependent_dropdown_id ? getDependentOptions(row.dependent_dropdown_id) : '' ">
+                            {{row.dropdown_display_name ? (row.dropdown_display_name | titlecase) : ''}}
+                            <div class="flex items-center gap-1">
+                                <svg class="hs-accordion-active:hidden hs-accordion-active:!text-primary hs-accordion-active:!bg-primary hs-accordion-active:group-hover:!text-primary block sm:w-[1.25rem] h-[1.25rem] w-[2.25rem] ms-2 p-[3px] rounded-full text-gray-600 bg-light group-hover:text-defaulttextcolor dark:text-defaulttextcolor/80 " width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1.5 8.85999L14.5 8.85998" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                                    <path d="M8 15.36L8 2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                                </svg>
+                                <svg class="hs-accordion-active:block hs-accordion-active:!text-white hs-accordion-active:!bg-primary hs-accordion-active:group-hover:!text-primary hidden sm:w-[1.25rem] h-[1.25rem] w-[2.25rem] ms-2 p-[3px] rounded-full text-gray-600 bg-light group-hover:text-defaulttextcolor dark:text-defaulttextcolor/80 " width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1.5 8.85999L14.5 8.85998" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                                </svg>
+                                
+                            </div>
+                        </button>
+                        
+                        <div id="faq-collapse-one" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-one" [ngStyle]="{ display: openIndex === i ? 'block' : 'none' }">
+                            <div class="p-5">
+                                <mat-progress-bar mode="indeterminate" style="margin: -8px 0px 10px 0px;" *ngIf="optionLoading"></mat-progress-bar>
+                                <ul class="ti-list-group !border-0">
+                                    <li>
+                                        <div class="xxl:col-span-3 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                                            <div class="flex gap-3">
+                                                <div class="wp100" *ngIf="row.dependent_dropdown_name">
+                                                    <mat-form-field class="mat-custom-field">
+                                                        <mat-select name="parent_field_value" placeholder="Select an option *" #parent_field_value="ngModel" name="dependent_value_option"  [(ngModel)]="data.dependent_value_option">
+                                                            <ng-container *ngFor="let row of dropDownDependentValue">
+                                                                <mat-option value="{{row.option_name}}">{{row.label ? row.label : '---'}}</mat-option>
+                                                            </ng-container>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </div>
+                                                
+                                                <div class="wp100">
+                                                    <mat-form-field class="mat-custom-field">
+                                                        <input matInput placeholder="Add New Option *" name="dropdown_option" [(ngModel)]="data.dropdown_option">
+                                                    </mat-form-field>
+                                                </div>
+                                                
+                                                <app-icon-button [icon]="'ri-add-line'" (click)="submitOption(row._id, row.dropdown_name, dropDownDependentValue.length)" [buttonClass]="'ti-btn ti-btn-icon ti-btn-primary btn-wave m-0'" [disabled]="btnDisabled" matTooltip="Add New Option" > </app-icon-button> 
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="!border-b"  *ngFor="let option of dropDownValue; let i = index">
+                                        <div class="flex items-center flex-wrap gap-2">
+                                            <div class="flex-auto">
+                                                <span class="block font-bold capitalize">
+                                                    {{i+1}}. <span *ngIf="option.dependent_option_name" class="text-success">{{option.dependent_option_name ? (option.dependent_option_name+'-') : ''}}</span>  {{option.option_name ? option.option_name : ''}}
+                                                </span>
+                                            </div>
+                                            <div class="btn-list">
+                                                <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light m-0 mt-1 mb-1'" (clickEvent)="delete(row._id, option._id,  option.option_name)" matTooltip="Delete" > </app-icon-button> 
+                                                
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ng-container *ngIf="!dropDown.length && !skLoading">
+                <app-data-not-found></app-data-not-found>
+            </ng-container>
+        </div>
+    </div>
+</div>

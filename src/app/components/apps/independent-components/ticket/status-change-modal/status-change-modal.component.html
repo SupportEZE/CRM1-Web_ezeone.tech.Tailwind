@@ -1,0 +1,44 @@
+<!-- // -----Status Start----- // -->
+<div class="mat-dialoge">
+    <app-modal-header [title]="'Change Status'" [closeBtn]="true" (close)="close()">
+    </app-modal-header>
+    <form #f="ngForm" (ngSubmit)="f.valid && statusChange()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-12 col-span-12">
+                    <label class="form-label mb-0">Status<span class="text-red-500">*</span></label>
+                    <mat-form-field  class="mat-custom-field remove-space">
+                        <mat-select placeholder="Select an option" [(ngModel)]="data.status" name="status" #status="ngModel" required>
+                            <mat-option *ngFor="let row of statusOptions" [value]="row.name">{{row.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div class="mt-1 text-xs text-red-500 text-right" *ngIf="status.touched || f.submitted">
+                        <ng-container *ngIf="status.errors?.['required']">This field is required</ng-container>
+                    </div>
+                </div>
+                <div class="xl:col-span-12 col-span-12" *ngIf="data.status !== 'Pending'">
+                    <div class="mt-2" >
+                        <label class="form-label mb-0">{{data.status}} Remark<span class="text-red-500">*</span></label>
+                        <mat-form-field class="mat-custom-field remove-space">
+                            <textarea matInput placeholder="Type Here ..." [(ngModel)]="data.status_remark" name="status_remark" #status_remark="ngModel" required></textarea>
+                        </mat-form-field>
+                        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="status_remark.touched || f.submitted">
+                            <ng-container *ngIf="status_remark.errors?.['required']">This field is required</ng-container>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+
+<!-- // -----Status Start----- // -->

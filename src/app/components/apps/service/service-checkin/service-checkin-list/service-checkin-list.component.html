@@ -1,0 +1,111 @@
+<app-page-header [title]="'Check In'" [title1]="['Check In']" [activeitem]="'Check In List'" *ngIf="pageHeader"></app-page-header>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Check In List'" [listLength]="listingData.length" [class]="'pt-2'" 
+            [btnShow]="true" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()"></app-page-sub-header>
+            
+            <div class="box-body pt-1">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [columns]="PageHeaders">
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.name" placeholder="Search..." (keyup.enter)="getDayList()">
+                                            @if (filter.name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.name=''; getDayList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.reporting_manager_name" placeholder="Search..." (keyup.enter)="getDayList()">
+                                            @if (filter.reporting_manager_name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.reporting_manager_name=''; getDayList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.customer_name" placeholder="Search..." (keyup.enter)="getDayList()">
+                                            @if (filter.customer_name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_name=''; getDayList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listingData; let i = index;">
+                                <td class="!text-center">{{i+1}}</td>
+                                <td>{{row?.created_at | date:'d MMM yyyy, hh:mm a' : '--'}}</td>
+                                <td>{{row?.created_name || '--'}}</td>
+                                <td>
+                                    <div class="flex items-center gap-2">
+                                        <span class="avatar avatar-sm avatar-rounded">
+                                            <img src="./assets/images/faces/12.jpg" alt="">
+                                        </span>
+                                        <div class="">
+                                            <span class="block font-medium"> {{row?.user_info?.name || '--'}}</span>
+                                            <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">Code: </span> {{ row?.user_info?.user_code || '--' }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{row?.user_info?.reporting_manager_name || '--'}}</td>
+                                <td>
+                                    <div class="">
+                                        <span class="block font-medium"> {{row?.customer_details?.customer_name || '--'}}</span>
+                                        <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">Mobile: </span> {{row?.customer_details?.mobile || '--'}}</span>
+                                    </div>
+                                </td>
+                                <td>{{row?.customer_details?.customer_type_name || '--'}}</td>
+                                <td>{{row?.visit_start | date:'hh:mm a' : '--'}}</td>
+                                <td><span class="ellipsis" matTooltip="{{row?.start_location}}">{{row?.start_location || '--'}}</span></td>
+                                <td>{{row?.visit_end | date:'hh:mm a' : '--'}}</td>
+                                <td><span class="ellipsis" matTooltip="{{row?.end_location}}">{{row?.end_location || '--'}}</span></td>
+                                <td>{{row?.avarage_meeting_time || '--'}}</td>
+                                <td>{{row?.check_list || '--'}}</td>
+                                <td>{{row?.remark || '--'}}</td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                <td *ngFor="let row of [].constructor(11)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!listingData?.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

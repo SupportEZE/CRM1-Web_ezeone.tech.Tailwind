@@ -1,0 +1,19 @@
+<div class="mat-dialoge">
+    <app-modal-header [title]="'Assign Beat Route'" [closeBtn]="true"  (close)="close()"></app-modal-header>
+    
+    <form [formGroup]="statusForm" (ngSubmit)="onSubmitAssigning()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-12 col-span-12">
+                    <spk-ng-select formControlName="user_id" label="Select User" [fieldReq]="true" [options]="this.CommonApiService.userData" [search]="true"
+                    (searchChanged)="onSearch($event , 'user')" [multiple]="true"></spk-ng-select>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+    
+</div>

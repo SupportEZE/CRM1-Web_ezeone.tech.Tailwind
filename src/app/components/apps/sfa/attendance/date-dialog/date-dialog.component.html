@@ -1,0 +1,76 @@
+<div class="mat-dialoge">
+  <!-- Dialog Header -->
+  <div class="flex items-center justify-between p-3 py-1">
+    <p mat-dialog-title>Mark attendance of {{modalData?.attend_date}}</p>
+    <button
+      type="button"
+      class="ti-btn ti-btn-icon bg-danger/10 text-danger hover:bg-danger hover:text-white !rounded-full btn-wave"
+      (click)="closeDialog()"
+    >
+      <i class="ri-close-line"></i>
+    </button>
+  </div>
+
+  <!-- Form for Time Selection -->
+  <form #f="ngForm" (ngSubmit)="f.valid && submitTime()">
+    <mat-dialog-content class="mat-typography py-1">
+      <!-- Start Time Input Field -->
+      <div class="mb-3">
+        <label class="form-label mb-0">Start Time<span class="text-red-500">*</span></label>
+        <mat-form-field class="mat-custom-field remove-space">
+          <!-- Use ngx-material-timepicker -->
+          <input
+            matInput
+            [ngxTimepicker]="pickerStart"
+            [(ngModel)]="selectedStartTime"
+            placeholder="Select Start Time"
+            name="startTime"
+            #startTime="ngModel"
+            required
+          />
+          <ngx-material-timepicker #pickerStart></ngx-material-timepicker>
+        </mat-form-field>
+        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="startTime.touched || f.submitted">
+          <ng-container *ngIf="startTime.errors?.['required']">This field is required</ng-container>
+        </div>
+      </div>
+
+      <!-- Stop Time Input Field -->
+      <div class="mb-3">
+        <label class="form-label mb-0">Stop Time<span *ngIf="todayDate != modalData?.attend_date" class="text-red-500">*</span></label>
+        <mat-form-field class="mat-custom-field remove-space">
+          <!-- Use ngx-material-timepicker -->
+          <input
+            matInput
+            [ngxTimepicker]="pickerStop"
+            [(ngModel)]="selectedStopTime"
+            placeholder="Select Stop Time"
+            name="stopTime"
+            #stopTime="ngModel"
+            required = "{{todayDate != modalData?.attend_date ? true : false}}"
+          />
+          <ngx-material-timepicker #pickerStop></ngx-material-timepicker>
+        </mat-form-field>
+        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="stopTime.touched || f.submitted">
+          <ng-container *ngIf="stopTime.errors?.['required']">This field is required</ng-container>
+        </div>
+      </div>
+    </mat-dialog-content>
+
+    <!-- Dialog Actions (Buttons) -->
+    <mat-dialog-actions class="gap-2" align="end">
+      <button type="button" class="ti-btn ti-btn-outline-secondary btn-wave flex-auto" (click)="goToLeaveAdd()">Mark Leave</button>
+
+      <!-- Cancel Button -->
+      <!-- <button mat-button (click)="closeDialog()">Cancel</button> -->
+
+      <!-- Submit Button -->
+      <app-button
+        [buttonType]="'submit'"
+        [buttonClass]="'ti-btn ti-btn-primary m-0'"
+        [iconClass]="'ri-save-line'"
+        [loadingIconClass]="'ri-loader-2-fill'"
+      ></app-button>
+    </mat-dialog-actions>
+  </form>
+</div>

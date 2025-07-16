@@ -1,0 +1,455 @@
+<app-page-header [title]="'Secondary Order'" [title1]="['Secondary Order Add']" [activeitem]="'Secondary Order Add'"></app-page-header>
+<div class="grid grid-cols-12 sm:gap-x-6">
+    <div [ngClass]="{'xl:col-span-9 col-span-12': activeTab === 'cart' || activeTab === 'product', 'xl:col-span-12 col-span-12': activeTab === 'customer' || activeTab === 'complete'}">
+        <app-showcode-card [title]="'Cart Items'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="false">
+            <nav class="nav nav-tabs tab-style-8 scaleX md:flex block justify-around border border-dashed dark:border-defaultborder/10 border-b-0 bg-light rounded-top" aria-label="Tabs" role="tablist">
+                <app-listing-tab *ngFor="let tab of mainTabs" [countShow]="false" [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon }]" [activeTab]="activeTab"
+                (tabChange)="onTabChange(tab.name)"></app-listing-tab>
+                <app-listing-tab *ngIf="showCompleteTab" [countShow]="false" [tabs]="[{ name: 'complete', label: 'Complete Order', icon: 'ri-checkbox-circle-line' }]"
+                [activeTab]="activeTab" (tabChange)="onTabChange('complete')"></app-listing-tab>
+            </nav>
+            
+            <div class="tab-content border border-dashed dark:border-defaultborder/10" id="myTabContent">
+                <ng-container *ngIf="activeTab === 'customer'">
+                    <div class="xl:col-span-12 col-span-12 mt-4">
+                        <form [formGroup]="primaryOrderForm">
+                            <div class="grid grid-cols-12 sm:gap-x-6 px-3">
+                                <div class="xl:col-span-3 col-span-12 mb-3">
+                                    <spk-ng-select formControlName="customer_type_id" label="Customer Category" [fieldReq]="true" [options]="CommonApiService.customerCategorySubType"
+                                    [multiple]="false" (selectedChange)="onCustomerCategoryChange($event)"></spk-ng-select>
+                                </div>
+                                
+                                <div class="xl:col-span-3 col-span-12 mb-3" *ngIf="primaryOrderForm.get('customer_type_id')?.value">
+                                    <spk-ng-select label="Retailers" formControlName="retailer_id" [fieldReq]="true" [options]="CommonApiService.customerData" [multiple]="false"
+                                    [search]="true" (searchChanged)="onSearch($event, 'customer')" (selectedChange)="onCustomerSelected($event)" class="remove-space"></spk-ng-select>
+                                </div>
+                                
+                                <div class="xl:col-span-3 col-span-12 mb-3" *ngIf="primaryOrderForm.get('retailer_id')?.value">
+                                    <spk-ng-select label="Distributors" formControlName="distributor_id" [fieldReq]="true" [options]="CommonApiService.customerMapping" [multiple]="false"
+                                    [search]="true" (searchChanged)="onSearch($event, 'customer')" (selectedChange)="onUserSelected($event)" class="remove-space"></spk-ng-select>
+                                </div>
+                                
+                                <div class="xl:col-span-3 col-span-12 mb-3" *ngIf="primaryOrderForm.get('distributor_id')?.value">
+                                    <spk-ng-select formControlName="gst_type" label="GST Type" [fieldReq]="true" [options]="gstType" [multiple]="false"></spk-ng-select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end" *ngIf="activeTab === 'customer' && primaryOrderForm.get('gst_type')?.value">
+                        <button type="button" class="ti-btn ti-btn-soft-success" (click)="onNextTab('product')" id="personal-details-trigger">
+                            Continue<i class="ri-skip-right-fill ms-2 align-middle inline-block"></i></button>
+                    </div>
+                </ng-container>
+                    
+            <div class="table-responsive overflow-auto table-bordered-default mt-2 whitespace-nowrap">
+                <ng-container *ngIf="activeTab === 'product'">
+                    <spk-reusable-tables [columns]="cartColumn" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [showAction]="true">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                            <td class="text-center">&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.search" placeholder="Search..." (ngModelChange)="getProductList()">
+                                            @if (filter.search) {
+                                                <button matSuffix mat-icon-button aria-label="Clear"
+                                                (click)="filter.search=''; getProductList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <ng-container *ngIf="!productListLoading">
+                        <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of productDetail; let i = index;">
+                            <td class="text-center"> {{(pagination.cur_page - 1) * pagination.limit + i + 1 }} </td>
+                            <td class="cart-items01">
+                                <div class="flex items-center">
+                                    <!-- <div class="me-3">
+                                        <span class="avatar avatar-xl bg-light">
+                                            <img [src]="row.img" alt="">
+                                        </span>
+                                    </div> -->
+                                    <div class="flex-auto">
+                                        <div class="text-[10px] font-semibold">
+                                            <a (click)="openSchemeModal(row?.scheme_id)">{{ row?.category_name || '--' }}
+                                                @if(row?.scheme_description){
+                                                    <span
+                                                    class="badge bg-primarytint3color text-white text-[0.5625rem] inline-flex gap-1">
+                                                    <i class="ri-discount-percent-line text-[10px]"></i> {{
+                                                        row?.scheme_description }}
+                                                    </span>
+                                                }
+                                            </a>
+                                        </div>
+                                        <div class="flex gap-4 flex-wrap mb-1 items-center">
+                                            <div>
+                                                <span class="me-1">Product : </span>
+                                                <span class="font-normal text-textmuted dark:text-textmuted/50">{{row?.product_name
+                                                    || '--'}}</span>
+                                            </div>
+                                            <div>
+                                                <span class="me-1">Code:</span>
+                                                <span class="font-normal text-textmuted dark:text-textmuted/50">{{row?.product_code || '--'}}</span>
+                                            </div>
+                                        </div>
+                                            <!-- <span class="badge bg-{{row?.bg1}}/10 text-{{row?.bg1}}">{{row?.status || '--'}}</span> -->
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-right">{{CURRENCY_SYMBOLS.RUPEE}} {{row?.mrp || '--'}}</div>
+                            </td>
+                            <td>
+                                <div class="w80">
+                                    <input type="number" class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-blue-500"
+                                        placeholder="Discount" [(ngModel)]="row.basic_discount" name="point_{{i}}" (blur)="validateDiscount(row)"/>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-right">
+                                    {{CURRENCY_SYMBOLS.RUPEE}} {{row?.unit_price || '--'}}
+                                </div>
+                            </td>
+                            <td class="product-quantity-container">
+                                <div class="flex items-center flex-nowrap gap-1 rounded-full cart-input-group">
+                                    <button (click)="decreaseQuantity(row)" type="button" aria-label="button" class="ti-btn ti-btn-icon btn-wave ti-btn-sm !rounded-full bg-primary/10 text-primary border product-quantity-minus1 border-end-0 waves-effect waves-light"><i class="ri-subtract-line"></i></button>
+                                    <input [(ngModel)]="row.quantity" (ngModelChange)="recalculateProductAmounts(row)" type="number" min="0" class="form-control form-control-sm !rounded-full text-center p-0" aria-label="number" value="2">
+                                    <button (click)="increaseQuantity(row)" type="button" aria-label="button" class="ti-btn ti-btn-icon btn-wave ti-btn-sm  !rounded-full bg-primary/10 text-primary border product-quantity-plus1 border-start-0 waves-effect waves-light"><i class="ri-add-line"></i></button>
+                                </div>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="fill" class="mat-custom-field remove-space w80">
+                                    <mat-select [(ngModel)]="row.uom" placeholder="Selct UOM">
+                                        <mat-option *ngFor="let uom of uomOptions" [value]="uom">{{ uom }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <div class="text-right">
+                                    {{CURRENCY_SYMBOLS.RUPEE}} {{row?.sub_total || '--'}}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-right">
+                                    {{CURRENCY_SYMBOLS.RUPEE}} {{ row?.gst || '0.00' }} ({{ row?.gst_percent || 18 }}%)
+                                </div>
+                            </td>
+                            <td>
+                                <div class="font-semibold text-[14px] text-right">
+                                    {{CURRENCY_SYMBOLS.RUPEE}} {{row?.net_amount || '--'}}
+                            </div>
+                            </td>
+                            <td>
+                                <div class="flex items-center">
+                                    <app-icon-button [icon]="'ri-shopping-cart-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-info waves-effect waves-light'" (click)="addOrder(row)"></app-icon-button>
+                                </div>
+                            </td>
+                        </tr>
+                        </ng-container>
+                        <ng-container *ngIf="productListLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10"
+                            *ngFor="let row of [].constructor(11)">
+                            <td *ngFor="let row of [].constructor(11)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                        </ng-container>
+                    <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!productDetail.length && !productListLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </ng-container>
+                <div class="px-4 py-3 border-top border-block-start-dashed sm:flex justify-between" *ngIf="activeTab === 'product'">
+                    <button type="button" class="ti-btn ti-btn-soft-danger m-1" (click)="onPreviousTab('customer')" id="back-shipping-trigger"><i
+                        class="ri-skip-left-fill me-2 align-middle inline-block"></i>Previous</button>
+                    <button type="button" (click)="onNextTab('cart')" class="ti-btn ti-btn-soft-success m-1" id="payment-trigger">Continue<i class="ri-skip-right-fill align-middle ms-2 inline-block"></i></button>
+                </div>
+            </div>
+            
+            <div class="table-responsive overflow-auto table-bordered-default whitespace-nowrap">
+            <ng-container *ngIf="activeTab === 'cart'">
+                    <spk-reusable-tables [columns]="cartColumn"
+                    tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap"
+                    [showAction]="true">
+                    <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                        <td class="text-center">&nbsp;</td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.search" placeholder="Search..."
+                                    (keyup.enter)="getCartList()">
+                                    @if (filter.search) {
+                                        <button matSuffix mat-icon-button aria-label="Clear"
+                                        (click)="filter.search=''; getCartList()">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <ng-container *ngIf="!skLoading">
+                    <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"
+                    *ngFor="let row of cartDetail; let i = index;">
+                    <td class="text-center"> {{(pagination.cur_page - 1) * pagination.limit + i + 1 }} </td>
+                    <td class="cart-items01">
+                        <div class="flex items-center">
+                            <!-- <div class="me-3">
+                                <span class="avatar avatar-xl bg-light">
+                                    <img [src]="row.img" alt="">
+                                </span>
+                            </div> -->
+                            <div class="flex-auto">
+                                <div class="mb-1 text-[12px] font-semibold">
+                                    <a>{{row?.category_name || '--'}}</a>
+                                </div>
+                                <div class="flex gap-4 flex-wrap mb-1 items-center">
+                                    <div>
+                                        <span class="me-1">Product:</span><span
+                                        class="font-normal text-textmuted dark:text-textmuted/50">{{row?.product_name
+                                            || '--'}}</span>
+                                        </div>
+                                        <div>
+                                            <span class="me-1">Code:</span><span
+                                            class="font-normal text-textmuted dark:text-textmuted/50">{{row?.product_code
+                                                || '--'}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-right">
+                                    {{CURRENCY_SYMBOLS.RUPEE}} {{row?.mrp || '--'}}
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    {{ row?.discount_percent || '--'}} ({{CURRENCY_SYMBOLS.RUPEE}}{{row?.discount_amount ||
+                                        '--'}})
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-right">
+                                        {{CURRENCY_SYMBOLS.RUPEE}} {{row?.unit_price || '--'}}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                        {{row?.total_quantity || '--'}}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        {{row?.uom || '--'}}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-right">
+                                        {{CURRENCY_SYMBOLS.RUPEE}} {{row?.gross_amount || '--'}}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-right">
+                                        {{CURRENCY_SYMBOLS.RUPEE}} {{row?.gst_amount || '--'}} ({{ row?.gst_percent || 18 }}%)
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="font-semibold text-[14px] text-right">
+                                        {{CURRENCY_SYMBOLS.RUPEE}} {{row?.net_amount_with_tax || '--'}}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <app-icon-button [icon]="'ri-delete-bin-line'"
+                                        [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'"
+                                        (clickEvent)="onDeletCart(row._id)" matTooltip="Delete Cart"> </app-icon-button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10"
+                            *ngFor="let row of [].constructor(11)">
+                            <td *ngFor="let row of [].constructor(11)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </spk-reusable-tables>
+                <ng-container *ngIf="!cartDetail.length && !skLoading">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </ng-container>
+            <div class="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-between" *ngIf="activeTab === 'cart'">
+                <button type="button" class="ti-btn ti-btn-soft-danger m-1" (click)="onPreviousTab('product')" id="back-personal-trigger"><i class="ri-skip-left-fill me-2 align-middle inline-block"></i>Previous</button>
+            </div>
+        </div>
+        
+        <div class="checkout-payment-success">
+            <ng-container *ngIf="activeTab === 'complete'">
+                <div class="mb-4">
+                    <h5 class="text-success font-semibold">Order Successful...</h5>
+                </div>
+                <div class="mb-4 flex justify-center">
+                    <img src="./assets/images/ecommerce/png/24.png" alt="">
+                </div>
+                <div class="mb-4">
+                    <p class="mb-1 text-[14px]">You can track your order with Order Id <b>SPK#1FR</b> from <a
+                        class="text-primarytint1color" href="javascript:void(0);"><u>Track Order</u></a></p>
+                        <p class="text-textmuted dark:text-textmuted/50">Thankyou for shopping with us.</p>
+                    </div>
+                    <a class="ti-btn bg-primary text-white">View PDF<i class="bi bi-file-earmark-pdf ms-2"></i></a>
+                </ng-container>
+            </div>
+        </div>
+        <app-pagination-footer [class]="'p-0'" [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="productDetail.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+    </app-showcode-card>
+</div>
+
+<ng-container *ngIf="activeTab === 'cart' || activeTab === 'product'">
+    <div class="xl:col-span-3 col-span-12">
+        <app-showcode-card [title]="'Order Summary'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="false">
+            <div class="border-b border-defaultborder dark:border-defaultborder/10 border-dashed">
+                <button type="button" *ngIf="activeTab === 'cart'" class="hs-tab-active text-primary text-[16px] bg-light rounded-top nav-link w-full active" id="freeshipping-pane" aria-selected="true" data-hs-tab="#freeshipping" aria-controls="freeshipping" role="tab">
+                    Order Summary
+                </button>
+                <button type="button" *ngIf="activeTab === 'product'" class="hs-tab-active text-primary text-[16px] nav-link w-full active mb-2" id="filter-tab-pane" aria-selected="true" data-hs-tab="#filter" aria-controls="filter" role="tab">
+                    Product Filter
+                </button>
+                <!-- Order Summary (Only for cart tab) -->
+                <form [formGroup]="orderForm">
+                    <div *ngIf="activeTab === 'cart'" class="overflow-hidden p-0 border-0 min-h-[150px]">
+                        <ng-container *ngIf="!cartDetail.length">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                        <ng-container *ngIf="cartDetail.length">
+                            <div class="pr-2">
+                                <div class="flex items-center justify-between pt-3 mb-2">
+                                    <div class="text-textmuted dark:text-textmuted/50 text-[12px]">Total Item</div>
+                                    <div class="font-medium text-[12px]">{{orderSummary?.total_item_count || '--'}}</div>
+                                </div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-textmuted dark:text-textmuted/50 text-[12px]">Total Item Qty</div>
+                                    <div class="font-medium text-[12px]">{{orderSummary?.total_item_quantity || '--'}}</div>
+                                </div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-textmuted dark:text-textmuted/50 text-[12px]">Total Unit Price</div>
+                                    <div class="font-medium text-[12px]">
+                                        {{ CURRENCY_SYMBOLS.RUPEE }} {{ orderSummary?.net_amount_before_tax | number:'1.2-2' }}
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-textmuted dark:text-textmuted/50 text-[12px]">Total Discount Amount</div>
+                                    <div class="font-medium text-[12px] text-success">
+                                        {{ CURRENCY_SYMBOLS.RUPEE }} {{ orderSummary?.discount_amount | number:'1.2-2' }}
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-textmuted dark:text-textmuted/50 text-[12px]">Sub Total</div>
+                                    <div class="font-medium text-[12px]">
+                                        {{ CURRENCY_SYMBOLS.RUPEE }} {{ orderSummary?.gross_amount | number:'1.2-2' }}
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-textmuted dark:text-textmuted/50 text-[12px]">Total GST Amount</div>
+                                    <div class="font-medium text-[12px] text-danger">
+                                        {{ CURRENCY_SYMBOLS.RUPEE }} {{ orderSummary?.gst_amount | number:'1.2-2' }}
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-[1rem]">Grand Total :</div>
+                                    <div class="font-semibold">
+                                        {{ CURRENCY_SYMBOLS.RUPEE }} {{ orderSummary?.net_amount_with_tax | number:'1.2-2' }}
+                                    </div>
+                                </div>
+                                <div class="xl:col-span-6 col-span-12 mb-3">
+                                    <spk-input label="Description"  formControlName="order_create_remark"
+                                    [fieldReq]="true" class="remove-default-class" type="textarea"></spk-input>
+                                </div>
+                            </div>
+                            <div class="flex justify-center gap-4 mt-4">
+                                <div class="w-1/3">
+                                    <app-button
+                                    [buttonType]="'button'"
+                                    [buttonClass]="'ti-btn ti-btn-outline-danger w-full py-2 px-4 text-sm rounded-md'"
+                                    [label]="'Clear'"
+                                    [disabled]="api.disabled"
+                                    [loadingIconClass]="'ri-loader-2-fill'"
+                                    (click)="removeCart()" matTooltip="Remove Cart"
+                                    ></app-button>
+                                </div>
+                                <div class="w-2/2">
+                                    <app-button
+                                    [buttonType]="'submit'"
+                                    [buttonClass]="'ti-btn bg-success text-white btn-wave w-full py-2 px-4 text-sm rounded-md'"
+                                    [label]="'Place Order'"
+                                    [iconClass]="'ri-shopping-cart-2-line'"
+                                    [loadingIconClass]="'ri-loader-2-fill'"
+                                    [disabled]="api.disabled"
+                                    (click)="placeOrder()" matTooltip="Place Order"
+                                    ></app-button>
+                                </div>
+                            </div> 
+                        </ng-container>                                                  
+                    </div>           
+                </form>         
+                <!-- Product Filter (Only for product tab) -->
+                <div *ngIf="activeTab === 'product'" class="overflow-hidden p-0 border-0 scroll-y-600 pr-2">
+                    <ng-container *ngIf="!productDetail.length">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                    <ng-container *ngFor="let key of filterGroupKeys">
+                        <ng-container *ngIf="productDetail.length && hasAnyValidFilter(key)">
+                            <div class="mb-3">
+                                <h6 class="font-semibold mb-2 capitalize text-[12px] bg-light rounded-top px-2 py-1">
+                                    {{ key.replace('_', ' ') | titlecase }}
+                                </h6>
+                                <div class="scroll-y-300 pr-2">
+                                    <ng-container *ngFor="let row of (showMoreMap[key] ? filterGroups[key] : filterGroups[key].slice(0, 5)); let i = index">
+                                        <div class="form-check border-b pt-1 mb-1" *ngIf="row.label && row.label.trim() && row.count > 0">
+                                            <input class="form-check-input float-end" type="checkbox" [id]="key + '-' + i" [checked]="row.checked" (change)="onFilterChange(key, i, $event)" />
+                                            <label class="form-check-label text-[10px] text-wrap pe-3 !ps-0" [for]="key + '-' + i">
+                                                {{ row?.label }}
+                                                <span *ngIf="row.count !== undefined" class="text-[11px] font-normal text-textmuted">
+                                                    ({{ row?.count }})
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </ng-container>
+                                    <!-- Show MORE/LESS only if more than 5 items -->
+                                    <div class="mt-2" *ngIf="filterGroups[key].length > 5">
+                                        <a class="ecommerce-more-link cursor-pointer" (click)="toggleShowMore(key)">
+                                            {{ showMoreMap[key] ? 'LESS' : 'MORE' }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </app-showcode-card>
+    </div>
+</ng-container>
+</div>

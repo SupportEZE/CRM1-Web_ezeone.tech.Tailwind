@@ -1,0 +1,42 @@
+<div class="mat-dialoge" *ngIf="data.lastPage === 'beat-list'">
+    <app-modal-header [title]="'User Details'" [closeBtn]="true" (close)="close()">
+    </app-modal-header>
+    <mat-dialog-content class="mat-typography py-1">
+        <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="!skLoading">
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card>
+                    <ul class="ti-list-group list-group-flush border-0">
+                        <li class="border-b-2 pb-2 pt-2" *ngFor="let row of beatPartyInfo">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="avatar avatar-sm bg-primarytint1color">
+                                        {{nameUtils.getInitials(row.customer_name)}} 
+                                    </span>
+                                    
+                                    <div class="ms-2 font-semibold">
+                                        {{row.customer_name ? (row.customer_name | titlecase) : '---'}} {{row.customer_type_name ? ( '('+row.customer_type_name+')') : ''}} 
+                                    </div>
+                                </div>
+                                <span class="badge bg-light bg-textmuted/10 text-textmuted float-end ms-auto">{{row.mobile || '---'}}</span>
+                            </div>
+                        </li>
+                        
+                        <li class="border-b-2 pb-2 pt-2" *ngIf="!beatPartyInfo.length && !skLoading">
+                            <p>No Data Available</p>
+                        </li>
+                    </ul>
+                    
+                </app-showcode-card>                  
+            </div>
+        </div>
+        <div *ngIf="skLoading">
+            <mat-dialog-content class="mat-typography py-1">
+                <div class="grid grid-cols-12 gap-x-6">
+                    <div class="xl:col-span-6 col-span-12 mb-3" *ngFor="let card of [].constructor(4)">
+                        <app-skeleton></app-skeleton>
+                    </div>
+                </div>
+            </mat-dialog-content>
+        </div>
+    </mat-dialog-content>
+</div>

@@ -1,0 +1,46 @@
+
+<div class="hs-accordion-group {{groupClass}}" [attr.data-hs-accordion-always-open]="alwaysOpen">
+  @for(accordion of accordions;track $index){
+
+    <div class="hs-accordion {{accordion.Customclass}}"  [id]="accordion.headingId">
+      <button class=" {{accordion.buttonClass}}" 
+        [attr.aria-controls]="accordion.collapseId" > 
+        @if(accordion.svg){
+          <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+        }
+        @if(accordion.arrow){
+          <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        }
+        {{ accordion.title }}
+
+        @if(accordion.afterarrow){
+          <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        }
+      </button>
+      <div
+        [id]="accordion.collapseId"
+        class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300  {{accordion.Custombodyclass}}"
+        [attr.aria-labelledby]="accordion.headingId"  
+      >
+        
+        @if(accordion.children){
+
+          <spk-accordions
+          [accordions]="accordion.children"
+          [groupClass]="'ps-6'"
+        ></spk-accordions>
+        }
+        @else {
+       <div [innerHTML]="accordion.content">
+      
+        {{ accordion.content }}
+      </div>
+        
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,76 @@
+<!-- ***** Grn Status Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType ==='grn_stock'">
+    <app-modal-header [title]="'Update Grn Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="stockForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 sm:gap-x-6 gap-y-5">
+                <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12">
+                    <spk-ng-select
+                    formControlName="grn_status"
+                    label="Grn Status"
+                    [fieldReq]="true"
+                    [options]="statusList"
+                    [multiple]="false"
+                    >
+                </spk-ng-select>
+            </div>
+            
+
+            <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12" *ngIf="stockForm.get('grn_status')?.value === 'Received'">
+                <label class="form-label mb-0">Upload Bill Copy
+                    <span class="text-red-500">*</span>
+                </label>
+                <file-pond class="filepond basic-filepond" [options]="getPondOptions('image')" [files]="pondImages"
+                    (onremovefile)="onFileRemove($event, 'image')" (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+            </div>
+
+            <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12"  *ngIf="stockForm.get('grn_status')?.value === 'Reject'">
+                 <spk-input label="Remark" [fieldReq]="true" formControlName="remarks" class="remove-default-class" type="textarea"></spk-input>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</mat-dialog-actions>
+</form>
+</div>
+<!-- ***** Grn Status End ***** -->
+
+
+<!-- ***** Customer Stock Status Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType ==='customer_stock'">
+    <app-modal-header [title]="'Update Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="statusForm" (ngSubmit)="submitStatus()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 sm:gap-x-6 gap-y-5">
+                <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12">
+                    <spk-ng-select
+                    formControlName="status"
+                    label="Status"
+                    [fieldReq]="true"
+                    [options]="stockStatusList"
+                    [multiple]="false"
+                    >
+                </spk-ng-select>
+            </div>
+            
+            <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12"  *ngIf="statusForm.get('status')?.value === 'Reject'">
+                 <spk-input label="Remark" [fieldReq]="true" formControlName="remarks" class="remove-default-class" type="textarea"></spk-input>
+        </div>
+        
+        
+        
+        
+        
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</mat-dialog-actions>
+</form>
+</div>
+<!-- ***** Customer Stock Status End ***** -->

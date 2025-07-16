@@ -1,0 +1,672 @@
+    <app-page-header [title]="'Attendance'" [title1]="['Attendance Detail']" [activeitem]="'Attendance Detail'" [showSelectOption]="false"></app-page-header>
+    
+    
+    <!-- Start:: row-1 -->
+    <div class="grid grid-cols-12 gap-x-6" *ngIf="!skLoading">
+        <div class="xl:col-span-12 col-span-12">
+            
+            <div class="box profile-card">
+                <div class="box-body pb-0 relative">
+                    <div class="flex justify-end gap-3 pb-3">
+                        <div class="xl:col-span-2 col-span-12">
+                            <mat-form-field class="mat-custom-field remove-space">
+                                <input matInput 
+                                [matDatepicker]="picker" 
+                                [max]="today" 
+                                [(ngModel)]="selectedDate" 
+                                placeholder="Select Date">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        
+                        <div class="xl:col-span-2 col-span-12">
+                            <mat-form-field class="mat-custom-field remove-space">
+                                <mat-select placeholder="Select User" [(ngModel)]="selectedUser" >
+                                    <mat-option *ngFor="let row of commonApi.userData" [value]="row.value">
+                                        {{row.label}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        
+                        <div class="flex justify-start">
+                            <button [disabled]="!selectedDate || !selectedUser" type="button" aria-label="button" class="ti-btn ti-btn-icon ti-btn-primary btn-wave m-0" (click)="getAttendanceDetail()">
+                                <i class="material-icons">pan_tool_alt</i>
+                            </button>
+                        </div>
+                        <!-- <div class="flex justify-start" *ngIf="selectedDate || selectedUser">
+                            <button  type="button" aria-label="button" class="ti-btn ti-btn-icon ti-btn-primary btn-wave m-0 text-[10px]" (click)="selectedDate = null;selectedUser= null;getAttendanceDetail()">
+                                <i class="material-icons">filter_list_off</i>
+                            </button>
+                        </div> -->
+                    </div>
+                    
+                    <div class="grid grid-cols-12 sm:gap-x-6">
+                        <div class="xl:col-span-3 col-span-12">
+                            <div class="box overflow-hidden border border-defaultborder dark:border-defaultborder/10 mb-2">
+                                <div class="box-body border-b border-dashed border-defaultborder dark:border-defaultborder/10 py-2">
+                                    <div class="text-center">
+                                        <span class="avatar avatar-xxl avatar-rounded mb-3">
+                                            <img 
+                                            [src]="profilePic?.signed_url" 
+                                            alt="Profile Image" 
+                                            (error)="onError($event)"
+                                            [class.object-contain]="isFallback"
+                                            (click)="profilePic?.signed_url && comanFuncation.zoom(profilePic?._id, 'attendance/get-doc')">
+                                        </span>
+                                        <h5 class="font-semibold mb-1">{{userData?.name}}</h5>
+                                        <span class="block font-medium text-textmuted dark:text-textmuted/50 mb-2">User ({{userData?.user_code}})</span>
+                                        <div class="mb-3">
+                                            <span class="avatar avatar-sm avatar-rounded !text-success p-1 bg-success/10 me-2">
+                                                <i class="ri-calendar-check-fill align-middle text-[15px]"></i>
+                                            </span>
+                                            Start Attendance at {{!attendanceDetail?.punch_in ? '--' : (attendanceDetail?.punch_in | date : 'hh:mm a')}}
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <span class="avatar avatar-sm avatar-rounded !text-danger p-1 bg-danger/10 me-2">
+                                                <i class="ri-calendar-close-fill align-middle text-[15px]"></i>
+                                            </span>
+                                            Stop Attendance at {{!attendanceDetail?.punch_out ? '--' : (attendanceDetail?.punch_out | date : 'hh:mm a')}}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="">
+                                        <button type="button" class="ti-btn ti-btn-primary label-ti-btn py-2 text-[13px] wp100" *ngIf="attendanceDetail?.punch_out && accessRight?.modifyRight" (click)="resetAttendance()">
+                                            <i class="ri-refresh-line label-ti-btn-icon me-2 text-[15px]"></i> Reset Stop Attendance
+                                        </button>
+                                        
+                                        <button type="button" class="ti-btn ti-btn-secondary label-ti-btn py-2 text-[13px] wp100" *ngIf="accessRight?.modifyRight" (click)="absentAttendance()">
+                                            <i class="ri-close-circle-line label-ti-btn-icon me-2 text-[15px]"></i> Mark Absent 
+                                        </button>
+                                        
+                                        <button type="button" class="ti-btn ti-btn-info label-ti-btn py-2 text-[13px] wp100" *ngIf="accessRight?.modifyRight" (click)="goToLeaveAdd()">
+                                            <i class="ri-flight-takeoff-line label-ti-btn-icon me-2 text-[15px]"></i> Mark Leave 
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="box-body border-b border-dashed border-defaultborder dark:border-defaultborder/10 p-0">
+                                    <ul class="ti-list-group list-group-flush !border-0">
+                                        <li class="ti-list-group-item border-0 text-[11px]">
+                                            <div><span class="font-medium me-2">Name :</span><span class="text-textmuted dark:text-textmuted/50">{{userData?.name}}</span></div>
+                                        </li>
+                                        <li class="ti-list-group-item border-0 text-[11px]">
+                                            <div><span class="font-medium me-2">Designation :</span><span class="text-textmuted dark:text-textmuted/50">{{userData?.designation ? userData?.designation : '--'}}</span></div>
+                                        </li>
+                                        <li class="ti-list-group-item border-0 text-[11px]">
+                                            <div><span class="font-medium me-2">Email :</span><span class="text-textmuted dark:text-textmuted/50">{{userData?.email ? userData?.email : '--'}}</span></div>
+                                        </li>
+                                        <li class="ti-list-group-item border-0 text-[11px]">
+                                            <div><span class="font-medium me-2">Phone :</span><span class="text-textmuted dark:text-textmuted/50">{{userData?.mobile ? userData?.mobile : '--'}}</span></div>
+                                        </li>
+                                        <li class="ti-list-group-item border-0 text-[11px]">
+                                            <div><span class="font-medium me-2">Reporting Manager :</span><span class="text-textmuted dark:text-textmuted/50">{{userData?.reporting_manager_name ? userData?.reporting_manager_name : '--'}}</span></div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="box mb-2">
+                                <div class="box-body py-1">
+                                    <div class="calendar mb-2">
+                                        <div class="calendar__picture flex items-center justify-between mb-1">
+                                            <p class="font-medium">{{ currentMonth }}</p>
+                                            <p class="font-medium">{{ currentYear }}</p>
+                                        </div>
+                                        <div class="dropdown-divider mb-1 border"></div>
+                                        
+                                        <div class="calendar__date">
+                                            <div *ngFor="let day of ['M', 'T', 'W', 'T', 'F', 'S', 'S',]" class="calendar__day">
+                                                {{ day }}
+                                            </div>
+                                            
+                                            <div 
+                                            *ngFor="let day of daysGrid; let i = index" 
+                                            class="calendar__number text-[11px]" 
+                                            matTooltip="{{day.status}}"
+                                            [ngClass]="{
+                                                'calendar__number--current': day.current_date === true,
+                                                'empty-cell': day === null,
+                                                'bg-success/50': day?.status === 'Present',
+                                                'bg-danger/50': day?.status === 'Absent',
+                                                'bg-primarytint1color/50': day?.status === 'Holiday',
+                                                'bg-primarytint3color/50': day?.status === 'Weekly Off',
+                                                'bg-secondary/50': day?.status === 'Leave',
+                                            }">
+                                            
+                                            <p>{{ day.date }}</p></div>
+                                        </div>
+                                        
+                                        <div class="flex items-center justify-between gap-2 mb-2 mt-3">
+                                            <div class="text-[11px]">
+                                                <i class="ri-checkbox-blank-circle-fill text-success opacity-70 leading-none align-middle"></i> Present
+                                            </div>
+                                            <div class="text-[11px]">
+                                                <i class="ri-checkbox-blank-circle-fill text-danger opacity-70 leading-none align-middle"></i> Absent
+                                            </div>
+                                            <div class="text-[11px]">
+                                                <i class="ri-checkbox-blank-circle-fill text-primarytint1color opacity-70 leading-none align-middle"></i> Holiday
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center justify-between gap-2 mb-2">
+                                            <div class="text-[11px]">
+                                                <i class="ri-checkbox-blank-circle-fill text-primarytint3color opacity-70 leading-none align-middle"></i> Weekly Off
+                                            </div>
+                                            <div class="text-[11px]">
+                                                <i class="ri-checkbox-blank-circle-fill text-secondary opacity-70 leading-none align-middle"></i> Leave
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="box">
+                                <div class="box-header justify-between pt-2 pb-1">
+                                    <div class="box-title">
+                                        Traveling Logs
+                                    </div>
+                                </div>
+                                <div class="dropdown-divider mb-1 border"></div>
+                                <div class="box-body">
+                                    <div class=" scroll-y-300">
+                                        <ul class="list-none recent-activity-list">
+                                            <ng-container *ngIf="!skLoading_timeline">
+                                                <li *ngFor="let row of timelineData?.events">
+                                                    <div>
+                                                        <div>
+                                                            <div class="font-medium text-[11px]" 
+                                                            [ngClass]="{
+                                                                'text-success' : (row.type?.toLowerCase()?.replaceAll(' ','') == 'punchin') ,
+                                                                'text-danger' : (row.type?.toLowerCase()?.replace(' ','') == 'punchout'),
+                                                                'text-warning' : (row.type?.toLowerCase()?.replace(' ','') == 'halt'),
+                                                                'text-info' : (row.type?.toLowerCase()?.replace(' ','') == 'travel'),
+                                                                'text-secondary' : (row.type?.toLowerCase()?.replace(' ','') == 'walking')
+                                                            }">{{row.type}}</div>
+                                                            <span class="activity-time text-[10px]">
+                                                                {{row.from}}
+                                                            </span>
+                                                        </div>
+                                                        <ng-container *ngIf="row.type?.toLowerCase()?.replace(' ','') == 'checkin'">
+                                                            <span class="bg-primary/10 text-primary text8px badge whitespace-nowrap">Check In {{row.from}}</span>
+                                                            <span class="bg-primary/10 text-primary text8px badge whitespace-nowrap">Check Out {{row.to}}</span>
+                                                        </ng-container>
+                                                        <span *ngIf="row.name" class="block text-textmuted dark:text-textmuted/50 text-[11px]">
+                                                            <span class="font-medium text-dark">{{row.name}}</span> 
+                                                        </span>
+                                                        
+                                                        <span *ngIf="row?.location" class="block text-textmuted dark:text-textmuted/50 text9px">
+                                                            {{row?.location}}
+                                                        </span>
+                                                        <span class="block text-textmuted dark:text-textmuted/50 text-[11px]" *ngIf="row?.tat || row?.km">
+                                                            <span *ngIf="(row?.km !== undefined && row?.type !== 'Halt' && row?.type !== 'Punch In' && row?.type !== 'Punch Out')" class="font-medium text-dark">{{row?.diff_km}} Km </span>
+                                                            <span class="badge bg-light text-textmuted dark:text-textmuted/50 m-1 border border-defaultborder dark:border-defaultborder/10 text10px" *ngIf="(row?.tat !== undefined && row?.type !== 'Punch In' && row?.type !== 'Punch Out')">{{dateService.convrtMinToHrAndMin(row?.tatMin || '-')}}</span>
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            </ng-container>
+                                            
+                                            <ng-container *ngIf="skLoading_timeline">
+                                                <div class="flex gap-2 mb-1 flex-wrap">
+                                                    <div class="flex items-center" *ngFor="let card of [].constructor(5)">
+                                                        <app-skeleton [class]="'w250'"></app-skeleton>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="badge text-[12px] wp100 flex items-center justify-center mt-3 bg-light p-2" *ngIf="timelineData?.tatSumByType?.total_diff_km">
+                                        <span class="text-primary mr-2 flex items-center"><i class="ri-map-pin-line mr-1"></i>Total Travel</span>
+                                        <span class="text-dark">{{timelineData?.tatSumByType?.total_diff_km || 'Calculating...'}} KM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="xl:col-span-9 col-span-12">
+                            <div class="box overflow-hidden border border-defaultborder dark:border-defaultborder/10">
+                                <div class="box-body py-2">
+                                    <div class="box-title mb-2 uppercase"># {{ currentMonth }} {{ currentYear }} Stats</div>
+                                    
+                                    <div class="grid grid-cols-12 gap-x-2">
+                                        <ng-container *ngIf="!skLoading_calendar">
+                                            <div class="xxl:col-span-2 md:col-span-6 col-span-12" *ngFor="let project of cardData;">
+                                                <spk-project-card
+                                                [title]="project.title"
+                                                [count]="project.count"
+                                                [percentage]="project.percentage"
+                                                [iconClass]="project.iconClass"
+                                                [badgeClass]="project.badgeClass"
+                                                [avatarClass]="project.avatarClass"
+                                                [showGraph]="false"
+                                                ></spk-project-card>
+                                            </div>
+                                        </ng-container>
+                                        
+                                        <ng-container *ngIf="skLoading_calendar">
+                                            <div class="xl:col-span-2 col-span-12" *ngFor="let card of [].constructor(6)">
+                                                <app-skeleton [class]="'wp100 h80 mb-3'"></app-skeleton>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                    
+                                    <div class="card rounded-md p-4 mb-5 bg-light">
+                                        <div class="box-title mb-2"># Attendance Detail</div>
+                                        <div class="flex gap-5 mb-1 flex-wrap text-[11px]">
+                                            <div class="flex items-center">
+                                                <div>
+                                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Created At</span>
+                                                    <span class="block font-medium">{{!attendanceDetail?.attend_date ? '--' : (attendanceDetail?.attend_date | date : 'dd MMM y, hh:mm a')}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div>
+                                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Created By</span>
+                                                    <span class="block font-medium">{{attendanceDetail?.created_name || '--'}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div>
+                                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Start Attendance</span>
+                                                    <span class="block font-medium">{{!attendanceDetail?.punch_in ? '--' : (attendanceDetail?.punch_in | date : 'hh:mm a')}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div>
+                                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Start Address</span>
+                                                    <span class="block font-medium">{{attendanceDetail?.start_address || '--'}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div>
+                                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Stop Attendance</span>
+                                                    <span class="block font-medium">{{!attendanceDetail?.punch_out ? '--' : (attendanceDetail?.punch_out | date : 'hh:mm a')}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div>
+                                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Stop Address</span>
+                                                    <span class="block font-medium">{{attendanceDetail?.stop_address || '--'}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="dropdown-divider mb-3 mt-3"></div>
+                                        
+                                        <div class="flex gap-5 mb-1 flex-wrap text-[11px]">
+                                            <div class="flex items-center gap-2" *ngFor="let key of formattedKeysFormData | keyvalue">
+                                                <div>
+                                                    <span class="text-xs text-textmuted dark:text-textmuted/50">{{ key.key }}</span>
+                                                    <span class="block font-medium">{{ key.value }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card rounded-md p-4 mb-5" *ngIf="attendanceDetail?.files?.length">
+                                        <div class="box-title mb-2"># Gallery</div>
+                                        <div class="grid grid-cols-12 gap-x-4">
+                                            <div class="xxl:col-span-2 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of attendanceDetail?.files">
+                                                <spk-product-card [apiPath]="'attendance/get-doc'" [imageData]="image" [editBtn]="false" [heading]="true" [delBtn]="false" [subHeading]="false" >
+                                                </spk-product-card>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card rounded-md p-4 mb-5">
+                                        <div class="box-title mb-2"># Timeline Summary</div>
+                                        
+                                        <div class="card-body">
+                                            <ng-container *ngIf="!skLoading_timeline">
+                                                <div class="flex items-center justify-evenly mb-4 after-seperator">
+                                                    <div class="text-center seperator">
+                                                        <p class="flex items-center mb-1 text-[12px] whitespace-nowrap text-textmuted font-medium">
+                                                            <i class="ti ti-clock-hour-9 text-textmuted me-1 text-[14px]"></i>Working Time
+                                                        </p>
+                                                        <h6 class="text-[14px]">{{dateService.convrtMinToHrAndMin(timelineData?.tatSumByType?.total_min || '-')}}</h6>
+                                                    </div>
+                                                    <div class="text-center seperator">
+                                                        <p class="flex items-center mb-1 text-[12px] whitespace-nowrap text-success font-medium">
+                                                            <i class="ti ti-users text-success me-1 text-[14px]"></i>Meeting Time <span class="badge bg-primary/10 text-primary text-[11px] font-medium ml-2">{{timelineData?.tatSumByType?.check_in_count || '--'}}</span>
+                                                        </p>
+                                                        <h6 class="text-[14px]">{{dateService.convrtMinToHrAndMin(timelineData?.tatSumByType?.check_in || '-')}}</h6>
+                                                    </div>
+                                                    <div class="text-center seperator">
+                                                        <p class="flex items-center mb-1 text-[12px] whitespace-nowrap text-info font-medium">
+                                                            <i class="ti ti-road text-info me-1 text-[14px]"></i>Travelling Time <span class="badge bg-primary/10 text-primary text-[11px] font-medium ml-2">{{timelineData?.tatSumByType?.travel_diff_km || '--'}} KM</span>
+                                                        </p>
+                                                        <h6 class="text-[14px]">{{ dateService.convrtMinToHrAndMin(timelineData?.tatSumByType?.travel) }}</h6>
+                                                    </div>
+                                                    <div class="text-center seperator">
+                                                        <p class="flex items-center mb-1 text-[12px] whitespace-nowrap text-warning font-medium">
+                                                            <i class="ti ti-hand-stop text-warning me-1 text-[14px]"></i>Halt Time
+                                                        </p>
+                                                        <h6 class="text-[14px]">{{dateService.convrtMinToHrAndMin(timelineData?.tatSumByType?.halt || '-')}}</h6>
+                                                    </div>
+                                                    <div class="text-center seperator">
+                                                        <p class="flex items-center mb-1 text-[12px] whitespace-nowrap text-secondary font-medium">
+                                                            <i class="ti ti-walk text-secondary me-1 text-[14px]"></i>Walk In Time <span class="badge bg-primary/10 text-primary text-[11px] font-medium ml-2">{{timelineData?.tatSumByType?.walking_diff_km || '--'}} Km</span>
+                                                        </p>
+                                                        <h6 class="text-[14px]">{{dateService.convrtMinToHrAndMin(timelineData?.tatSumByType?.walking || '-')}}</h6>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="grid grid-cols-12 sm:gap-x-6 gap-y-3">
+                                                    <div class="xl:col-span-12 col-span-12 relative rounded">
+                                                        <div class="timeline-container">
+                                                            <ng-container  *ngFor="let bar of bars">
+                                                                
+                                                                <div class="timeline-bar"
+                                                                [ngStyle]="{
+                                                                    left: bar.left + '%',
+                                                                    width: bar.width + '%',
+                                                                    backgroundColor: getCssColor(bar.color)
+                                                                }"
+                                                                matTooltip="{{bar.type}}"
+                                                                matTooltipPosition="above"
+                                                                >
+                                                                <!-- backgroundColor: getCssColor(bar.color) -->
+                                                                
+                                                                <span *ngIf="bar.width > 7" style="padding: 0 4px;">
+                                                                    {{ bar.startTime }} to {{ bar.endTime }}
+                                                                </span> </div>
+                                                            </ng-container>
+                                                            
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    
+                                                    <!-- <div class="xl:col-span-12 col-span-12 mt-2 flex justify-between text-[10px]">
+                                                        <span *ngFor="let hour of hours">{{ hour }}</span>
+                                                    </div> -->
+                                                </div>
+                                            </ng-container>
+                                            
+                                            <ng-container *ngIf="skLoading_timeline">
+                                                <div class="xl:col-span-12 col-span-12">
+                                                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(2)"></app-skeleton>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card rounded-md p-4 mb-5" >
+                                        <div class="box-title mb-2"># Map View</div>
+                                        <div class="card-body">
+                                            <nav class="nav nav-tabs tab-style-6 mb-3 p-0 flex bg-white dark:bg-bodybg" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                                <button type="button" class="nav-link text-start rounded-md" [ngClass]="{'active': activeTab ==='start-location'}" (click)="activeTab = 'start-location'; loadMap('start-location')">
+                                                    Start Location
+                                                </button>
+                                                <button type="button" class="nav-link text-start rounded-md" [ngClass]="{'active': activeTab ==='end-location'}" (click)="activeTab = 'end-location'; loadMap('stop-location')">
+                                                    Stop Location
+                                                </button>
+                                                <button type="button" class="nav-link text-start rounded-md" [ngClass]="{'active': activeTab ==='live-location'}" (click)="activeTab = 'live-location'; loadMap('live-location')" *ngIf="attendanceDetail?.showLiveLocation">
+                                                    Live Location
+                                                </button>
+                                                <button type="button" class="nav-link text-start rounded-md" [ngClass]="{'active': activeTab ==='route-location'}" (click)="activeTab = 'route-location';getRouteDetails();">
+                                                    Route
+                                                </button>
+                                                <button type="button" class="nav-link text-start rounded-md active" [ngClass]="{'active': activeTab ==='battery'}" (click)="activeTab = 'battery'; getBatteryDetails()">
+                                                    Battery Tracking
+                                                </button>
+                                            </nav>
+                                            
+                                            <div class="tab-content" id="profile-tabs">
+                                                
+                                                <div *ngIf="activeTab === 'start-location'">
+                                                    <app-showcode-card  [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="false" [classbody]="'pt-0'">
+                                                        <ng-container *ngIf="attendanceDetail?.start_lat && attendanceDetail?.start_lng">
+                                                            <div id="map" style="width: 100%; height: 300px;"></div>
+                                                            
+                                                            <div class="flex gap-6 mt-2 flex-wrap text-[12px]">
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Start Attendance Time</span>
+                                                                        <span class="block font-medium">{{!attendanceDetail?.punch_in ? '--' : (attendanceDetail?.punch_in | date : 'hh:mm a')}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">latitude</span>
+                                                                        <span class="block font-medium">{{attendanceDetail?.start_lat || '--'}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">longitude</span>
+                                                                        <span class="block font-medium">{{attendanceDetail?.start_lng || '--'}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Address</span>
+                                                                        <span class="block font-medium">{{attendanceDetail?.start_address || '--'}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </app-showcode-card>
+                                                </div>
+                                                
+                                                <div *ngIf="activeTab === 'end-location'">
+                                                    <app-showcode-card [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="false" [classbody]="'pt-0'">
+                                                        <ng-container *ngIf="attendanceDetail?.stop_lat && attendanceDetail?.stop_lng">
+                                                            <div id="map" style="width: 100%; height: 300px;"></div>
+                                                            
+                                                            <div class="flex gap-6 mt-2 flex-wrap text-[12px]">
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Stop Attendance Time</span>
+                                                                        <span class="block font-medium">{{!attendanceDetail?.punch_out ? '--' : (attendanceDetail?.punch_out | date : 'hh:mm a')}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">latitude</span>
+                                                                        <span class="block font-medium">{{attendanceDetail?.stop_lat || '--'}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">longitude</span>
+                                                                        <span class="block font-medium">{{attendanceDetail?.stop_lng || '--'}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Address</span>
+                                                                        <span class="block font-medium">{{attendanceDetail?.stop_address || '--'}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                        <ng-container *ngIf="!attendanceDetail?.stop_lat && !attendanceDetail?.stop_lng">
+                                                            <app-data-not-found></app-data-not-found>
+                                                        </ng-container>
+                                                    </app-showcode-card>
+                                                </div>
+                                                
+                                                <div *ngIf="activeTab === 'live-location'">
+                                                    
+                                                    <app-showcode-card [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="false" [classbody]="'pt-0'">
+                                                        <ng-container *ngIf="attendanceDetail?.last_location_lat && attendanceDetail?.last_location_lng">
+                                                            <div id="map" style="width: 100%; height: 300px;"></div>
+                                                            
+                                                            <div class="flex gap-6 mt-2 flex-wrap text-[12px]">
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Last Location Time</span>
+                                                                        <span class="block font-medium">{{!attendanceDetail?.last_attend_date ? '--' : (attendanceDetail?.last_attend_date | date : 'hh:mm a')}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">latitude</span>
+                                                                        <span class="block font-medium">{{attendanceDetail?.last_location_lat || '--'}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">longitude</span>
+                                                                        <span class="block font-medium">{{attendanceDetail?.last_location_lng || '--'}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex items-center">
+                                                                    <div>
+                                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Address</span>
+                                                                        <span class="block font-medium">{{attendanceDetail?.last_location || '--'}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                        <ng-container *ngIf="!attendanceDetail?.last_location_lat && !attendanceDetail?.last_location_lng">
+                                                            <app-data-not-found></app-data-not-found>
+                                                        </ng-container>
+                                                    </app-showcode-card>
+                                                </div>
+                                                
+                                                <div *ngIf="activeTab === 'route-location'">
+                                                    <ng-container *ngIf="!skLoading_battery && mapRoute.length">
+                                                        <div id="map" style="height: 400px; width: 100%;" ></div>
+                                                        <div class="flex items-center gap-4 mt-4">
+                                                            <input type="range" class="accent-blue-600 wp100" min="0" [max]="markers.length ? markers.length - 1 : 0" [(ngModel)]="sliderIndex" (input)="onSliderChange()" />
+                                                            
+                                                            <div class="flex gap-2">
+                                                                <button type="button" class="ti-btn ti-btn-success label-ti-btn py-2 text-[13px] w120" (click)="togglePlayPause()">
+                                                                    <i class="label-ti-btn-icon me-2 text-xl" [ngClass]="isPlaying ? 'ri-pause-circle-fill' : 'ri-play-circle-fill'"></i> {{ isPlaying ? 'Pause' : 'Play' }}
+                                                                </button>
+                                                                
+                                                                <button type="button" class="ti-btn ti-btn-danger label-ti-btn py-2 text-[13px] w120" (click)="resetRoute()">
+                                                                    <i class="ri-refresh-fill label-ti-btn-icon me-2 text-xl"></i> Reset 
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="flex gap-6 flex-wrap text-[12px]">
+                                                            <div class="flex items-center">
+                                                                <div>
+                                                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Total Distance</span>
+                                                                    <span class="block font-medium">{{cumulativeDistance.toFixed(2) || '--'}} Km</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex items-center">
+                                                                <div>
+                                                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Time</span>
+                                                                    <span class="block font-medium">{{ markersTemp?.[sliderIndex]?.created_at | date : 'hh:mm a' }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </ng-container>
+                                                    
+                                                    <ng-container *ngIf="skLoading_battery">
+                                                        <div class="xl:col-span-12 col-span-12" *ngFor="let card of [].constructor(8)">
+                                                            <app-skeleton [class]="'wp100 h40 mb-3'"></app-skeleton>
+                                                        </div>
+                                                    </ng-container>
+                                                    
+                                                    <ng-container *ngIf="!mapRoute.length">
+                                                        <app-data-not-found></app-data-not-found>
+                                                    </ng-container>
+                                                </div>
+                                                
+                                                <div *ngIf="activeTab === 'battery'">
+                                                    <ng-container *ngIf="!skLoading_battery && batteryGraph.length">
+                                                        <spk-apexcharts [chartOptions]="chartOptions"></spk-apexcharts>                                                        
+                                                    </ng-container>
+                                                    
+                                                    <ng-container *ngIf="skLoading_battery">
+                                                        <div class="xl:col-span-12 col-span-12" *ngFor="let card of [].constructor(6)">
+                                                            <app-skeleton [class]="'wp100 h40 mb-3'"></app-skeleton>
+                                                        </div>
+                                                    </ng-container>
+                                                    
+                                                    <ng-container *ngIf="!skLoading_battery && !batteryGraph.length">
+                                                        <app-data-not-found></app-data-not-found>
+                                                    </ng-container>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End:: row-1 -->
+    
+    <!-- Sk Loading Start -->
+    <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+        <div class="xl:col-span-3 col-span-12">
+            <app-showcode-card>
+                <div class="box-body border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                    <div class="text-center">
+                        <span class="avatar avatar-xxl avatar-rounded  mb-3">
+                            <app-skeleton [class]="'w90 h90 radius'"></app-skeleton>
+                        </span>
+                        <h5 class="font-semibold mb-1">
+                            <app-skeleton [class]="'wp100 h10 mt15'"></app-skeleton>
+                        </h5>
+                        <span class="block font-medium text-textmuted dark:text-textmuted/50 mb-2">
+                            <app-skeleton [class]="'wp70 h10 mt10'"></app-skeleton>
+                        </span>
+                    </div>
+                </div>
+                <div class="flex mb-0 flex-wrap gap-4 p-4 border-b border-dashed border-defaultborder dark:border-defaultborder/10"> 
+                    <div class="flex items-center gap-4 me-2 flex-wrap" *ngFor="let row of [].constructor(3)">
+                        <div>
+                            <span class="avatar avatar-md">
+                                <app-skeleton [class]="'w50 h50'"></app-skeleton>
+                            </span>
+                        </div>
+                        <div>
+                            <div>                                
+                                <app-skeleton [class]="'w150 h10'"></app-skeleton>
+                            </div>
+                            <div>
+                                <app-skeleton [class]="'w100 h10 mt5'"></app-skeleton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </app-showcode-card>
+            
+            <app-showcode-card [titleView]="false"  [view]="false">
+                <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(5)"></app-skeleton>
+            </app-showcode-card>
+        </div>
+        
+        <div class="xl:col-span-9 col-span-12">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-12 col-span-12">
+                    <app-showcode-card [titleView]="false"  [view]="false">
+                        <div >
+                            <!-- *ngIf="skLoading" -->
+                            <div class="flex gap-2 mb-1 flex-wrap">
+                                <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                    <app-skeleton [class]="'w180'"></app-skeleton>
+                                </div>
+                            </div>
+                        </div>
+                    </app-showcode-card>
+                </div>
+                
+                <div class="xl:col-span-6 col-span-12">
+                    <app-showcode-card [titleView]="false"  [view]="false">
+                        <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(4)"></app-skeleton>
+                    </app-showcode-card>
+                </div>
+                <div class="xl:col-span-6 col-span-12">
+                    <app-showcode-card [titleView]="false"  [view]="false">
+                        <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(4)"></app-skeleton>
+                    </app-showcode-card>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Sk Loading End -->

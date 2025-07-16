@@ -1,0 +1,66 @@
+<app-page-header 
+[title]="'Master'" 
+[title1]="'Point Category'"
+[activeitem]=" 'Point Category List'">
+</app-page-header>
+
+<!-- (buttonClick1)="getListingModuleData()" -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Point Category List'" [listLength]="pagination.total"   [listLength]="2" [refreshLabel]="'Refresh'" [btnShow]="true" [btnShow1]="true" [btnShow2]="accessRight?.addRight" [addBtnLabel]="'Add Point Category'" [logsLabel]="'Logs'"  (logBtn)="openMainLogModal('')"  (onRefresh)="onRefresh()"  (button1)="goToPage()"></app-page-sub-header>
+            
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <ng-container *ngIf="!skLoading">
+                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="true" [showAction]="true" [columns]="tableHeader" (sortChanged)="onSortChanged($event)" (selectionChange)="handleSelectionChange($event)">
+                            <tr class="user-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listData; let i = index;">
+                                <td class="w50 !text-center">{{ i + 1 }}</td>
+                                <td class="w100">{{ row.created_at ? (row.created_at | date : 'dd MMM yyyy hh:mm a') : '' }}</td>
+                                <td class="w130">{{ row.created_name ? row.created_name : '' }}</td>
+                                <td>{{ row.point_category_name ? row.point_category_name : '' }}</td>
+                                <ng-container *ngFor="let item of userSubTypes">
+                                    <td class="w80 text-right">
+                                        <ng-container *ngFor="let subRow of row.point">
+                                            <ng-container *ngIf="item.label === subRow.customer_type_name">
+                                                <strong>
+                                                    {{ (item.label === subRow.customer_type_name) ? (subRow.point_value + 'PT'):'0' }}
+                                                </strong>
+                                            </ng-container>
+                                        </ng-container>
+                                    </td>
+                                </ng-container>
+                                <td class="w80">
+                                    <span class="badge">
+                                        <app-toggle [checked]="row.isChecked" (checkedChange)="onToggleChange($event, row._id, row.status)"></app-toggle>
+                                    </span>
+                                </td>
+                                <td class="!text-center relative">
+                                    <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)"> </app-icon-button>
+                                    
+                                    <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="goToEditPage(row._id)"> </app-icon-button>
+                                </td>
+                            </tr>
+                        </spk-reusable-tables>
+                    </ng-container>
+                    
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                            <td class="w120" *ngFor="let row of [].constructor(11)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                    
+                    <ng-container *ngIf="!listData.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listData.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

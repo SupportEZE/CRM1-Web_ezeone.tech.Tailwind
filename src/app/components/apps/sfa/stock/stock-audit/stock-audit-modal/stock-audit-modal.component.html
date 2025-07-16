@@ -1,0 +1,136 @@
+
+<div class="mat-dialoge" *ngIf="modalData.formType === 'add'">
+    <app-modal-header [title]="'Add Stock Audit'" [closeBtn]="true"  (close)="close()"></app-modal-header>
+    
+    <form [formGroup]="stockAuditForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-4 col-span-12 mb-3">
+                    <spk-ng-select
+                    formControlName="customer_type_id"
+                    label="Customer Category"
+                    [fieldReq]="true"
+                    [options]="CommonApiService.customerCategorySubType"
+                    (selectedChange)="onCustomerCategoryChange($event);"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-6 col-span-12 mb-3">
+                    <spk-ng-select
+                    formControlName="customer_id"
+                    label="Customer Category"
+                    [fieldReq]="true"
+                    [options]="CommonApiService.customerData"
+                    [search]="true" 
+                    (searchChanged)="onSearch($event , 'customer')" 
+                    (selectedChange)="onCustomerChange($event);"></spk-ng-select>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-12 sm:gap-x-6" [formGroup]="productForm">
+                <div class="xl:col-span-6 col-span-12 mb-3">
+                    <spk-ng-select  
+                    formControlName="product_id"  
+                    label="Product" 
+                    [fieldReq]="false" 
+                    [options]="CommonApiService.productList" 
+                    [search]="true" 
+                    (searchChanged)="onSearch($event , 'product')" 
+                    (selectedChange)="onProductChange($event);"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-3 col-span-12 mb-3">
+                    <spk-input label="Stock" [fieldReq]="false" formControlName="stock" class="remove-default-class" type="number"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-2 col-span-12 mb-3">
+                    <spk-ng-select  formControlName="uom"  label="UOM" [fieldReq]="false" [options]="uomList"></spk-ng-select>
+                </div>
+                
+                <div class="flex justify-start mt-6">
+                    <button type="button" aria-label="button" class="ti-btn ti-btn-icon ti-btn-primary btn-wave" (click)="addToList()">
+                        <i class="ri-add-line"></i>
+                    </button>
+                </div>
+                
+                <div class="xl:col-span-12 col-span-12" *ngIf="productData.length > 0">
+                    <div class="table-responsive mt-4 table-bordered-default">
+                        <spk-reusable-tables [columns]="headerColumn" tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showAction]="true">
+                            <tr *ngFor="let row of productData; let i = index;">
+                                <td class="w60 text-center">{{i+1}}</td>
+                                <td>{{row.product_name}}</td>
+                                <td class="text-center">{{row.stock}}</td>
+                                <td class="text-center">{{row.uom}}</td>
+                                <td class="w60 relative">
+                                    <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                        <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="deleteRow(i)">
+                                        </app-icon-button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </spk-reusable-tables>
+                    </div>
+                </div>
+                
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions align="end">
+            <div class="flex items-center gap-2">
+                <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [iconClass]="api.disabled ? 'ri-loader-2-fill animate-spin' : 'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+            </div>
+        </mat-dialog-actions>
+    </form>
+</div>
+
+<div class="mat-dialoge" *ngIf="modalData.formType === 'view'">
+    <app-modal-header [title]="'Product Detail'" [closeBtn]="true"  (close)="close()"></app-modal-header>
+    <mat-dialog-content class="mat-typography">
+        <div class="table-responsive mt-4 table-bordered-default">
+            <spk-reusable-tables [columns]="headerColumn" tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [showS_No]="true">
+                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                    <td>&nbsp;</td>
+                    <td>
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text" [(ngModel)]="filter.product_name" placeholder="Search..." (keyup.enter)="onStaticSearch()">
+                                @if (filter.product_name) {
+                                    <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.product_name=''; onStaticSearch()">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr *ngFor="let row of filteredData; let i = index;">
+                    <td class="w60 text-center">{{i+1}}</td>
+                    <td>{{row.product_name || '---'}}</td>
+                    <td class="text-center">{{row.uom || '--'}}</td>
+                    <td class="text-center">{{row.stock || '--'}}</td>
+                </tr>
+            </spk-reusable-tables>
+        </div>
+    </mat-dialog-content>
+    
+    <!-- <app-showcode-card [title]="''" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="false"  [actionIcons]="false" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'" [iconName]="'ri-add-line'">
+        <ul class="ti-list-group list-group-flush border-0 scroll-y-300">
+            <li class="border-b-2 pb-2 pt-2" *ngFor="let row of modalData.formData">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <span class="avatar avatar-sm bg-primarytint1color">
+                            {{nameUtils.getInitials(row.product_name)}} 
+                        </span>
+                        <div class="ms-2 font-medium">
+                            {{row.product_name || '--'}} ({{row.uom || '--'}})
+                        </div>
+                    </div>
+                    <span class="badge bg-light bg-primary/10 text-primary float-end ms-auto"> {{row.stock || '--'}}</span>
+                </div>
+            </li>
+        </ul>
+    </app-showcode-card> -->
+    
+</div>

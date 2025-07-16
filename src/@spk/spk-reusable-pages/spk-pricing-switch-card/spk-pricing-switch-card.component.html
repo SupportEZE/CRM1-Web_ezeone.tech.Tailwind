@@ -1,0 +1,49 @@
+
+    <div class="card custom-card pricing-card" [ngClass]="{'pricing-card-main': isRecommended}">
+      @if (isRecommended) {
+      <span  class="pricetag">Recommended</span>
+      }
+      <div class="box-body p-4 bg-white rounded">
+        <div class="text-center" [ngClass]="{'bg-primary-transparent': isRecommended}" class="text-center bg-light p-3 rounded">
+          <h4 class="fw-medium mb-1">{{ title }}</h4>
+          <span class="mb-1 text-muted d-block">{{ description }}</span>
+          <h2 class="mb-0 fw-bold d-block text-primary">{{ price }}/<span class="fs-12 text-default fw-medium ms-1">{{ perMonth }}</span></h2>
+        </div>
+        <hr class="border-top my-4">
+        <ul class="list-unstyled pricing-body">
+          @for (feature of features; track $index) {
+          <li>
+            <div class="d-flex align-items-center">
+              <span class="avatar avatar-xs svg-success">
+                <i class="ti ti-check text-success fs-18"></i>
+              </span>
+              <span class="ms-2 my-auto flex-fill">{{ feature.name }}</span>
+              @if (feature.badge) {
+              <span class="badge" [ngClass]="feature.badgeClass"><i class="ri-flashlight-fill text-warning me-1"></i>{{ feature.badge }}</span>
+              }
+              @if (feature.trialPeriod) {
+              <span class="text-muted fs-12 fw-medium">{{ feature.trialPeriod }}</span>
+              }
+            </div>
+          </li>
+        }
+        </ul>
+        <hr class="border-top my-3">
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="fs-13 fw-medium">Vat Tax</span>
+            <span class="fs-16 fw-medium">{{ vatTax }}</span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="fs-13 fw-medium">Total</span>
+            <span class="fs-4 fw-medium text-primary">{{ total }}</span>
+          </div>
+        </div>
+        <hr class="border-top my-3">
+        <button type="button" class="btn btn-lg" [ngClass]="buttonClass + ' d-grid w-100 btn-wave'">
+          <span class="ms-4 me-4">{{ buttonText }}</span>
+        </button>
+      </div>
+    </div>
+
+  

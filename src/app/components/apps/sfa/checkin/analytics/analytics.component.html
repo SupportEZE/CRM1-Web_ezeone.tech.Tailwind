@@ -1,0 +1,14 @@
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-4 xl:col-span-4 col-span-6" *ngFor="let card of cardData">
+        <spk-listview-card [card]="card"></spk-listview-card>
+    </div>
+</div>
+
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-12 xl:col-span-12 col-span-12" *ngIf="chartOptions1">
+        <app-showcode-card [title]="'Last 30 days graph visit count'" [class]="'box-title font-medium text-[15px] block'"  [titleView]="true"  [actionIcons]="false" [classbody]="'pt-0'" 
+        [iconName]="'ri-pencil-line'">
+        <spk-apexcharts [chartOptions]="chartOptions1"></spk-apexcharts>
+    </app-showcode-card>
+</div>
+</div>

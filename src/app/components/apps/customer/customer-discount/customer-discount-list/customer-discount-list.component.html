@@ -1,0 +1,133 @@
+<div class="box py-3 px-4">
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+        
+        <ng-container *ngIf="skLoading">
+            <div class="flex items-center gap-3">
+                <app-skeleton [class]="'w100 h30 bg-skeleton'" *ngFor="let row of [].constructor(2)"></app-skeleton>
+            </div>
+        </ng-container>
+        
+        <ng-container *ngIf="!skLoading">
+            <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+                <app-listing-tab *ngFor="let tab of mainTabs"
+                [tabs]="[{ name: tab.label, label: tab.label, icon: tab.icon}]"
+                [activeTab]="activeTab"
+                [countShow]="false"
+                (tabChange)="onTabChange($event.tab)"></app-listing-tab>
+            </nav>
+        </ng-container>
+    </nav>
+    <!-- Start::row-1 -->
+    <div class="row">
+        <div class="col-xl-12">
+            <app-page-sub-header [pageTitle]="'Customer Discount'" [listLength]="pagination.total" [btnShow]="true" [refreshLabel]="'Refresh'" [class]="'p-0 pt-3'"  (onRefresh)="onRefresh()">
+            </app-page-sub-header>
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <ng-container *ngIf="activeTab === 'Product'">
+                    
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [showAction]="true" [columns]="PageHeaders">
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                <td>&nbsp;</td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.product_name" placeholder="Search..." (keyup.enter)="getProductDisList()">
+                                            @if (filter.product_name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.product_name=''; getProductDisList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of productListing; let i = index;">
+                                <td class="!text-center">{{i + 1 }}</td>
+                                <td>{{ row.product_name ? row.product_name : '--' }}</td>
+                                <td>
+                                    <span class="badge bg-light text-textmuted dark:text-textmuted/50 m-1 border border-defaultborder dark:border-defaultborder/10 flex-wrap" [innerHTML]="getDiscountSumHtml(row.form_data)"></span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-textmuted dark:text-textmuted/50 m-1 border border-defaultborder dark:border-defaultborder/10 flex-wrap" [innerHTML]="getDiscountSumHtml(row.customer_form_data)"></span>
+                                </td>
+                                <td class="!text-center">
+                                    <app-icon-button [icon]="'ri-edit-line'" matTooltip="Update Discount" [buttonClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="update(row)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+                                    <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)"> </app-icon-button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                <td *ngFor="let row of [].constructor(5)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!productListing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </ng-container>
+                
+                <ng-container *ngIf="activeTab === 'Category'">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [showAction]="true" [columns]="PageHeaders1">
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                <td>&nbsp;</td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.category_name" placeholder="Search..." (keyup.enter)="getCategoryDisList()">
+                                            @if (filter.category_name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.category_name=''; getCategoryDisList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of categoryListing; let i = index;">
+                                <td class="!text-center">{{i + 1 }}</td>
+                                <td>{{ row.category_name ? row.category_name : '--' }}</td>
+                                <td>
+                                    <span class="badge bg-light text-textmuted dark:text-textmuted/50 m-1 border border-defaultborder dark:border-defaultborder/10 flex-wrap" [innerHTML]="getDiscountSumHtml(row.form_data)"></span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-textmuted dark:text-textmuted/50 m-1 border border-defaultborder dark:border-defaultborder/10 flex-wrap" [innerHTML]="getDiscountSumHtml(row.customer_form_data)"></span>
+                                </td>
+                                <td class="!text-center">
+                                    <app-icon-button [icon]="'ri-edit-line'" matTooltip="Update Discount" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'"  (clickEvent)="update(row)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+                                    <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)"> </app-icon-button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                <td *ngFor="let row of [].constructor(5)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!categoryListing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--End::row-1 -->

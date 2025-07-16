@@ -1,0 +1,206 @@
+<app-page-header [title]="'WMS'" [title1]="['Dispatch']" [activeitem]="removeSpace.formatText(pageType)"></app-page-header>
+
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box py-4 px-4">
+            <app-page-sub-header [pageTitle]="removeSpace.formatText(pageType) +' List'"
+            [listLength]="pagination.total ? pagination.total : 0" [btnShow]="true" [refreshLabel]="'Refresh'"
+            [class]="'p-0 pt-0'" (onRefresh)="onRefresh()"></app-page-sub-header>
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables
+                tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap"
+                [tableHead]="'border-b'" [showS_No]="true" [columns]="getColumn()">
+                <ng-container *ngIf="!skLoading">
+                    <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                        <td class="!text-center">&nbsp;</td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput [matDatepicker]="picker" [(ngModel)]="filter.created_at"
+                                    name="created_at" placeholder="Date Created" (ngModelChange)="getList();">
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.billing_company" placeholder="Search..." (keyup.enter)="getList();">
+                                    @if (filter.billing_company) {
+                                        <button matSuffix mat-icon-button aria-label="Clear"
+                                        (click)="filter.billing_company='';getList();">
+                                        <mat-icon>close</mat-icon></button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        
+                        <td class="!text-center">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.gatepass_number"
+                                    placeholder="Search..." (keyup.enter)="getList();">
+                                    @if (filter.gatepass_number) {
+                                        <button matSuffix mat-icon-button aria-label="Clear"
+                                        (click)="filter.gatepass_number='';getList();">
+                                        <mat-icon>close</mat-icon></button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td class="!text-center">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.invoice_number" placeholder="Search..."
+                                    (keyup.enter)="getList();">
+                                    @if (filter.invoice_number) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.invoice_number='';getList();">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td class="!text-center">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.e_way_number" placeholder="Search..."
+                                    (keyup.enter)="getList();">
+                                    @if (filter.e_way_number) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.e_way_number='';getList();">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td class="!text-center">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.driver_name" placeholder="Search..."
+                                    (keyup.enter)="getList();">
+                                    @if (filter.driver_name) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.driver_name='';getList();">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td class="!text-center">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.mobile" placeholder="Search..."
+                                    (keyup.enter)="getList();">
+                                    @if (filter.mobile) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.mobile='';getList();">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td class="!text-center">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.vehicle_number" placeholder="Search..." (keyup.enter)="getList();">
+                                    @if (filter.vehicle_number) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.vehicle_number='';getList();">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td class="!text-center">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.transportation_mode" placeholder="Search..."
+                                    (keyup.enter)="getList();">
+                                    @if (filter.transportation_mode) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.transportation_mode='';getList();">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td class="!text-center">
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.bilty_number" placeholder="Search..."
+                                    (keyup.enter)="getList();">
+                                    @if (filter.bilty_number) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.bilty_number='';getList();">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td class="!text-center">&nbsp;</td>
+                    </tr>
+                    <tr *ngFor="let row of listing; let i = index;"
+                    class="invoice-list border-b !border-defaultborder dark:!border-defaultborder/10"
+                    [class.bg-gray-400]="isHighlighted(row._id)">
+                    <td>{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                    <td>{{row.created_at ? (row.created_at | date : 'dd MMM yyyy hh:mm a') : '' }}</td>
+                    <td>{{row.created_name ? (row.created_name | titlecase) : '' }}</td>
+                    <td>
+                        <a class="font-medium text-primary" (click)="goToDetail(row._id)">
+                            {{row.gatepass_number ? row.gatepass_number : '---'}}
+                        </a>
+                    </td>
+                    <td>{{row.invoice_number ? row.invoice_number : '---'}}</td>
+                    <td class="text-right">
+                        {{row.e_way_number ? (row.e_way_number) : '---'}}
+                    </td>
+                    <td>{{row.driver_name ? (row.driver_name | titlecase) : '---'}}</td>
+                    <td>{{row.mobile ? row.mobile : '---'}}</td>
+                    <td>{{row.vehicle_number ? row.vehicle_number : '---'}}</td>
+                    <td>{{row.transportation_mode ? row.transportation_mode : '---'}}</td>
+                    <td>{{row.bilty_number ? row.bilty_number : '---'}}</td>
+                    <td>
+                        <app-icon-button [icon]="'ri-eye-line'"
+                        [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'"
+                        matTooltip="View Detail" (clickEvent)="goToDetail(row._id)"></app-icon-button>
+                        <app-icon-button [icon]="'ri-edit-line'"
+                        [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-success waves-effect waves-light'"
+                        matTooltip="Edit" (clickEvent)="openDialog(pageType=== 'gatepass_genrated' ? 'gatepass_edit' : 'bilty_update', row._id)"></app-icon-button>
+                        <!-- () goToDetail(row._id, pageType=== 'gatepass_genrated' ?'gatepass_edit' : 'invoice_number_edit' ) -->
+                    </td>
+                </tr>
+            </ng-container>
+            
+            
+            <!-- //--skeleton--// -->
+            <ng-container *ngIf="skLoading">
+                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10"
+                *ngFor="let row of [].constructor(10)">
+                <td *ngFor="let row of [].constructor(12)">
+                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                </td>
+            </tr>
+        </ng-container>
+        <!-- //--skeleton--// -->
+        
+    </spk-reusable-tables>
+    
+    
+    <ng-container *ngIf="listing.length === 0 && !skLoading">
+        <app-data-not-found></app-data-not-found>
+    </ng-container>
+    <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages"
+    [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev"
+    [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')"
+    (nextButtonClick)="changeToPagination('Next')"
+    (pageChange)="changeToPage($event)"></app-pagination-footer>
+</div>
+</div>
+</div>
+</div>
+<!--End::row-1 -->

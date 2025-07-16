@@ -1,0 +1,22 @@
+<div class="box overflow-hidden">
+    <div class="box-body">
+        <div class="mb-5 flex items-start justify-between">
+            <span class="avatar avatar-sm" [ngClass]="avatarClass" >
+                <i [class]="iconClass"></i>
+            </span>
+            <span class="badge leading-none bg-{{badgeClass}}/10 text-dark text-xl font-medium">{{count}}</span>
+            <!-- <span class="badge leading-none bg-{{badgeClass}}/10 text-{{badgeClass}}">{{percentage}}</span> -->
+        </div>
+        <div class="flex align-items-end justify-between flex-wrap">
+            <div class="flex-shrink-0 leading-none">
+                <div class="text-textmuted dark:text-textmuted/50">{{title}}</div>
+                <!-- <h4 class="mb-0 text-xl font-medium">{{count}}</h4> -->
+            </div>
+            @if(showGraph){
+                <div  [id]="chartId" class="flex-shrink-0 text-end ms-auto">
+                    <spk-apexcharts [chartOptions]="chartOptions"></spk-apexcharts>
+                </div>
+            }
+        </div>
+    </div>
+</div>

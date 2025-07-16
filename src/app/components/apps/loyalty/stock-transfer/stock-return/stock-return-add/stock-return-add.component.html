@@ -1,0 +1,149 @@
+<app-page-header [title]="'IRP'" [title1]="['Stock Return']" [activeitem]="detailData['return-type'] === 'company' ? 'Customer To Company Stock Return' :'Customer To Customer Stock Return'" [btnShow1]="false"></app-page-header>
+
+<div class="box" *ngIf="skLoading">
+    <div class="p-4">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xl:col-span-3 col-span-12 "
+            *ngFor="let card of [].constructor(10)">
+            <app-skeleton></app-skeleton>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="xl:col-span-12 col-span-12" *ngIf="!skLoading">
+    <form [formGroup]="stockForm" (ngSubmit)="onSubmit()">
+        <div class="box">
+            <div class="p-4">
+                <div class="grid grid-cols-12 sm:gap-x-4 sm:gap-y-4">
+                    <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                        <spk-ng-select
+                        formControlName="sender_customer_type_id"
+                        [label]="detailData['return-type'] === 'customer' ? 'Sender ' : ''   +   'Customer Category'"
+                        [fieldReq]="true"
+                        [options]="commonApi.customerCategorySubType"
+                        [multiple]="false"
+                        (selectedChange)="getSenderCustomer($event); findName($event, 'sender_customer_type_id');"
+                        ></spk-ng-select>
+                    </div>
+                    
+                    <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                        <spk-ng-select
+                        formControlName="sender_customer_id"
+                        [label]="detailData['return-type'] === 'customer' ? 'Sender ' : ''   +   'Customer'"
+                        [fieldReq]="true"
+                        [search]="true"
+                        (searchChanged)="onSearch($event , 'sender_customer')"
+                        [options]="commonApi.customerData"
+                        [multiple]="false"
+                        (selectedChange)="findName($event, 'sender_customer_id');"
+                        ></spk-ng-select>
+                    </div>
+                    
+                    <ng-container *ngIf="detailData['return-type'] != 'company'">
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-ng-select
+                            formControlName="receiver_customer_type_id"
+                            label="Receiver Customer Category"
+                            [fieldReq]="true"
+                            [options]="customerCategorySubType"
+                            (selectedChange)="getReceiverCustomer($event);findName($event, 'receiver_customer_type_id');"
+                            [multiple]="false"
+                            ></spk-ng-select>
+                        </div>
+                        
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-ng-select
+                            formControlName="receiver_customer_id"
+                            label="Receiver Customer"
+                            [fieldReq]="true"
+                            [search]="true"
+                            (searchChanged)="onSearch($event , 'receiver_customer')"
+                            [options]="customerData"
+                            [multiple]="false"
+                            (selectedChange)="findName($event, 'receiver_customer_id');"
+                            ></spk-ng-select>
+                        </div>
+                    </ng-container>
+                    
+                    <div class="col-span-12  xl:col-span-4 xxl:col-span-3">
+                        <spk-flatpickr 
+                        placeholder="Bill Date"
+                        label="Bill Date"
+                        [fieldReq]="true" 
+                        [max]="today"
+                        class="form-control custom-datepickr"
+                        formControlName="bill_date"
+                        ></spk-flatpickr>
+                    </div>
+                    
+                    <div class="col-span-12  xl:col-span-4 xxl:col-span-3">
+                        <spk-input label="Bill/Slip Number"  formControlName="bill_number"
+                        [fieldReq]="true" class="remove-default-class" type="text"></spk-input>
+                    </div>
+                    
+                    <div class="col-span-12  xl:col-span-4 xxl:col-span-3">
+                        <spk-input label="Bill Amount"  formControlName="bill_amount"
+                        [fieldReq]="true" class="remove-default-class" type="number"></spk-input>
+                    </div>
+                    
+                    <div class="col-span-12  xl:col-span-4 xxl:col-span-3">
+                        <label class="form-label mb-0">Upload Bill Copy<span class="text-red-500">*</span></label>
+                        <file-pond 
+                        class="filepond basic-filepond" 
+                        [options]="getPondOptions('image')" 
+                        [files]="pondImages" 
+                        (onremovefile)="onFileRemove($event, 'image')"
+                        (onprocessfile)="onFileProcessed($event, 'image')"
+                        ></file-pond>
+                    </div>
+                </div> 
+                <div class="grid grid-cols-12 sm:gap-x-6">
+                    <div class="xl:col-span-6 col-span-12">
+                        <div class="grid grid-cols-12 sm:gap-x-3">
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                                <spk-ng-select formControlName="product_id" label="Select Product" [search]="true"
+                                (searchChanged)="onSearch($event , 'product')" [fieldReq]="selectedItems.length === 0" [options]="product"
+                                [multiple]="false"></spk-ng-select>
+                            </div>
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                                <div class="flex  gap-4 justify-center items-end ">
+                                    <spk-input label="QTY"  formControlName="qty"
+                                    [fieldReq]="selectedItems.length === 0" class="remove-default-class" type="number"></spk-input>
+                                    
+                                    <button type="button" aria-label="button" class="ti-btn m-0 ti-btn-icon ti-btn-primary btn-wave" (click)="addToList()">
+                                        <i class="ri-add-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gift List Table -->
+                    <div class="xl:col-span-6 col-span-12" *ngIf="selectedItems.length > 0">
+                        <div class="table-responsive mt-4 table-bordered-default">
+                            <spk-reusable-tables [columns]="headerColumn" tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [showCheckbox]="false">
+                                <tr *ngFor="let row of selectedItems; let i = index;">
+                                    <td class="w60 text-center">{{i+1}}</td>
+                                    <td>{{row.label ? row.label : '---'}}</td>
+                                    <td class="text-center">{{row.qty ? row.qty : '0'}}</td>
+                                    <td class="w60 relative">
+                                        <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                            <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="delete(i)">
+                                            </app-icon-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </spk-reusable-tables>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-end mt-10 gap-2">                     
+                    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [iconClass]="api.disabled ? 'ri-loader-2-fill animate-spin' : 'ri-save-line'"  
+                    [loadingIconClass]="'ri-loader-2-fill'" [disabled]="api.disabled"></app-button>
+                </div>    
+            </div>
+        </div>
+    </form>
+</div>

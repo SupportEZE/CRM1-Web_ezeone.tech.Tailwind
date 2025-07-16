@@ -1,0 +1,23 @@
+
+<label class="form-label">{{ label }} <span class="text-red-500" *ngIf="fieldReq">*</span></label>
+<mat-form-field class="mat-custom-field" [ngClass]="{'remove-space': label == ''}">
+  <mat-select [formControl]="control" [multiple]="multiple" placeholder="Select an option" 
+    (selectionChange)="onSelectionChange($event.value)" [disabled]="disabled">
+    <mat-option *ngIf="search">
+      <ngx-mat-select-search 
+      [formControl]="searchControl"  
+      placeholderLabel="Search..."  
+      [noEntriesFoundLabel]="'No Data Found'">
+      </ngx-mat-select-search>
+    </mat-option>
+
+    <mat-option *ngFor="let option of options" [value]="option.value">
+      {{ option.label }}
+    </mat-option>
+  </mat-select>
+  <mat-hint align="end" *ngIf="control.invalid && (control.touched || control.dirty)" class="mt-1 text-xs text-red-500 text-right">
+    <ng-container *ngIf="control.hasError('required')">
+      {{ label }} is required
+    </ng-container>
+  </mat-hint>
+</mat-form-field>

@@ -1,0 +1,538 @@
+<app-page-header [title]="'IRP'" [title1]="['Redeem Request']" [activeitem]="
+redeemType === 'Cash' ? 'Bank Transfer' :(redeemType| titlecase) + ' Redeem Request'" *ngIf="!detail_page_active"></app-page-header>
+<div class="box py-3 px-4">
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+        <app-listing-tab *ngFor="let tab of mainTabs"
+        [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon, count: tab.count}]"
+        [activeTab]="activeTab"
+        [countShow]="true"
+        (tabChange)="onTabChange($event.tab)">
+    </app-listing-tab>
+</nav>
+<div class="row">
+    <div class="col-xl-12">
+        <app-page-sub-header [pageTitle]="redeemType === 'Cash' ? 'Bank Transfer' :(redeemType| titlecase) + ' Redeem Request'" [class]="'p-0 pt-3'"  [listLength]="pagination.total ? pagination.total : 0" [refreshLabel]="'Refresh'" [btnShow]="true"  (onRefresh)="onRefresh()"></app-page-sub-header>
+        
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <spk-reusable-tables
+            tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" 
+            [columns]="getColumns()"
+            [showCheckbox]="false">
+            <ng-container *ngIf="!skLoading">
+                <tr class="border-b ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap">
+                    <td class="w50">&nbsp;</td>
+                    <td class="w120">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="getList()">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>  
+                        </div>
+                    </td>
+                    <td class="w160">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text"
+                                [(ngModel)]="filter.req_id"
+                                placeholder="Search..."
+                                (keyup.enter)="getList()">
+                                @if (filter.req_id) {
+                                    <button matSuffix mat-icon-button
+                                    aria-label="Clear"
+                                    (click)="filter.req_id='';getList()">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            }
+                        </mat-form-field>
+                    </div>
+                </td>
+                <td class="w150">
+                    <div class="table-search-filters">
+                        <mat-form-field class="table-input">
+                            <input matInput type="text"
+                            [(ngModel)]="filter.customer_name"
+                            placeholder="Search..."
+                            (keyup.enter)="getList()">
+                            @if (filter.customer_name) {
+                                <button matSuffix mat-icon-button
+                                aria-label="Clear"
+                                (click)="filter.customer_name='';getList()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        }
+                    </mat-form-field>
+                </div>
+            </td>
+            <td class="w160">
+                <div class="table-search-filters">
+                    <mat-form-field class="table-input">
+                        <input matInput type="text"
+                        [(ngModel)]="filter.customer_type_name"
+                        placeholder="Search..."
+                        (keyup.enter)="getList()">
+                        @if (filter.customer_type_name) {
+                            <button matSuffix mat-icon-button
+                            aria-label="Clear"
+                            (click)="filter.customer_type_name='';getList()">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    }
+                </mat-form-field>
+            </div>
+        </td>
+        <td class="w160">
+            <div class="table-search-filters">
+                <mat-form-field class="table-input">
+                    <input matInput type="text"
+                    [(ngModel)]="filter.customer_mobile"
+                    placeholder="Search..."
+                    (keyup.enter)="getList()">
+                    @if (filter.customer_mobile) {
+                        <button matSuffix mat-icon-button
+                        aria-label="Clear"
+                        (click)="filter.customer_mobile='';getList()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                }
+            </mat-form-field>
+        </div>
+    </td>
+    <td class="w160">
+        
+        <div class="table-search-filters">
+            <mat-form-field class="table-input">
+                <input matInput type="text"
+                [(ngModel)]="filter.state"
+                placeholder="Search..."
+                (keyup.enter)="getList()">
+                @if (filter.state) {
+                    <button matSuffix mat-icon-button
+                    aria-label="Clear"
+                    (click)="filter.state='';getList()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+</td>
+<td class="w160">
+    
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.district"
+            placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.district) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.district='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"  [(ngModel)]="filter.title"   placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.title) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.title='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<ng-container *ngIf="redeemType === 'Cash'">
+    <td class="w160">
+        <div class="table-search-filters">
+            <mat-form-field class="table-input">
+                <input matInput type="text"
+                [(ngModel)]="filter.beneficiary_name"
+                placeholder="Search..."
+                (keyup.enter)="getList()">
+                @if (filter.beneficiary_name) {
+                    <button matSuffix mat-icon-button
+                    aria-label="Clear"
+                    (click)="filter.beneficiary_name='';getList()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.bank_name"
+            placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.bank_name) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.bank_name='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.account_no"
+            placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.account_no) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.account_no='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.ifsc_code"
+            placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.ifsc_code) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.ifsc_code='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160 text-right">&nbsp;</td>
+<td class="w160 text-right">&nbsp;</td>
+<td class="w160 text-right">&nbsp;</td>
+<td class="w160">&nbsp;</td>
+<ng-container *ngIf="activeTab === 'Approved'">
+    <td class="w160">
+        <div class="table-search-filters">
+            <mat-form-field class="table-input">
+                <input matInput type="text"
+                [(ngModel)]="filter.transfer_status"
+                placeholder="Search..."
+                (keyup.enter)="getList()">
+                @if (filter.transfer_status) {
+                    <button matSuffix mat-icon-button
+                    aria-label="Clear"
+                    (click)="filter.transfer_status='';getList()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.payment_mode"
+            placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.payment_mode) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.payment_mode='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.transaction_no"
+            placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.transaction_no) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.transaction_no='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput  [matDatepicker]="picker1" [(ngModel)]="filter.transaction_date" name="transaction_date" placeholder="Transaction Date" (ngModelChange)="getList()">
+            <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>  
+    </div>
+</td>
+<td class="w160">&nbsp;</td>
+</ng-container>
+</ng-container>
+
+<ng-container *ngIf="redeemType === 'Gift' || redeemType === 'Voucher'">
+    <td class="w160 text-right">&nbsp;</td>
+    <td class="w160">
+        <div class="table-search-filters">
+            <mat-form-field class="table-input">
+                <input matInput type="text"
+                [(ngModel)]="filter.status"
+                placeholder="Search..." 
+                (keyup.enter)="getList()">
+                @if (filter.status) {
+                    <button matSuffix mat-icon-button
+                    aria-label="Clear"
+                    (click)="filter.status='';getList()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+</td>
+<ng-container *ngIf="activeTab === 'Approved'">
+    <td class="w160">
+        <div class="table-search-filters">
+            <mat-form-field class="table-input">
+                <input matInput type="text"
+                [(ngModel)]="filter.transfer_status"
+                placeholder="Search..." 
+                (keyup.enter)="getList()">
+                @if (filter.transfer_status) {
+                    <button matSuffix mat-icon-button
+                    aria-label="Clear"
+                    (click)="filter.transfer_status='';getList()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+</td>
+<ng-container *ngIf="redeemType === 'Gift'">
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.shipping_address"
+            placeholder="Search..." 
+            (keyup.enter)="getList()">
+            @if (filter.shipping_address) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.shipping_address='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.shipping_type"
+            placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.shipping_type) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.shipping_type='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.shipping_courier"
+            placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.shipping_courier) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.shipping_courier='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.shipping_tracking"
+            placeholder="Search..."
+            (keyup.enter)="getList()">
+            @if (filter.shipping_tracking) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.shipping_tracking='';getList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="w160">&nbsp;</td>
+</ng-container>
+<td class="w160" *ngIf="redeemType === 'Voucher'">&nbsp;</td>
+</ng-container>
+</ng-container>
+
+<ng-container *ngIf="activeTab === 'Reject'">
+    <td class="w160">&nbsp;</td>
+</ng-container>
+<ng-container *ngIf="activeTab != 'Pending'">
+    <td class="w160">&nbsp;</td>
+    <td class="w160">&nbsp;</td>
+</ng-container>
+</tr>
+
+<tr *ngFor="let row of qrList; let i = index;"  [class.bg-gray-400]="isHighlighted(row._id)">
+    <td class="w50">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+    <td class="w120">{{row.created_at ?  (row.created_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</td>
+    <td class="w160 text-blue-600">{{row.req_id ? row.req_id :'---'}}</td>
+    <td class="w150">{{row.customer_name ? (row.customer_name | titlecase) : '---'}}</td>
+    <td class="w160">{{row.customer_type_name ? (row.customer_type_name) : '---'}}</td>
+    <td class="w160">{{row.customer_mobile ? (row.customer_mobile) : '---'}}</td>
+    <td class="w160">{{row.state ? (row.state) : '---'}}</td>
+    <td class="w160">{{row.district ? (row.district) : '---'}}</td>
+    <td class="w160">{{row.title ? (row.title) : '---'}}</td>
+    <ng-container *ngIf="redeemType === 'Cash'">
+        <td class="w160">{{row.beneficiary_name ? (row.beneficiary_name | titlecase) : '---'}}</td>
+        <td class="w160">{{row.bank_name ? (row.bank_name | titlecase) : '---'}}</td>
+        <td class="w160">{{row.account_no ? (row.account_no) : '---'}}</td>
+        <td class="w160">{{row.ifsc_code ? (row.ifsc_code) : '---'}}</td>
+        <td class="w160 text-right">{{row.claim_point ? ((row.claim_point + ' PT')) : '---'}}</td>
+        <td class="w160 text-right">{{row.point_value ? (row.point_value + ' PT') : '---'}}</td>
+        <td class="w160 text-right">{{row.cash_value ? ('₹' +row.cash_value) : '---'}}</td>
+    </ng-container>
+    <ng-container *ngIf="redeemType === 'Gift' || redeemType === 'Voucher'">
+        <td class="w160 text-right">{{row.point_value ? ((row.point_value + ' PT')) : '---'}}</td>
+        
+    </ng-container>
+    <td class="w160">
+        <span class="badge" [ngClass]="row.status ==='Pending' ? 'bg-warning' :  row.status ==='Approved' ? 'bg-success' :  'bg-danger'">
+            {{row.status ? (row.status) : '---'}}
+        </span>
+        <ng-container *ngIf="row.status === 'Pending'">
+            <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ml-2 ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-success waves-effect waves-light'"  (clickEvent)="changeStatus(row._id, row.status, 'redeem_status', redeemType, row)"> </app-icon-button>
+        </ng-container>
+    </td>
+    <ng-container *ngIf="activeTab === 'Approved'">
+        <td class="w160"  >
+            <span class="badge" [ngClass]="row.transfer_status ==='Pending' ? 'bg-warning' : 'bg-success'">
+                {{row.transfer_status ? (row.transfer_status) : '---'}}
+            </span>
+            <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ml-2 ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="changeStatus(row._id, row.transfer_status, redeemType === 'Cash' ? 'transfer_status' : redeemType === 'Gift' ? 'shipped_status' : 'voucher_status', redeemType, row)" *ngIf="row.transfer_status === 'Pending'"> </app-icon-button>
+        </td>
+        <ng-container *ngIf="redeemType === 'Cash'">
+            <td class="w160">{{row.payment_mode ? (row.payment_mode) : '---'}}</td>
+            <td class="w160">{{row.transaction_no ? (row.transaction_no) : '---'}}</td>
+            <td class="w160">{{row.transaction_date ? (row.transaction_date | date:'d MMM yyyy, hh:mm a') : '---'}}</td>
+            <td class="w160">{{row.transfer_remark ? (row.transfer_remark) : '---'}}</td>
+        </ng-container>
+        
+        <ng-container *ngIf="redeemType === 'Gift'">
+            <td class="w160">{{row.shipping_address? row.shipping_address: ''}}</td>
+            <td class="w160">{{row.shipping_type? row.shipping_type: ''}}</td>
+            <td class="w160">{{row.shipping_courier ? row.shipping_courier : ''}}</td>
+            <td class="w160">{{row.shipping_tracking ? row.shipping_tracking : ''}}</td>
+            <td class="w160">{{row.transfer_remark ? (row.transfer_remark) : '---'}}</td>
+        </ng-container>
+        <td class="w160" *ngIf="redeemType === 'Voucher'">{{row.voucher_code? maskService.maskValue(row.voucher_code): ''}}</td>
+    </ng-container>
+    <ng-container *ngIf="activeTab === 'Reject'">
+        <td class="w160">{{row.status_remark ? (row.status_remark) : '---'}}</td>
+    </ng-container>
+    <ng-container *ngIf="activeTab != 'Pending'">
+        <td class="w160">{{row.updated_name ? (row.updated_name) : '---'}}</td>
+        <td class="w160">{{row.updated_at ?  (row.updated_at | date:'d MMM yyyy, hh:mm a') : '---'}}</td>
+    </ng-container>
+</tr>
+</ng-container>
+<ng-container *ngIf="skLoading">
+    <tr *ngFor="let row of [].constructor(10);">
+        <td class="w50"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w120"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <ng-container *ngIf="redeemType === 'Cash'">
+            <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            <td class="w160 text-right"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            <td class="w160 text-right"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            <td class="w160 text-right"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        </ng-container>
+        <ng-container *ngIf="redeemType === 'Gift' || redeemType === 'Voucher'">
+            <td class="w160 text-right"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        </ng-container>
+        <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        <ng-container *ngIf="activeTab === 'Approved'">
+            <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            <ng-container *ngIf="redeemType === 'Cash'">
+                <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            </ng-container>
+            
+            <ng-container *ngIf="redeemType === 'Gift'">
+                <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            </ng-container>
+            <td class="w160"  *ngIf="redeemType === 'Voucher'">
+                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+            </td>
+            
+        </ng-container>
+        <ng-container *ngIf="activeTab === 'Reject'">
+            <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        </ng-container>
+        <ng-container *ngIf="activeTab != 'Pending'">
+            <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+            <td class="w160"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+        </ng-container>
+    </tr>
+</ng-container>
+</spk-reusable-tables>
+</div>
+
+<ng-container *ngIf="!qrList.length && !skLoading">
+    <app-data-not-found></app-data-not-found>
+</ng-container>
+<app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="qrList.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+</div>
+</div>
+</div>

@@ -1,0 +1,108 @@
+<app-page-header [title]="'Master Modules'" [title1]="['User']" [activeitem]="'User List'" [btnShow1]="accessRight?.modifyRight" [buttonText1]="'Header Config'" [icon1]="'settings'" [dataHsOverlay]="'#user-header-config'" (buttonClick1)="openHeaderSettingModal()"></app-page-header>
+
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <ng-container *ngIf="skLoading">
+                <div class="flex items-center gap-3 px-4 pt-3">
+                    <app-skeleton [class]="'w100 h30 bg-skeleton'" *ngFor="let row of [].constructor(6)"></app-skeleton>
+                </div>
+            </ng-container>
+            
+            <ng-container *ngIf="!skLoading">
+                <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1 px-4 pt-3" aria-label="Tabs" role="tablist">
+                    <app-listing-tab *ngFor="let tab of mainTabs"
+                    [tabs]="[{ name: tab.value, label: tab.label, count: tab.count}]"
+                    [activeTab]="activeTab"
+                    [iconShow]="false"
+                    (tabChange)="onTabChange($event.tab)"></app-listing-tab>
+                </nav>
+                
+            </ng-container>
+            
+            <app-page-sub-header [pageTitle]="'User List'"  [listLength]="listing.total" [class]="'pt-2'" 
+            [btnShow]="true"  [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()"
+            [btnShow1]="true" [logsLabel]="'Logs'" (logBtn)="openMainLogModal()"
+            [btnShow2]="accessRight?.addRight" [addBtnLabel]="'Add User'" (button1)="goToPage()"></app-page-sub-header>
+            
+            <div class="box-body pt-1">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="true"  [showFilterRow]="true" [showAction]="true" [columns]="visibleHeaders" (sortChanged)="onSortChanged($event)" (selectionChange)="handleSelectionChange($event)" (textSearchChange)="updateSearchFilter($event)" (dateRangeChange)="handleDateRangeChange($event)" [subModule]="subModule" #reusableTable>
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;" [class.bg-gray-400]="isHighlighted(row._id)">
+                                <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                                <ng-container *ngFor="let header of visibleHeaders">
+                                    <td>
+                                        
+                                        <!-- DATE FORMAT HANDLING -->
+                                        <ng-container *ngIf=" header?.name.includes('date') || header?.name.endsWith('_at') || header?.name.endsWith('_app_login')">
+                                            <span *ngIf="!isNaN(Date.parse(row?.[header?.name] ?? row?.form_data?.[header?.name]))">
+                                                {{ (row?.[header?.name] ?? row?.form_data?.[header?.name]) | date: 'd MMM yyyy, hh:mm a' }}
+                                            </span>
+                                            <span *ngIf="isNaN(Date.parse(row?.[header?.name] ?? row?.form_data?.[header?.name]))" >
+                                                {{ row?.[header?.name] ?? row?.form_data?.[header?.name] ?? '--' }} 
+                                            </span>
+                                        </ng-container>
+                                        
+                                        <!-- NAME FIELD -->
+                                        <span class="font-semibold" *ngIf="header?.name === 'name'" >
+                                            <a class="text-primary underline" (click)="goToDetail(row._id)">
+                                                {{ row[header?.name] || '--' }}
+                                            </a>
+                                        </span>
+                                        
+                                        <!-- ASSIGNED BEATS FIELD -->
+                                        <ng-container *ngIf="header.name === 'assigned_beat'">
+                                            <span class="ellipsis" matTooltip="{{ row[header.name] ?? row.form_data?.[header.name] ?? '--' }}">
+                                                {{ row[header.name] ?? row.form_data?.[header.name] ?? '--' }}
+                                            </span>
+                                        </ng-container>
+                                        
+                                        <!-- STATUS FIELD -->
+                                        <span *ngIf="header?.name === 'status'" class="badge">
+                                            <ng-container *ngIf="accessRight?.modifyRight">
+                                                <app-toggle [checked]="row.isChecked" (checkedChange)="onToggleChange($event, row._id, row.status)"></app-toggle>
+                                            </ng-container>
+                                        </span>
+                                        
+                                        <!-- DEFAULT CASE -->
+                                        <span *ngIf="!(header?.name.includes('date') || header?.name.endsWith('_at') || header?.name.endsWith('_app_login') || header?.name === 'status' || header?.name === 'name' || header.name === 'assigned_beat' )">
+                                            {{row[header?.actual_name || header?.name] ?? row['form_data']?.[header?.name] ?? '--'}}
+                                        </span>
+                                    </td>
+                                </ng-container>
+                                <td>
+                                    <div class="text-right">
+                                        <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="resetDevice(row._id)" [disabled]="!(accessRight?.modifyRight && row?.device_info && activeTab === 4)">
+                                            <i class="ri-smartphone-line font-medium align-middle"></i>
+                                            Reset Device
+                                        </button>
+                                        <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" [tooltipText]="'Delete User'" (clickEvent)="delete(row._id, 'user/delete', 'User Delete')" *ngIf="accessRight.modifyRight"></app-icon-button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </spk-reusable-tables>
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(16)">
+                            <td class="w120" *ngFor="let row of [].constructor(11)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                    
+                    <ng-container *ngIf="!listing.length && this.isApiLoaded">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+            
+            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

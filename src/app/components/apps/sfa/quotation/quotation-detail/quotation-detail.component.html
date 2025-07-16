@@ -1,0 +1,253 @@
+<app-page-header [title]="'Quotation'" [title1]="['Quotation Details']" [activeitem]="'Quotation Details'" [buttonText1]="'Edit Quotation'"  [icon1]="'edit'"  [btnShow1]="true" (buttonClick1)="editQuotationItem()"></app-page-header>
+<!-- Start::row-1 -->
+<div class="grid grid-cols-12 gap-x-6" *ngIf="!skLoading">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="box">
+            <div class="box-header md:flex block">
+                <div class="h5 mb-0 sm:flex block items-center">
+                    <div class="sm:ms-2 ms-0 sm:mt-0 mt-2">
+                        <div class="h6 font-medium mb-0">Quotation Id : <span class="text-primary">{{quotationDetail?.quotation_id ? quotationDetail?.quotation_id : '---'}}</span></div>
+                    </div>
+                </div>
+                <div class="ms-auto mt-md-0 mt-2">
+                    <app-icon-button [icon]="'ri-mail-line'" [buttonClass]="'ti-btn ti-btn-icon bg-primary/10 text-primary !border hover:bg-primary hover:text-white !rounded-full btn-wave'"> </app-icon-button>
+                    <app-icon-button [icon]="'ri-whatsapp-line'" [buttonClass]="'ti-btn ti-btn-icon bg-secondary/10 text-secondary hover:bg-secondary hover:text-white !rounded-full btn-wave'"> </app-icon-button>
+                    <app-icon-button matTooltip="Export Pdf" [icon]="'bi bi-file-earmark-pdf'" [buttonClass]="'ti-btn ti-btn-icon bg-primary/10 text-primary !border hover:bg-primary hover:text-white !rounded-full btn-wave'" (click)="exportQuotationPdf()"> </app-icon-button>
+                    <app-icon-button matTooltip="Logs" [icon]="'ri-file-list-line'" (click)="openMainLogModal(quotationDetail?._id)" [buttonClass]="'ti-btn ti-btn-icon bg-secondary/10 text-secondary hover:bg-secondary hover:text-white !rounded-full btn-wave'"> </app-icon-button>
+                </div>
+            </div> 
+            <div class="box-body">
+                <div class="grid grid-cols-12 sm:gap-x-6 gap-y-3">
+                    <div class="xl:col-span-12 col-span-12">
+                        <div class="grid grid-cols-12 gap-x-6">
+                            <div class="xl:col-span-4 lg:col-span-4 md:col-span-5 sm:col-span-12 col-span-12">
+                                <p class="h6 font-medium mb-5">
+                                    Customer Details :
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    {{customerDetail?.customer_name || '---'}}
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    {{customerDetail?.address || '---'}} , {{customerDetail?.city || '---'}} , {{customerDetail?.district || '---'}}
+                                </p>
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    {{customerDetail?.state || '---'}},{{customerDetail?.country || '---'}},{{customerDetail?.pincode || '---'}}
+                                </p>
+                                <!-- <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    {{customerDetail?.email || '---'}}
+                                </p> -->
+                                <p class="mb-1 text-textmuted dark:text-textmuted/50">
+                                    {{customerDetail?.mobile || '---'}}
+                                </p>
+                                <p class="text-textmuted dark:text-textmuted/50">For more information check for <a href="javascript:void(0);" class="text-primary font-medium"><u>GSTIN</u></a> Details.</p>
+                            </div>
+                            <div class="xl:col-span-4 lg:col-span-3 md:col-span-2 sm:col-span-12 col-span-12"></div>
+                            <div class="xl:col-span-4 lg:col-span-4 md:col-span-5 sm:col-span-12 col-span-12">
+                                <spk-reusable-tables  tableClass="table table-sm text-nowrap mb-0 table-borderless" [showCheckbox]="false">
+                                    <p class="h6 font-medium mb-3">
+                                        Quotation Details :
+                                    </p>
+                                    <tr  class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <p class="text-textmuted dark:text-textmuted/50">Last Activity: </p>
+                                        </th>
+                                        <td>
+                                            <p class="text-textmuted dark:text-textmuted/50">{{quotationDetail?.created_at ? (quotationDetail?.created_at | date:'d MMM yyyy, hh:mm a') : '---'}}</p>
+                                        </td>
+                                    </tr>
+                                    <tr  class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <p class="text-textmuted dark:text-textmuted/50">Next Followup : </p>
+                                        </th>
+                                        <td>
+                                            <p class="text-textmuted dark:text-textmuted/50">{{quotationDetail?.followup_date ? (quotationDetail?.followup_date | date:'d MMM yyyy, hh:mm a') : '---'}}</p>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr  class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <p class="text-textmuted dark:text-textmuted/50">Quotation Type :</p>
+                                        </th>
+                                        <td>
+                                            <p class="text-textmuted dark:text-textmuted/50">{{quotationDetail?.quotation_type || '---'}}</p>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr  class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <p class="text-textmuted dark:text-textmuted/50">Customer Type :</p>
+                                        </th>
+                                        <td>
+                                            <p class="text-textmuted dark:text-textmuted/50">{{quotationDetail?.customer_type_name || '---'}}</p>
+                                        </td>
+                                    </tr>
+                                    <tr  class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <p class="text-textmuted dark:text-textmuted/50">Customer Detail :</p>
+                                        </th>
+                                        <td class="ellipsis">
+                                            <span class="ellipsis text-textmuted dark:text-textmuted/50" matTooltip="{{quotationDetail?.customer_name || '---'}}">{{quotationDetail?.customer_name || '---'}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr  class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <p class="text-textmuted dark:text-textmuted/50">Total Amount :</p>
+                                        </th>
+                                        <td>
+                                            <p class="text-textmuted dark:text-textmuted/50">{{CURRENCY_SYMBOLS.RUPEE}}{{quotationDetail?.total_amount || '---'}}</p>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <p class="text-textmuted dark:text-textmuted/50">Status :</p>
+                                        </th>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <span class="flex items-center block font-medium badge bg-info/10 text-info">{{quotationDetail?.status || '--'}}
+                                                    <a class="text-info font-medium" (click)="updateQuotationStatus()">
+                                                        <i class="material-icons ms-1">edit</i>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr  class="border-b !border-transparent" *ngIf="quotationDetail.status == 'Reject'">
+                                        <th scope="row">
+                                            <p class="text-textmuted dark:text-textmuted/50">Reject Reason</p>
+                                        </th>
+                                        <td class="ellipsis">
+                                            <span class="ellipsis text-textmuted dark:text-textmuted/50" matTooltip="{{quotationDetail?.reject_reason || '---'}}">{{quotationDetail?.reject_reason || '---'}}</span>
+                                        </td>
+                                    </tr>                                                                           
+                                </spk-reusable-tables>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xl:col-span-12 col-span-12">
+                        <div class="table-responsive">
+                            <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head mt-3 border border-defaultborder dark:border-defaultborder/10" [columns]="quotationColumns" [showCheckbox]="false">
+                                <ng-container *ngIf="!skLoading">
+                                    <tr class="invoice-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of cartDetail; let i = index;">
+                                        <td><div class="font-medium text-center">{{i + 1}}</div></td>
+                                        <td><div class="font-medium">{{row?.product_name || '---'}}</div></td>
+                                        <td class="w140 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row?.price || '---'}}</td>
+                                        <td class="w120 text-center">{{row?.qty}}</td>
+                                        <td class="w120 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row?.discount_amount || '---'}} &nbsp; ({{row?.discount_percent || '---'}}%)</td>
+                                        <td class="w120 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row?.sub_total || '---'}}</td>
+                                        <td class="w120 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row?.gst_amount}} &nbsp; ({{row?.gst_percent || '---'}}%)</td>
+                                        <td class="w120 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row?.total_price || '---'}}</td>
+                                    </tr>
+                                </ng-container>   
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                    <td colspan="5">
+                                        <div class="xl:col-span-12 col-span-12">
+                                            <label class="form-label">Terms & Conditions<span class="text-red-500">*</span></label>
+                                            <div id="product-features" class="ngx-editor-custom editor-height500">
+                                                <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+                                                <ngx-editor [editor]="editor" class="overflow-auto"></ngx-editor>
+                                            </div>
+                                            <!-- <div *ngIf="quotationForm.get('answer')?.invalid && quotationForm.get('answer')?.touched" class="text-red-500">
+                                                Information is required.
+                                            </div> -->
+                                        </div>
+                                    </td>
+                                    <td colspan="4">
+                                        <spk-reusable-tables  tableClass="table table-sm text-nowrap mb-0 table-borderless" [showCheckbox]="false" >
+                                            <tr  class="border-b !border-transparent">
+                                                <th scope="row">
+                                                    <p class="mb-0 font-medium text-[15px]">Total Amount:</p>
+                                                </th>
+                                                <td>
+                                                    <p class="mb-0 font-medium text-[15px] text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{ quotationDetail?.total_amount || '---' }}</p>
+                                                </td>
+                                            </tr>
+                                            <tr  class="border-b !border-transparent">
+                                                <th scope="row">
+                                                    <p class="mb-0 font-medium text-[15px]">Total Discount Amount :</p>
+                                                </th>
+                                                <td>
+                                                    <p class="mb-0 font-medium text-[15px] text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{ quotationDetail?.total_discount || '---' }}</p>
+                                                </td>
+                                            </tr>
+                                            <tr  class="border-b !border-transparent">
+                                                <th scope="row">
+                                                    <p class="mb-0 font-medium text-[15px]">Sub Total :</p>
+                                                </th>
+                                                <td>
+                                                    <p class="mb-0 font-medium text-[15px] text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{ quotationDetail?.sub_total || '---' }}</p>
+                                                </td>
+                                            </tr>
+                                            <tr  class="border-b !border-transparent">
+                                                <th scope="row">
+                                                    <p class="mb-0 font-medium text-[15px]">Total GST Amount :</p>
+                                                </th>
+                                                <td>
+                                                    <p class="mb-0 font-medium text-[15px] text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{quotationDetail?.gst || '---'}}</p>
+                                                </td>
+                                            </tr>
+                                            <tr  class="border-b !border-transparent">
+                                                <th scope="row">
+                                                    <p class="mb-0 text-[14px] font-medium text-[15px]">Net Amount :</p>
+                                                </th>
+                                                <td>
+                                                    <p class="mb-0 font-medium text-[1rem] text-right text-success">{{CURRENCY_SYMBOLS.RUPEE}}{{quotationDetail?.total_amount || '---'}}</p>
+                                                </td>
+                                            </tr>
+                                        </spk-reusable-tables>
+                                    </td>
+                                </tr>
+                            </spk-reusable-tables>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->
+
+<!-- Sk Loading Start -->
+<div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+    <div class="xl:col-span-12 col-span-12">   
+        <div class="grid grid-cols-12 sm:gap-x-6">
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <div >
+                        <!-- *ngIf="skLoading" -->
+                        <div class="flex gap-2 mb-1 flex-wrap">
+                            <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                <app-skeleton [class]="'w180'"></app-skeleton>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+            <div class="xl:col-span-8 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sk Loading End -->

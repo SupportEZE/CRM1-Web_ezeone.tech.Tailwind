@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "spk-widget-budget-card.component.scss"
+    ],
+    "names": [],
+    "file": "spk-widget-budget-card.component.css"
+}

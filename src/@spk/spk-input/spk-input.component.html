@@ -1,0 +1,29 @@
+
+<label class="form-label">{{ label }} <span class="text-red-500" *ngIf="fieldReq">*</span></label>
+<mat-form-field class="mat-custom-field {{class}}" [ngClass]="{ 'text-area-height': type === 'textarea' }">
+  <ng-container *ngIf="type !== 'textarea'">
+    <input [placeholder]="label" matInput  [attr.maxlength]="maxlength" [attr.minlength]="minlength"  #inputRef [formControl]="control" [type]="type"  (input)="onInputChange($event)"  (keydown)="preventMinus($event)"
+    (paste)="blockNegativePaste($event)"  />
+  </ng-container>
+  <ng-container *ngIf="type === 'textarea'">
+    <textarea [placeholder]="label" matInput [formControl]="control" [type]="type"  (input)="onInputChange($event)"></textarea>
+  </ng-container>
+  <mat-hint align="end" *ngIf="control.invalid && (control.touched || control.dirty)" class="mt-1 text-xs text-red-500 text-right">
+    <ng-container *ngIf="control.hasError('required')">
+      {{ label }} is required
+    </ng-container>
+    <ng-container *ngIf="control.hasError('pattern')">
+      Enter a valid {{ label }}
+    </ng-container>
+    <ng-container *ngIf="control.hasError('minlength')">
+      Minimum required length is {{ control.errors?.['minlength'].requiredLength }} characters.
+    </ng-container>
+    <ng-container *ngIf="control.hasError('maxlength')">
+      Maximum allowed length is {{ control.errors?.['maxlength'].requiredLength }} characters.
+    </ng-container>
+    <ng-container *ngIf="control.hasError('email')">
+      Please enter a valid email
+    </ng-container>
+  </mat-hint>
+</mat-form-field>
+

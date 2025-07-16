@@ -1,0 +1,31 @@
+
+<div class="box overflow-hidden">
+    <div class="widget-card">
+        <div class="flex items-start text-white flex-wrap px-2">
+            <div class="grow text-center">
+                <div class="mt-2 items-center justify-conent-between text-[21px] mb-1">
+                    <span>{{ title }}</span>
+                    <span class="min-w-fit-content text-[10px] ms-1 ">{{ subtitle }}</span>
+                </div>
+                <div class="flex items-center justify-conent-between">
+                    <span
+                        class="grow text-[1.875rem] font-semibold sale-font counter">{{ mainValue }}<span>
+                        </span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box-body" *ngIf="footer">
+        <div class="flex items-center gap-2">
+            <div class="grow">
+                <div class="text-[21px] font-medium mb-1">{{increasedAmount}}</div>
+                <div class="grow text-[13px] mb-2">Increased By</div>
+                <span class="text-xs text-success"><i
+                        class="ti ti-arrow-narrow-up"></i>{{increasedPercentage}}</span>
+            </div>
+            <span class="avatar rounded-full bg-primary/10 !text-primary ms-auto">
+                <i class="bx bx-up-arrow-alt text-xl"></i>
+            </span>
+        </div>
+    </div>
+</div>

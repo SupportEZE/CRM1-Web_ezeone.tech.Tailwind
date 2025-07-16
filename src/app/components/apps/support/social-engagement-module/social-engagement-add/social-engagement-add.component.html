@@ -1,0 +1,101 @@
+<div class="mat-dialoge">
+    <app-modal-header [title]="(modalData.pageType | titlecase) + ' Social'" [closeBtn]="true" (close)="close()">
+    </app-modal-header>
+    
+    <ng-container *ngIf="modalData.pageType === 'add' || modalData.pageType === 'edit'">
+        <ng-container *ngIf="!skLoading">
+            <form #f="ngForm" (ngSubmit)="f.valid && onSubmit()">
+                <mat-dialog-content class="mat-typography py-1">
+                    <div class="grid grid-cols-12 sm:gap-x-6">
+                        <div class="xl:col-span-4 col-span-12 mb-3">
+                            <label class="form-label mb-0">Social Platform<span class="text-red-500">*</span></label>
+                            <mat-form-field  class="mat-custom-field remove-space">
+                                <mat-select placeholder="Select an option" [(ngModel)]="data.title" name="data.title" #title="ngModel" (selectionChange)="onSelectPlatform($event.value)" required [disabled]="modalData?.pageType === 'edit'">
+                                    <mat-option *ngFor="let row of socialList" [value]="row.title">{{row?.title}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="title.touched || f.submitted">
+                                <ng-container *ngIf="title.errors?.['required']">This field is required</ng-container>
+                            </div>
+                        </div>
+                        
+                        <div class="xl:col-span-4 col-span-12 mb-3">
+                            <label class="form-label mb-0">Page URL<span class="text-red-500">*</span></label>
+                            <mat-form-field class="mat-custom-field remove-space">
+                                <input matInput placeholder="Type Here ..." name="social_url" [(ngModel)]="data.social_url" pattern="^[^\s].*" #social_url="ngModel" required>
+                            </mat-form-field>
+                            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="social_url.touched || f.submitted">
+                                <ng-container *ngIf="social_url.errors?.['required']">This field is required</ng-container>
+                            </div>
+                        </div>
+                        
+                        <div class="xl:col-span-4 col-span-12 mb-3">
+                            <label class="form-label mb-0">Subscriber<span class="text-red-500">*</span></label>
+                            <mat-form-field class="mat-custom-field remove-space">
+                                <input type="number" matInput placeholder="Type Here ..." name="subscriber" [(ngModel)]="data.subscriber" pattern="^[^\s].*" #subscriber="ngModel" required>
+                            </mat-form-field>
+                            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="subscriber.touched || f.submitted">
+                                <ng-container *ngIf="subscriber.errors?.['required']">This field is required</ng-container>
+                            </div>
+                        </div>
+                        
+                        <div class="xl:col-span-4 col-span-12 mb-3" *ngIf="modalData.pageType === 'edit'">
+                            <label class="form-label mb-0">Status<span class="text-red-500">*</span></label>
+                            <mat-form-field  class="mat-custom-field remove-space">
+                                <mat-select placeholder="Select an option" [(ngModel)]="data.status" name="status" #status="ngModel" required>
+                                    <mat-option *ngFor="let row of statusList" [value]="row.label">{{row.label}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="status.touched || f.submitted">
+                                <ng-container *ngIf="status.errors?.['required']">This field is required</ng-container>
+                            </div>
+                        </div>
+                        
+                        <div class="xl:col-span-4 col-span-12 mb-3">
+                            <label class="form-label mb-0">Bonus Point<span class="text-red-500">*</span></label>
+                            <mat-form-field class="mat-custom-field remove-space">
+                                <input type="number" matInput placeholder="Type Here ..." name="points" [(ngModel)]="data.points" pattern="^[^\s].*" #points="ngModel" required>
+                            </mat-form-field>
+                            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="points.touched || f.submitted">
+                                <ng-container *ngIf="points.errors?.['required']">This field is required</ng-container>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </mat-dialog-content>
+                
+                <mat-dialog-actions align="end">
+                    <div class="flex items-center gap-2">
+                        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.pageType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+                    </div>
+                </mat-dialog-actions>
+            </form>
+        </ng-container>
+        
+        <ng-container *ngIf="skLoading">
+            <mat-dialog-content>
+                <div class="grid grid-cols-12 gap-x-6">
+                    <div class="xl:col-span-4 col-span-12 mb-4" *ngFor="let card of [].constructor(6)">
+                        <app-skeleton></app-skeleton>
+                    </div>
+                </div>
+            </mat-dialog-content>
+        </ng-container>
+    </ng-container>
+    
+    <ng-container *ngIf="modalData.pageType === 'view'">
+        <ng-container *ngIf="modalData.rowData.files.length !== 0">
+            <div class="grid grid-cols-12">
+                <div class="xxl:col-span-3 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12 ml-4 mb-2" *ngFor="let image of modalData.rowData.files">
+                    <spk-product-card apiPath]="'web-social/get-doc'" [imageData]="image" [editBtn]="false" [delBtn]="false" [heading]="false" [subHeading]="false">
+                    </spk-product-card>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container  *ngIf="modalData.rowData.files.length === 0">
+            <app-data-not-found></app-data-not-found>
+        </ng-container>
+    </ng-container>
+</div>
+
+

@@ -1,0 +1,279 @@
+<app-page-header [title]="'Master Modules'" [title1]="['Product']"
+[activeitem]="'Product Details'" [buttonText]="'Filter'"
+[icon]="'filter_list'" [btnShow]="false" [buttonValue]="''"
+[buttonText1]="'Edit Product'" [icon1]="'edit'" [btnShow1]="true"
+[buttonValue1]="''" (buttonClick1)="editPage($event)"></app-page-header>
+
+<!-- Start:: Row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-8 xl:col-span-8 lg:col-span-8 md:col-span-7 col-span-12">
+        <app-showcode-card  [titleView]="false"  [view]="false">
+            <div *ngIf="!skLoading">
+                <p class="text-lg font-semibold mb-2">
+                    {{productDetail.category_name? productDetail.category_name : '--'}},
+                    {{productDetail.product_name ?  productDetail.product_name : '--'}},
+                    {{productDetail.product_code ? productDetail.product_code : '--'}}
+                </p>
+                
+                <div class="dropdown-divider mb-4"></div>
+                
+                <div class="flex gap-5 mb-1 flex-wrap">
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block font-medium">{{productDetail.created_at ? (productDetail.created_at | date : 'dd MMM yyyy hh:mm a') : ''}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Created At</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block font-medium">{{productDetail.created_name}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Created Name</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block font-medium">
+                                {{productDetail.category_name? productDetail.category_name : '--'}},
+                            </span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Category</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2" *ngIf="productDetail.sub_category">
+                        <div>
+                            <span class="block font-medium">
+                                {{productDetail.sub_category? productDetail.sub_category : '--'}},
+                            </span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Category</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block font-medium">
+                                {{productDetail.product_name? productDetail.product_name : '--'}},
+                            </span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Product Name</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block font-medium">
+                                {{productDetail.product_code? productDetail.product_code : '--'}},
+                            </span>
+                            <span
+                            class="text-xs text-textmuted dark:text-textmuted/50">Product Code</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block" [ngClass]="{ 'text-success': productDetail.status === 'Active', 'text-danger': productDetail.status === 'Inactive'}">
+                                {{productDetail.status}}
+                            </span>
+                            <span
+                            class="text-xs text-textmuted dark:text-textmuted/50">Status</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2" *ngIf="productDetail.updated_name">
+                        <div>
+                            <span class="block font-medium">
+                                {{productDetail.updated_name  ? (productDetail.updated_name | titlecase) :'---'}}
+                            </span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">
+                                Updated By
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2" *ngIf="productDetail.updated_at">
+                        <div>
+                            <span
+                            class="block font-medium">{{productDetail.updated_at ? (productDetail.updated_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</span>
+                            <span
+                            class="text-xs text-textmuted dark:text-textmuted/50">Updated
+                            At</span>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div class="flex items-center me-2 gap-2 flex-wrap" *ngIf="orgData?.org?.irp">
+                        <div>
+                            <span class="block font-medium">
+                                {{productDetail.point_category_name ? (productDetail.point_category_name) : '---'}}
+                            </span>
+                            <span   class="text-xs text-textmuted dark:text-textmuted/50">
+                                Point Category
+                            </span>
+                        </div>
+                        
+                        <app-icon-button [icon]="'ri-pencil-line'" [buttonClass]="'btn-wave ti-btn ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" matTooltip="Change Status" (click)="openModal('point_category')">
+                        </app-icon-button>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="dropdown-divider mb-1"></div>
+                
+                <div class="flex gap-5 mb-1 flex-wrap">
+                    <div class="flex items-center gap-2" *ngFor="let key of formattedKeysFormData | keyvalue">
+                        <div>
+                            <span class="block text-[14px] font-medium">{{ key.value }}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">{{ key.key }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!-- Loading Start -->
+            <div *ngIf="skLoading">
+                <div class="flex gap-2 mb-1 flex-wrap">
+                    <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                        <app-skeleton [class]="'w180'"></app-skeleton>
+                    </div>
+                </div>
+            </div>
+            <!-- Loading End -->
+        </app-showcode-card>
+        
+        <app-showcode-card [title]="'Product Image'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'" [iconName]="'ri-add-line'">
+            
+            <div class="grid grid-cols-12 gap-x-4 gap-4" *ngIf="productDetailImages.length > 0">
+                <div class="xxl:col-span-2 lg:col-span-4 xl:col-span-4 sm:col-span-6 col-span-6" *ngFor="let image of productDetailImages">
+                    <spk-product-card [apiPath]="'product/get-doc'" [imageData]="image" [editBtn]="false" [heading]="false" [subHeading]="false" (delete)="delete(image._id, 'product/delete-file', 'delete')">
+                    </spk-product-card>
+                </div>
+            </div>
+            <app-data-not-found *ngIf="productDetailImages.length === 0"></app-data-not-found>
+        </app-showcode-card>
+                
+        <app-showcode-card [title]="'Pricing Config'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'"  [titleView]="true">
+            <div class="table-responsive overflow-auto table-bordered-default">
+                
+                <ng-container *ngIf="priceConfigType === 'Net Price' || priceConfigType === 'Mrp'">
+                    <spk-reusable-tables  [columns]="priceConfig" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [showAction]="true">
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10">
+                                <td *ngFor="let config of priceConfig;">
+                                    <input type="number" class="form-control form-control-light" placeholder="Enter here ..."  [(ngModel)]="priceInputValues[config.label]">
+                                </td>
+                                <td class="text-center">
+                                    <app-icon-button [icon]="'ri-save-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="saveNetPrice()"> </app-icon-button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(1)">
+                                <td *ngFor="let config of priceConfig">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                </ng-container>
+                
+                <ng-container *ngIf="priceConfigType === 'Zone Wise Mrp' || priceConfigType === 'Zone Wise Net Price'">
+                    <spk-reusable-tables  [columns]="priceConfig" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap">
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let zone of priceZone; let i = index">
+                                <td>{{ zone }} </td>
+                                
+                                <ng-container *ngFor="let config of priceConfig;">
+                                    <td *ngIf="config.label !== 'Zone'">
+                                        <input type="number" class="form-control form-control-light" placeholder="Enter here ..."  [ngModel]="priceInputValues[i]?.[config.label] || ''" (ngModelChange)="onZonePriceChange($event, i, config.label)">
+                                    </td>
+                                </ng-container>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(2)">
+                                <td *ngFor="let config of priceConfig">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    
+                    <div class="box-footer border-t border-block-start-dashed sm:flex justify-end">
+                        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'" (buttonClick)="saveNetPrice()"></app-button>
+                    </div>
+                </ng-container>
+            </div>
+        </app-showcode-card>
+    </div>
+    <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-5 col-span-12" >
+        <app-showcode-card [title]="'Dispatch Config'"
+        [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true" [actionIcons]="true"
+        [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'"
+        (action)="openModal('dispatch')" [classbody]="'pt-0'"
+        [iconName]="'ri-pencil-line'" *ngIf="orgData?.org?.wms || orgData?.org?.irp">
+        <ul class="ti-list-group list-group-flush border-0">
+            <li>
+                <div class="flex items-center gap-5 flex-wrap">
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">
+                                {{dispatchConfig.box_size ? dispatchConfig.box_size : '---'}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50 font-medium">
+                                Box Size
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">
+                                {{dispatchConfig.qr_genration ? 'Yes' : 'No'}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50 font-medium">
+                                QR Code Genration
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">
+                                {{dispatchConfig.box_with_item ? 'Yes' : 'No'}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50 font-medium">
+                                Box Item With QR
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">
+                                {{dispatchConfig.uom ? dispatchConfig.uom : '---'}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50 font-medium">
+                                UOM
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        
+        <!-- <div *ngIf="!otherDetail">
+            <p>No Data Available</p>
+        </div> -->
+    </app-showcode-card>
+    
+    <app-logs [logList]="logList" [closeBtn]="false"></app-logs>
+    
+</div>
+
+</div>
+<!-- <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-info waves-effect waves-light'"> </app-icon-button> -->
+<!-- End:: Row-1 -->

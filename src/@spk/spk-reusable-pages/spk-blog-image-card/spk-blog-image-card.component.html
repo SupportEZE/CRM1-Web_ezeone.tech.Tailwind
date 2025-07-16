@@ -1,0 +1,30 @@
+<div class="box overflow-hidden">
+  @if(cardData.imageTop){
+  <a href="javascript:void(0);"  class="{{ cardData.imageClass}}">
+      <img [src]="cardData.image" class="card-img-top {{ cardData.imageClass1}}" [alt]="cardData.altText || 'Blog Image'">
+  </a>
+}
+  <div class="box-body">
+      <a [routerLink]="cardData.routerLink" class="!font-semibold h5 mb-2 block lh-base"> {{ cardData.title }}</a>
+      <p class="mb-1">{{ cardData.description }}<a href="javascript:void(0);" class="font-medium text-primary ms-2 align-middle text-xs text-Augoration-underline inline-block">Read More ?</a></p>
+      <div class="flex flex-wrap items-center justify-between">
+          <div class="flex items-center">
+              <div class="avatar {{cardData.avatarClass}} avatar-rounded me-2">
+                  <img [src]="cardData.authorImage" [alt]="cardData.authorName || 'Author Image'" >
+              </div>
+              <div>
+                  <p class="mb-0 font-medium">{{ cardData.authorName }} </p>
+                  <span class="text-textmuted dark:text-textmuted/50 text-xs mb-0">{{ cardData.date }}</span>
+              </div>
+          </div>
+          <div class="avatar avatar-sm bg-danger/10 avatar-rounded">
+              <i class="ri-heart-line text-danger"></i>
+          </div>
+      </div>
+  </div>
+  @if(cardData.imageBottom){
+    <a href="javascript:void(0);"  class="{{ cardData.imageClass}}">
+      <img [src]="cardData.image" class="card-img-bottom {{ cardData.imageClass1}}" [alt]="cardData.altText || 'Blog Image'">
+  </a>
+  }
+</div>

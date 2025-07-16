@@ -1,0 +1,447 @@
+<app-page-header [title]="'WMS'" 
+[title1]="['Dispatch']" 
+[activeitem]="removeSpace.formatText(pageType) + ' Detail'"
+[btnShow]="(count.planned_qty ? count.planned_qty : 0) != (count.scanned_quantity ? count.scanned_quantity : 0)" 
+[btnDisabled]="btnFlag"
+[buttonText]="btnFlag ? 'Please Wait' :'Genrate Master Box'" 
+[icon]="'qr_code'" 
+(buttonClick)="genrateMasterBox()"   
+[showSelectOption]="false"
+[optionArray]="dropDownList"
+[search]="true"
+[filterForm]="filterForm"
+(onsearchChange)="getMasterDropdownCodes($event)"
+(onSingleSelectChange)="onSingleSelectChange($event)">
+</app-page-header>
+
+<!-- (count.planned_qty ? count.planned_qty : 0) != (count.scanned_quantity ? count.scanned_quantity : 0) -->
+
+<div class="grid grid-cols-12 sm:gap-x-4">
+    <ng-container *ngIf="skLoading">
+        <div class="xl:col-span-6 col-span-6" >
+            <app-showcode-card [titleView]="false" [view]="false">
+                <div >
+                    <div class="flex gap-2 mb-1 flex-wrap">
+                        <div class="flex items-center" *ngFor="let card of [].constructor(9)">
+                            <app-skeleton [class]="'w180'"></app-skeleton>
+                        </div>
+                    </div>
+                </div>
+            </app-showcode-card>
+        </div>
+        <div class="xl:col-span-6 col-span-6">
+            <app-showcode-card [titleView]="false" [view]="false">
+                <div >
+                    <div class="flex gap-2 mb-1 flex-wrap">
+                        <div class="flex items-center" *ngFor="let card of [].constructor(9)">
+                            <app-skeleton [class]="'w180'"></app-skeleton>
+                        </div>
+                    </div>
+                </div>
+            </app-showcode-card>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!skLoading">
+        <div class="xl:col-span-6 col-span-12">
+            <app-showcode-card [title]="'Customer Details'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+            [classbody]="'pt-0'" [titleView]="true">
+            <ul class="ti-list-group list-group-flush border-0">
+                <li>
+                    <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">
+                                    {{dispatchDetail.company_name ? dispatchDetail.company_name : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Company Name</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium">
+                                    {{dispatchDetail.customer_code ? (dispatchDetail.customer_code | titlecase) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Account Code</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium">
+                                    {{dispatchDetail.customer_name ? (dispatchDetail.customer_name | titlecase) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Contact Person</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium">
+                                    {{dispatchDetail.mobile ? dispatchDetail.mobile : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Contact Details</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">
+                                    {{dispatchDetail.customer_address ? dispatchDetail.customer_address : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Address</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul></app-showcode-card>
+            
+            <ng-container *ngIf="(count.planned_qty ? count.planned_qty : 0) != (count.scanned_quantity ? count.scanned_quantity : 0)">
+                <app-showcode-card  [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+                [classbody]="'pt-0'" [titleView]="false">
+                <ul class="ti-list-group list-group-flush border-0">
+                    <li>
+                        <form [formGroup]="dispatchForm">
+                            <div class="flex items-center gap-3 text-[12px]">
+                                <div class="flex items-center me-2 flex-wrap wp50 mt-4">
+                                    <spk-ng-select formControlName="master_box_code" label="Select Master Box" [fieldReq]="true" [search]="true" (searchChanged)="onSearch($event)"
+                                    [options]="dropDownList" [multiple]="false"></spk-ng-select>
+                                </div>
+                                <div class="flex items-center flex-wrap wp50 mt-4" *ngIf="dispatchForm.get('master_box_code')?.value">
+                                    <spk-input  #couponInput formControlName="qr_code"  label="Qr Code Number" [fieldReq]="true" type="text" [class]="'focus-input'" [maxlength]="16" [minlength]="16" class="remove-default-class wp100"></spk-input>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                </ul></app-showcode-card>
+                <app-showcode-card [title]="'Scanning V/S Pending Product'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+                [classbody]="'pt-0'" [titleView]="true">
+                <ul class="ti-list-group list-group-flush border-0">
+                    <li>
+                        <div class="flex items-center gap-2 flex-wrap text-[12px]">
+                            <div class="flex items-center me-2 flex-wrap left-auto">
+                                <div>
+                                    <span class="block font-medium text-5xl">
+                                        <span class="text-success">
+                                            {{count.scanned_quantity ? count.scanned_quantity : 0}}
+                                        </span>
+                                        /
+                                        <span  [ngClass]="count.scanned_quantity=== count.planned_qty ? 'text-green' : 'text-danger'">
+                                            {{count.planned_qty ? count.planned_qty : 0}}
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="table-responsive overflow-auto table-bordered-default" *ngIf="queScanList.length > 0">
+                    <spk-reusable-tables [columns]="getColumns('que-item')" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary" [showAction]="false">
+                        <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"
+                        *ngFor="let row of queScanList; let i = index;"  
+                        [ngClass]="row.status === 'Pending' ? 'bg-yellow-500' : row.status === 'Item Dispatched.' ? 'bg-green-500' : 'bg-red-500'">
+                        <td class="text-center w50">{{i+1}}</td>
+                        <td class="">{{row.qr_code ? row.qr_code : '---'}}</td>
+                        <td class="text-center w80">{{row.status}}</td>
+                    </tr></spk-reusable-tables>
+                </div>
+            </app-showcode-card>
+        </ng-container>
+        
+    </div>
+    <div class="xl:col-span-6 col-span-12">
+        <app-showcode-card [title]="'Order Details'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+        [classbody]="'pt-0'" [titleView]="true">
+        <ul class="ti-list-group list-group-flush border-0">
+            <li>
+                <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                    
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium ">
+                                {{dispatchDetail.order_date ? (dispatchDetail.order_date | date : 'dd MMM yyyy') : '---'}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50">Order Date</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium ">
+                                {{dispatchDetail.billing_company ? dispatchDetail.billing_company : '---'}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50">Billing Company</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium ">
+                                {{dispatchDetail.dispatch_from ? (dispatchDetail.dispatch_from | titlecase) : '---'}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50">Dispatch Type</span>
+                            
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium ">
+                                {{dispatchDetail.order_no ? (dispatchDetail.order_no) : '---'}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50">Order Number</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium">
+                                {{count.total_items ? count.total_items : 0}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50">Total Item</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium">
+                                {{count.planned_qty ? count.planned_qty : 0}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50">Total Item QTY.</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium">
+                                {{dispatchDetail.shipping_address ? (dispatchDetail.shipping_address) : '---'}}
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50">Shipping Address</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul></app-showcode-card>
+        
+        <app-showcode-card [title]="'Master Box Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-0'"
+        [classbody]="'pt-0'" [titleView]="true" [disabled]="printLoading" [actionIcons]="true" (action)="printMaster();"  [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-success waves-effect waves-light mt27'" [iconName]="printLoading ? 'ri-loader-line animate-spin' :'ri-printer-line'" [labelName]="'Party Marka'" [filterLabel]='true' [showSelectOption]="true" [optionArray]="marka" [filterForm]="filterForm"
+        (onSingleSelectChange)="onSingleSelectChange($event)">
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <spk-reusable-tables [columns]="getColumns('master')"
+            tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary" [showAction]="false">
+            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                <td class="!text-center">&nbsp;</td>
+                <td class="!text-center">
+                    <div class="table-search-filters">
+                        <mat-form-field class="table-input">
+                            <input matInput type="text" [(ngModel)]="filter.label" placeholder="Search..."
+                            (keyup.enter)="getMasterCodes(filter.label);">
+                            @if (filter.label) {
+                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.label='';getMasterCodes();">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            }
+                        </mat-form-field>
+                    </div>
+                </td>
+                <td class="!text-center">&nbsp;</td>
+                <td class="!text-center">&nbsp;</td>
+                <td class="!text-center">&nbsp;</td>
+            </tr>
+            <ng-container *ngIf="!masterQrLoading">
+                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"
+                *ngFor="let row of masterQrList; let i = index;">
+                <td class="text-center w50">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                <td class="w150">{{row.label ? row.label : '---'}}</td>
+                <td class="w130">
+                    <a class="text-primary underline"  [matTooltip]="row?.box?.length > 0 ? 'View Detail' : 'Item not linked yet'" (click)="row?.box?.length > 0 ? openDialog('box-item', row.box, row.label) : alertError(row.label) ">
+                        {{ row?.box?.length || 0 }}
+                    </a>
+                </td>
+                <td class="w100">
+                    <a class="text-primary underline"  [matTooltip]="row?.item?.length > 0 ? 'View Detail' : 'Item not linked yet'"  (click)="row?.item?.length > 0 ? openDialog('item', row.item, row.label): alertError(row.label) ">
+                        {{ row?.item?.length || 0 }}
+                    </a>
+                </td>
+                <td class="w100">
+                    <app-icon-button [icon]="'ri-printer-line'" [disabled]="(row?.item?.length === 0) && (row?.box?.length === 0)"
+                    [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'"
+                    [matTooltip]="((row?.item?.length === 0) && (row?.box?.length === 0)) ? 'Disabled'  : 'Print Master Box Sticker'" (clickEvent)="printType= 'single-master-item'; printMasterbox(row.item, 'single-master-item', row.label)"></app-icon-button>
+                    <app-icon-button [icon]="'ri-add-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-success waves-effect waves-light'"  matTooltip="Add Manually"  (clickEvent)="openDialog('manual', row, row.label)" *ngIf="(count.planned_qty ? count.planned_qty : 0) != (count.scanned_quantity ? count.scanned_quantity : 0)"></app-icon-button>
+                    <app-icon-button [icon]="'ri-subtract-line'" *ngIf="(row?.item?.length === 0) && (row?.box?.length === 0)" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" [matTooltip]="((row?.item?.length > 0) || (row?.box?.length > 0)) ? 'Disabled'  : 'Delete Master Box'" (clickEvent)=" delete(row._id, 'qr-code/delete-master-box', 'Dispatch')"></app-icon-button>
+                </td>
+            </tr>
+        </ng-container>
+        
+        <!-- //--skeleton--// -->
+        <ng-container *ngIf="masterQrLoading && masterQrList.length ===0">
+            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(5)">
+                <td *ngFor="let row of [].constructor(5)">
+                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                </td>
+            </tr>
+        </ng-container>
+        <!-- //--skeleton--// -->
+    </spk-reusable-tables>
+    <ng-container *ngIf="masterQrList.length === 0 && !masterQrLoading">
+        <app-data-not-found></app-data-not-found>
+    </ng-container>
+</div>
+
+<app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages"
+[pageLimit]="pagination.limit" [listLength]="masterQrList.length" [preBtn]="!pagination.prev"
+[nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')"
+(nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+
+</app-showcode-card>
+
+<app-showcode-card [title]="'Product Details'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"[classbody]="'pt-0'" [titleView]="true" (action)="printType= 'all-item'; printMasterbox()"  [actionIcons]="true"  [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-success waves-effect waves-light'" [iconName]="'ri-printer-line'">
+    <div class="table-responsive overflow-auto table-bordered-default">
+        <spk-reusable-tables [columns]="getColumns('product')"
+        tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary"
+        [showAction]="false">
+        <ng-container *ngIf="!itemLoading">
+            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"  *ngFor="let row of itemList; let i = index;"   
+            [ngClass]="{'bg-green-500': row.scanned_quantity === row.planned_qty,  'bg-yellow-400': row.scanned_quantity  > 0 && row.scanned_quantity !== row.planned_qty,'bg-red-500': row.scanned_quantity === 0 }">
+            <td class="text-center w50">{{i+1}}</td>
+            <td class="whitespace-normal">
+                {{row.product_name ? row.product_name : '---'}} - {{row.product_code ? row.product_code : '---'}}
+            </td>
+            <td class="w100">
+                <div class="" *ngIf="row.qty != row.scanned_quantity">
+                    <mat-form-field class="mat-custom-field w60">
+                        <input type="text" matInput
+                        onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46"
+                        #planned_qty="ngModel" [(ngModel)]="row.planned_qty" type="number">
+                    </mat-form-field>
+                    <app-icon-button [icon]="'ri-save-line'" [matTooltip]="'Decrease Qty'" [disabled]="api.disabled" 
+                    [buttonClass]="'ti-btn ti-btn-icon ti-btn-success  btn-wave ml-2'" (clickEvent)="updateQty(row)"> </app-icon-button>
+                </div>
+                <ng-container *ngIf="row.qty === row.scanned_quantity">
+                    {{row.planned_qty}}
+                </ng-container>
+            </td>
+            <td class="text-center w50">{{row.scanned_quantity ? row.scanned_quantity : '0'}}</td>
+        </tr>
+    </ng-container>
+    
+    <!-- //--skeleton--// -->
+    <ng-container *ngIf="itemLoading">
+        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(3)">
+            <td *ngFor="let row of [].constructor(4)">
+                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+            </td>
+        </tr>
+    </ng-container>
+    <!-- //--skeleton--// -->
+    <ng-container *ngIf="itemList.length === 0 && !itemLoading">
+        <app-data-not-found></app-data-not-found> 
+    </ng-container>
+</spk-reusable-tables>
+</div></app-showcode-card>
+</div>
+</ng-container>
+</div>
+
+
+
+
+<!-- Printing Start -->
+<div  id="QR_CODE_LABEL" #dispatchLabel>
+    <div hidden>
+        <!--  Single Master Items Start -->
+        <div style="width: 100mm; height: 150mm;" *ngIf="printType === 'single-master-item'">
+            <h2 style="margin: 0px; font-size: 16px; font-weight: 800 !important; text-align:center">{{dispatchDetail.billing_company ? dispatchDetail.billing_company : '---'}}</h2>
+            <div style="display: flex; justify-content: center;">
+                <div style="min-width: 75mm; width:75mm;">
+                    <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight:600;"><strong>Company Name : </strong> {{dispatchDetail.company_name ? (dispatchDetail.company_name | truncateChars:50) : 'N/A'}}</p>
+                    <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight:600;"><strong>Marka. : </strong> {{markaValue ? markaValue : 'N/A'}}</p>
+                    <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight:600;"><strong>Order No. : </strong> {{dispatchDetail.order_no ? dispatchDetail.order_no : 'N/A'}}</p>
+                    <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight:600;"><strong>Order Date : </strong> {{dispatchDetail.order_date ? (dispatchDetail.order_date | date : 'dd MMM yyyy') : 'N/A'}}</p>
+                    <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight:600;"><strong>Master Box Serial No. : </strong>{{masterPrintData.masterBoxNumber}}</p>
+                    <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight:600;"><strong>Master Box Total QTY.  : </strong>{{totalMasterQty}}</p>
+                </div>
+                <div style="min-width: 20mm; width:20mm">
+                    <qrcode
+                    [qrdata]="'MBV8E1ZQQIJRV7Y9'"
+                    [allowEmptyString]="true"
+                    [ariaLabel]="'QR Code image with the following content...'"
+                    [cssClass]="'center'"
+                    [colorDark]="'#000000ff'"
+                    [colorLight]="'#ffffffff'"
+                    [elementType]="'img'"
+                    [errorCorrectionLevel]="'M'"
+                    [imageHeight]="25"
+                    [imageWidth]="25"
+                    [margin]="4"
+                    [scale]="1"
+                    [width]="90"
+                    ></qrcode>
+                </div>
+            </div>
+            <table style="width: 95mm;table-layout: fixed;box-sizing: border-box; border-collapse: collapse; margin-top:10px; margin: 6px auto 0px auto;">
+                <tr>
+                    <td style="line-height:14px;  border: 1.5px solid #000; font-size: 12px; font-weight:900; padding: 3px;"> Product Detail</td>
+                    <td style="width: 70px; line-height:14px; border: 1.5px solid #000; font-size: 12px; text-align:center; font-weight:900; padding: 3px;"> Dispatch QTY.</td>
+                </tr>
+                <tr *ngFor="let row of masterPrintData.item">
+                    <td style="line-height:18x; border: 1.5px solid #000; font-size: 11px; font-weight:900; padding:2px 3px; text-transform: uppercase;">
+                        {{(row.product_name + ('- '+row.product_code)) | truncateChars:74}}
+                    </td>
+                    <td style="width: 70px; line-height:18px; border: 1.5px solid #000; font-size: 11px; text-align:center; font-weight:900; padding:2px 3px;">{{row.qty ? row.qty : '0'}}</td>
+                </tr>
+            </table>
+        </div>   
+        <!--  Single Master Items End -->
+        
+        <!-- Master all Items Start -->
+        <div style="width: 100mm; height: 150mm;" *ngIf="printType === 'master-all-item'">
+            <h2 style="margin: 0px; font-size: 16px; font-weight: 800 !important; text-align:center">{{dispatchDetail.billing_company ? dispatchDetail.billing_company : '---'}}</h2>
+            <div style="width: 95mm; margin: 0px auto;">
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Company Name : </strong> {{dispatchDetail.company_name ? (dispatchDetail.company_name | truncateChars:50) : 'N/A'}}</p>
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Marka. : </strong> {{markaValue ? markaValue : 'N/A'}}</p>
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Order No. : </strong> {{dispatchDetail.order_no ? dispatchDetail.order_no : 'N/A'}}</p>
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Order Date : </strong> {{dispatchDetail.order_date ? (dispatchDetail.order_date | date : 'dd MMM yyyy') : 'N/A'}}</p>
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Total Master Box  : </strong>{{pdfMasterQr.length}}</p>
+            </div>
+            <table style="width: 95mm;table-layout: fixed;box-sizing: border-box; border-collapse: collapse; margin-top:10px; margin: 6px auto 0px auto;">
+                <tr>
+                    <td style="width: 130px; line-height:14px;  border: 1.5px solid #000; font-size: 12px; font-weight:900; padding: 3px;">Master Box Number</td>
+                    <td style="line-height:14px;  border: 1.5px solid #000; font-size: 12px; font-weight:900; padding: 3px;"> Product Detail</td>
+                    <td style="width: 60px; line-height:14px; border: 1.5px solid #000; font-size: 12px; text-align:center; font-weight:900; padding: 3px;"> Dispatch QTY.</td>
+                </tr>
+                <ng-container *ngFor="let row of pdfMasterQr">
+                <tr *ngFor="let subRow of row.pdf_products">
+                        <td style="width: 70px; line-height:18px; border: 1.5px solid #000; font-size: 11px; text-align:center; font-weight:900; padding:2px 3px;">{{row.label}}</td>
+                        <td style="line-height:18x; border: 1.5px solid #000; font-size: 11px; font-weight:900; padding:2px 3px; text-transform: uppercase;">
+                            {{(subRow.product_name + subRow.product_code) | truncateChars:74}}
+                        </td>
+                        <td style="width: 60px; line-height:18px; border: 1.5px solid #000; font-size: 11px; text-align:center; font-weight:900; padding:2px 3px;">{{subRow.qty}}</td>
+                    </tr>
+                </ng-container>
+            </table>
+        </div>   
+        <!-- Master all Items End -->
+        
+        <!-- All Items start -->
+        <div style="width: 100mm; height: 150mm;" *ngIf="printType === 'all-item'">
+            <h2 style="margin: 0px; font-size: 16px; font-weight: 800 !important; text-align:center">{{dispatchDetail.billing_company ? dispatchDetail.billing_company : '---'}}</h2>
+            <div style="width: 95mm; margin: 0px auto;">
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Company Name : </strong> {{dispatchDetail.company_name ? (dispatchDetail.company_name | truncateChars:50) : 'N/A'}}</p>
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Marka. : </strong> {{markaValue}}</p>
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Order No. : </strong> {{dispatchDetail.order_no ? dispatchDetail.order_no : 'N/A'}}</p>
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Order Date : </strong> {{dispatchDetail.order_date ? (dispatchDetail.order_date | date : 'dd MMM yyyy') : 'N/A'}}</p>
+                <p style="font-size: 12px; margin: 0px; line-height: 16px; font-weight: 700;"><strong>Total Master Box  : </strong>{{dropDownList.length}}</p>
+            </div>
+            <table style="width: 95mm;table-layout: fixed;box-sizing: border-box; border-collapse: collapse; margin-top:10px; margin: 6px auto 0px auto;">
+                <tr>
+                    <td style="width:35px; line-height:14px;  border: 1.5px solid #000; font-size: 12px; font-weight:900; padding: 3px;">S.No</td>
+                    <td style="line-height:14px;  border: 1.5px solid #000; font-size: 12px; font-weight:900; padding: 3px;"> Product Detail</td>
+                    <td style="width: 50px; line-height:14px; border: 1.5px solid #000; font-size: 12px; text-align:center; font-weight:900; padding: 3px;">QTY.</td>
+                    <td style="width: 70px; line-height:14px; border: 1.5px solid #000; font-size: 12px; text-align:center; font-weight:900; padding: 3px;"> Dispatched QTY.</td>
+                </tr>
+                <tr  *ngFor="let row of itemList; let i = index;">
+                    <td style="width: 35px; line-height:18px; border: 1.5px solid #000; font-size: 11px; font-weight:900; padding:2px 3px;">{{i+1}}</td>
+                    <td style="line-height:18x; border: 1.5px solid #000; font-size: 11px; font-weight:900; padding:2px 3px; text-transform: uppercase;">
+                        {{row.product_name ? ((row.product_name + ('-' +row.product_code)) | truncateChars:74) : '---'}} 
+                    </td>
+                    <td style="width: 50px; line-height:18px; border: 1.5px solid #000; font-size: 11px; text-align:center; font-weight:900; padding:2px 3px;">{{row.planned_qty ? row.planned_qty : '0'}}</td>
+                    <td style="width: 70px; line-height:18px; border: 1.5px solid #000; font-size: 11px; text-align:center; font-weight:900; padding:2px 3px;">{{row.scanned_quantity ? row.scanned_quantity : '0'}}</td>
+                </tr>
+            </table>
+        </div>   
+        <!-- All Items End -->
+    </div>
+</div>
+<!-- Printing End -->

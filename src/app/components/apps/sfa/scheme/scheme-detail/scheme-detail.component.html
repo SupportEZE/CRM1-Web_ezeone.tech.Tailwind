@@ -1,0 +1,139 @@
+<app-page-header [title]="'Scheme'" [title1]="['Scheme Detail']" [activeitem]="'Scheme Detail'"></app-page-header>
+
+
+<!-- Start:: row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        
+        <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="!skLoading">
+            <div class="xl:col-span-12 col-span-12">
+                <div class="grid grid-cols-12 sm:gap-x-6">
+                    <div class="xl:col-span-12 col-span-12">
+                        <app-showcode-card [title]="'Basic Detail'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true" [classbody]="'pt-0'">
+                            <ul class="ti-list-group list-group-flush border-0">
+                                <li>
+                                    <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{Detail.created_at ? (Detail.created_at | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50">Created At</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{Detail.created_name || '--'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50">Created By</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{Detail.date_from ? (Detail.date_from | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50">Date From</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{Detail.date_to ? (Detail.date_to | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50">Date To</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{Detail.updated_at ? (Detail.updated_at | date:'d MMM yyyy') : '--'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50">Updated At</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{Detail.description || '--'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50">Scheme Description</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </app-showcode-card>                        
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-12 sm:gap-x-6">
+                    <div class="xl:col-span-4 col-span-12">
+                        <app-showcode-card [title]="'Products'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="false" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'" [iconName]="'ri-add-line'">
+                            <ul class="ti-list-group list-group-flush border-0 scroll-y-300">
+                                <li class="border-b-2 pb-2 pt-2" *ngFor="let row of productDetail">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <span class="avatar avatar-sm bg-primarytint1color">
+                                                {{nameUtils.getInitials(row.product_name)}} 
+                                            </span>
+                                            
+                                            <div class="ms-2 font-semibold">
+                                                {{row.product_name || '--'}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <ng-container *ngIf="productList.length === 0">
+                                    <app-data-not-found></app-data-not-found>
+                                </ng-container>
+                            </ul>
+                        </app-showcode-card>
+                    </div>
+                    
+                    <div class="xl:col-span-4 col-span-12">
+                        <app-showcode-card [title]="'Scheme Gallery'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true" [classbody]="'pt-0'">
+                            <div class="grid grid-cols-12 gap-x-4" *ngIf="schemeImages.length > 0">
+                                <ng-container>
+                                    <div class="xxl:col-span-2 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of schemeImages">
+                                        <spk-product-card [apiPath]="'order/get-doc'" [imageData]="image" [editBtn]="false" [heading]="false" [subHeading]="false" (delete)="delete(image._id, 'order/delete-file', 'delete')">
+                                        </spk-product-card>
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <ng-container *ngIf="schemeImages.length === 0">
+                                <app-data-not-found></app-data-not-found>
+                            </ng-container>
+                        </app-showcode-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sk Loading Start -->
+        <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+            <div class="xl:col-span-12 col-span-12">
+                
+                <div class="grid grid-cols-12 sm:gap-x-6">
+                    <div class="xl:col-span-12 col-span-12">
+                        <app-showcode-card [titleView]="false"  [view]="false">
+                            <div >
+                                <div class="flex gap-2 mb-1 flex-wrap">
+                                    <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                        <app-skeleton [class]="'w180'"></app-skeleton>
+                                    </div>
+                                </div>
+                            </div>
+                        </app-showcode-card>
+                    </div>
+                    
+                    <div class="xl:col-span-4 col-span-12">
+                        <app-showcode-card [titleView]="false"  [view]="false">
+                            <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                        </app-showcode-card>
+                    </div>
+                    
+                    <div class="xl:col-span-4 col-span-12">
+                        <app-showcode-card [titleView]="false"  [view]="false">
+                            <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                        </app-showcode-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Sk Loading End -->
+    </div>
+</div>
+<!-- End:: row-1 -->

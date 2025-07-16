@@ -1,0 +1,83 @@
+
+<div class="mat-dialoge" *ngIf="modalData.formType === 'add'">
+    <app-modal-header [title]="'Add Payment'" [closeBtn]="true"  (close)="close()"></app-modal-header>
+    
+    <form [formGroup]="addForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-ng-select formControlName="customer_type_id" label="Customer Category" [fieldReq]="true" [options]="CommonApiService.customerCategorySubType" (selectedChange)="findName($event, 'customer_category');"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-ng-select formControlName="collected_from_id" label="Customer" [fieldReq]="true"  [options]="CommonApiService.customerData" [search]="true" (searchChanged)="onSearch($event , 'customer')" (selectedChange)="findName($event, 'customer_name');"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12" *ngIf="addForm.get('collected_from_login_type_id')?.value === LOGIN_TYPES.SECONDARY">
+                    <spk-ng-select formControlName="payment_to_id" label="Payment To" [fieldReq]="true" [options]="CommonApiService.customerMapping" (selectedChange)="findName($event, 'payment_to_name');"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-input label="Amount" [fieldReq]="true" formControlName="amount" class="remove-default-class" type="number"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-flatpickr 
+                    placeholder="Payment Date"
+                    label="Payment Date"
+                    [fieldReq]="true" 
+                    [max]="today"
+                    class="form-control custom-datepickr"
+                    formControlName="payment_date"></spk-flatpickr>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-ng-select formControlName="payment_mode" label="Mode" [fieldReq]="true" [options]="modeList"></spk-ng-select>
+                </div>
+                
+                <ng-container *ngIf="addForm.get('payment_mode')?.value !== 'Cash'">
+                    <div class="xl:col-span-4 col-span-12" >
+                        <spk-input formControlName="transaction_id" [label]="addForm.value.payment_mode === 'Online' ? 'Transaction Id' : 'Cheque No.'" [fieldReq]="true" class="remove-default-class"></spk-input>
+                    </div>
+                    <div class="xl:col-span-8 col-span-12">
+                        <label class="form-label mb-0">Screenshot Attachment<span class="text-red-500">*</span></label>
+                        <file-pond class="filepond basic-filepond" 
+                        [options]="pondOptions" 
+                        [files]="pondFiles" 
+                        (onremovefile)="onFileRemove($event, 'image')"
+                        (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+                    </div>
+                </ng-container>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions align="end">
+            <div class="flex items-center gap-2">
+                <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [iconClass]="api.disabled ? 'ri-loader-2-fill animate-spin' : 'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+            </div>
+        </mat-dialog-actions>
+    </form>
+</div>
+
+<div class="mat-dialoge" *ngIf="modalData.formType === 'change-status'">
+    <app-modal-header [title]="'Change Status'" [closeBtn]="true"  (close)="close()"></app-modal-header>
+    
+    <form [formGroup]="statusForm" (ngSubmit)="statusChange()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-12 col-span-12">
+                    <spk-ng-select formControlName="status" label="Status" [fieldReq]="true" [options]="statusList"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-12 col-span-12">
+                    <spk-input [label]="statusForm.get('status')?.value === 'Verified' ? 'Remark' : 'Reason' " [fieldReq]="true" formControlName="reason" class="remove-default-class" type="textarea"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+    
+</div>

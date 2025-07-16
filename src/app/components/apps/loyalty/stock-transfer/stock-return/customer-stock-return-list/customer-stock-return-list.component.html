@@ -1,0 +1,197 @@
+<app-page-header [title]="'IRP'" [title1]="['Stock Return']" [activeitem]="'Customer To Customer Stock Return'" *ngIf="pageHeader"></app-page-header>
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="py-4"  [ngClass]="pageHeader ? 'box px-4' : ''">
+            <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist" *ngIf="tabView">
+                <app-listing-tab *ngFor="let tab of mainTabs"
+                [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon}]"
+                [activeTab]="activeTab"
+                [countShow]="false"
+                (tabChange)="onTabChange($event.tab)">
+            </app-listing-tab>
+        </nav>
+        
+        <app-page-sub-header [pageTitle]="'Customer To Customer Stock Return'" [listLength]="listing.length" 
+        [btnShow]="true" [btnShow2]="accessRight?.addRight && LOGIN_TYPES.INFLUENCER == customerDetail?.login_type_id ? false : true && activeTab != 'My Return' " [addBtnLabel]="'Stock Return'" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()"  [class]="'p-0 pt-3'" (button1)="goToPage()"></app-page-sub-header>
+        <!-- *ngIf="pageHeader" -->
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [columns]="invoiceColumn"> 
+                <ng-container *ngIf="!skLoading">
+                    <tr
+                    class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                    <td class="!text-center">&nbsp;</td>
+                    <td>
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="created_at" placeholder="Date Created" (ngModelChange)="getList()">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>  
+                        </div>
+                    </td>
+                    <td class="!text-center">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text"
+                                [(ngModel)]="filter.created_name"
+                                placeholder="Search..."
+                                (keyup.enter)="getList()">
+                                @if (filter.created_name) {
+                                    <button matSuffix mat-icon-button
+                                    aria-label="Clear"
+                                    (click)="filter.created_name='';getList()">
+                                    <mat-icon>close</mat-icon>    </button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    
+                    <td>
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput [matDatepicker]="picker2" [(ngModel)]="filter.billing_date" name="billing_date"
+                                placeholder="Bill Date" (ngModelChange)="getList()">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                                <mat-datepicker #picker2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    
+                    <td class="!text-center">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text"
+                                [(ngModel)]="filter.bill_number"
+                                placeholder="Search..."
+                                (keyup.enter)="getList()">
+                                @if (filter.bill_number) {
+                                    <button matSuffix mat-icon-button
+                                    aria-label="Clear"
+                                    (click)="filter.bill_number='';getList()">
+                                    <mat-icon>close</mat-icon></button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td class="!text-center">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text"
+                                [(ngModel)]="filter.sender_customer_type_name"
+                                placeholder="Search..."
+                                (keyup.enter)="getList()">
+                                @if (filter.sender_customer_type_name) {
+                                    <button matSuffix mat-icon-button
+                                    aria-label="Clear"
+                                    (click)="filter.sender_customer_type_name='';getList()">
+                                    <mat-icon>close</mat-icon></button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td class="!text-center">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text"
+                                [(ngModel)]="filter.sender_customer_name"
+                                placeholder="Search..."
+                                (keyup.enter)="getList()">
+                                @if (filter.sender_customer_name) {
+                                    <button matSuffix mat-icon-button
+                                    aria-label="Clear"
+                                    (click)="filter.sender_customer_name='';getList()">
+                                    <mat-icon>close</mat-icon></button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td class="!text-center">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text" [(ngModel)]="filter.sender_customer_type_name" placeholder="Search..."
+                                (keyup.enter)="getList()">
+                                @if (filter.
+                                receiver_customer_type_name) {
+                                    <button matSuffix mat-icon-button aria-label="Clear"
+                                    (click)="filter.
+                                    receiver_customer_type_name='';getList()">
+                                    <mat-icon>close</mat-icon></button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td class="!text-center">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text" [(ngModel)]="filter.
+                                receiver_customer_name" placeholder="Search..."
+                                (keyup.enter)="getList()">
+                                @if (filter.
+                                receiver_customer_name) {
+                                    <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.
+                                    receiver_customer_name='';getList()">
+                                    <mat-icon>close</mat-icon></button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr *ngFor="let row of listing; let i = index;" class="invoice-list border-b !border-defaultborder dark:!border-defaultborder/10" [class.bg-gray-400]="isHighlighted(row._id)">
+                    <td>{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                    <td>{{row.created_at ? (row.created_at | date : 'dd MMM yyyy hh:mm a') : '' }}</td>
+                    <td>{{row.created_name ? (row.created_name | titlecase) : '---'}}</td>
+                    <td>{{row.bill_date ? (row.bill_date | date : 'dd MMM yyyy hh:mm a') : '' }}</td>
+                    <td>
+                        <a (click)="goToDetail(row._id)" class="font-medium text-primary underline">
+                            {{row.bill_number ? row.bill_number : '---'}}
+                        </a>
+                    </td>
+                    <td>{{row.sender_customer_type_name ? row.sender_customer_type_name : '---'}}</td>
+                    <td>{{row.sender_customer_name ? (row.sender_customer_name | titlecase) : '---'}}</td>
+                    <td>{{row.receiver_customer_type_name ? (row.receiver_customer_type_name | titlecase) : '---'}}</td>
+                    <td>{{row.receiver_customer_name ? row.receiver_customer_name : '---'}}</td>
+                    <td class="text-center">{{row.total_item_count ? row.total_item_count : '---'}}</td>
+                    <td class="text-center">{{row.total_item_quantity ? row.total_item_quantity : '---'}}</td>
+                    <td class="text-right">₹ {{row.bill_amount ? (row.bill_amount) : '0'}}</td>
+                    
+                </tr>
+            </ng-container>
+            
+            
+            <!-- //--skeleton--// -->
+            <ng-container *ngIf="skLoading">
+                <tr
+                class="border-b !border-defaultborder dark:!border-defaultborder/10"
+                *ngFor="let row of [].constructor(5)">
+                <td *ngFor="let row of [].constructor(13)">
+                    <app-skeleton
+                    [class]="'h20 bg-skeleton'"></app-skeleton>
+                </td>
+            </tr>
+        </ng-container>
+        <!-- //--skeleton--// -->
+        
+    </spk-reusable-tables>
+    <ng-container *ngIf="listing.length === 0 && !skLoading">
+        <app-data-not-found></app-data-not-found>
+    </ng-container>
+    <app-pagination-footer
+    [currentPage]="pagination.cur_page"
+    [totalPage]="pagination.total_pages"
+    [pageLimit]="pagination.limit"
+    [listLength]="listing.length"
+    [preBtn]="!pagination.prev"
+    [nextBtn]="!pagination.next"
+    (preButtonClick)="changeToPagination('Previous')"
+    (nextButtonClick)="changeToPagination('Next')"
+    (pageChange)="changeToPage($event)"></app-pagination-footer>
+</div>
+</div>
+</div>
+</div>
+<!--End::row-1 -->

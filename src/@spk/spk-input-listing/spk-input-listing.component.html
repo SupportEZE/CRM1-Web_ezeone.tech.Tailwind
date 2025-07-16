@@ -1,0 +1,36 @@
+
+<!-- <label class="form-label ">{{ label }} <span class="text-red-500" *ngIf="fieldReq">*</span></label>
+<mat-form-field class="mat-custom-field">
+    <ng-container *ngIf="type !== 'textarea'">
+        <input [placeholder]="label" matInput [formControl]="control" [type]="type"  (input)="onInputChange($event)"  />
+    </ng-container>
+    <ng-container *ngIf="type === 'textarea'">
+        <textarea [placeholder]="label" matInput [formControl]="control" [type]="type"  (input)="onInputChange($event)" ></textarea>
+    </ng-container>
+</mat-form-field> -->
+
+
+
+<mat-form-field class="mat-custom-field table-input">
+    <input
+    matInput
+    [placeholder]="label"
+    [type]="type"
+    [ngModel]="model"
+    (ngModelChange)="onInputChange($event)"
+    (keyup)="debugKey($event)"
+    (keyup.enter)="onEnter()"  
+    />
+    <button
+    *ngIf="model"
+    matSuffix
+    mat-icon-button
+    aria-label="Clear"
+    (click)="clearInput()"
+    >
+    <mat-icon>close</mat-icon>
+</button>
+</mat-form-field>
+
+
+

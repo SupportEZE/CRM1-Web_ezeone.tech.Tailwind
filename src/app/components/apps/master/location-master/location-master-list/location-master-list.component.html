@@ -1,0 +1,359 @@
+<app-page-header [title]="'Master'" [title1]="['Location Master']"
+[activeitem]="'Location Master'"></app-page-header>
+
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-12 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xl:col-span-12 col-span-12">
+                <div class="box">
+                    <div class="box-body px-2 py-2">
+                        <ul class="list-none files-main-nav flex items-center" id="files-main-nav">
+                            @for(item of fileNavItems;track $index){
+                                <li class="files-type flex items-center justify-between py-1" [ngClass]="{'active': item.name === activeTab}">
+                                    <a (click)="activeTab = item.name;getNavData(activeTab)">
+                                        <div class="flex items-center">
+                                            <div class="me-2">
+                                                <i class="{{item.icon}} text-[1rem]"></i>
+                                            </div>
+                                            <span class="flex-auto text-nowrap">
+                                                {{ item.name }}
+                                            </span>
+                                        </div>
+                                    </a>
+                                    <button class="ti-btn ti-btn-sm ti-btn-icon ti-btn-soft-primary ml-2" matTooltip="{{item.tooltipLabel}}" (click)="activeTab = item.name;getNavData(activeTab);openModal(activeTab)">
+                                        <i class="ri-add-line leading-none align-middle"></i>
+                                    </button>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="xxl:col-span-12 col-span-12">
+        <!-- Pincode Start -->
+        <div class="grid grid-cols-12 gap-x-6" *ngIf="activeTab === 'Pincode'">
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [title]="'Pincode'" [class]="'pb-0 pt-0'" [classbody]="'pt-0'" [titleView]="true" [view]="false" [refresBtnShow]="true" [overallCountShow]="true" [overallCount]="listingPagination.total" [activeTab]="'Pincode'" (refresh)="onRefresh($event)">
+                    <div class="table-responsive overflow-auto table-bordered-default">
+                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [tableHeadColumn]="'!text-center'" [tableHeight]="'630px'" [showCheckbox]="false" [columns]="listColumns">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                <td class="!text-center">&nbsp;</td>
+                                <!-- <td class="!text-center">
+                                    <input type="text" class="form-control" id="input-text" placeholder="Search..."  [(ngModel)]="filter.country" (keyup.enter)="getPincodeMaster()">
+                                </td> -->
+                                <td class="!text-center">
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.state" placeholder="Search..." (keyup.enter)="getPincodeMaster()">
+                                            @if (filter.state) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.state='';getPincodeMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td class="!text-center">
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.district" placeholder="Search..." (keyup.enter)="getPincodeMaster()">
+                                            @if (filter.district) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.district='';getPincodeMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td class="!text-center">
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text"  [(ngModel)]="filter.city"  placeholder="Search..." (keyup.enter)="getPincodeMaster()">
+                                            @if (filter.city) {
+                                                <button matSuffix mat-icon-button  aria-label="Clear" (click)="filter.city='';getPincodeMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td class="!text-center">
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.pincode" placeholder="Search..." (keyup.enter)="getPincodeMaster()">
+                                            @if (filter.pincode) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.pincode='';getPincodeMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <ng-container *ngIf="!skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let list of pincodeMasterList; let i = index; trackBy: trackById">
+                                    <td class="!text-center">{{ (listingPagination.cur_page - 1) * listingPagination.limit + i + 1 }}</td>
+                                    <!-- <td>{{list.country || 'India'}}</td> -->
+                                    <td>{{list.state || '--'}}</td>
+                                    <td>{{list.district || '--'}}</td>
+                                    <td>{{list.city || '--'}}</td>
+                                    <td>{{list.pincode || '--'}}</td>
+                                    <td class="w140 relative">
+                                        <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                            <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openModal('logs',list)"> </app-icon-button>
+                                            <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="onUpdate(activeTab , list)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+                                            <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="onDeleteRow(list._id,'Pincode')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            
+                            <!-- //--skeleton--// -->
+                            <ng-container *ngIf="skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(5)">
+                                    <td *ngFor="let row of [].constructor(6)">
+                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                        </spk-reusable-tables>
+                        
+                        <ng-container *ngIf="!pincodeMasterList.length && !skLoading">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </div>
+                    <app-pagination-footer
+                    [currentPage]="listingPagination.cur_page"
+                    [totalPage]="listingPagination.total_pages"
+                    [pageLimit]="listingPagination.limit"
+                    
+                    [preBtn]="!listingPagination.prev"
+                    [nextBtn]="!listingPagination.next"
+                    (preButtonClick)="changeToPagination('Previous')"
+                    (nextButtonClick)="changeToPagination('Next')"
+                    (pageChange)="changeToPage($event)"></app-pagination-footer>
+                </app-showcode-card>
+            </div>
+        </div>
+        <!-- Pincode Start -->
+        
+        <!-- Zone Start -->
+        <div class="grid grid-cols-12 gap-x-6" *ngIf="activeTab === 'Zone'">
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [title]="'Zone'" [view]="false" [refresBtnShow]="true" [overallCountShow]="true" [overallCount]="listingPagination.total" [activeTab]="'Zone'" (refresh)="onRefresh($event)">
+                    <div class="table-responsive overflow-auto table-bordered-default">
+                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [tableHeadColumn]="'!text-center'" [tableHeight]="'630px'" [showCheckbox]="false" [columns]="zoneColumns">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 td-p-x-10">
+                                <td class="!text-center">&nbsp;</td>
+                                <td class="!text-center">
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.zone" placeholder="Search..." (keyup.enter)="getZoneMaster()">
+                                            @if (filter.zone) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.zone='';getZoneMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td class="!text-center">
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.state" placeholder="Search..." (keyup.enter)="getZoneMaster()">
+                                            @if (filter.state) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.state='';getZoneMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <ng-container *ngIf="!skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let list of zoneMasterList; let i = index; trackBy: trackById">
+                                    <td class="w60 !text-center">{{ (listingPagination.cur_page - 1) * listingPagination.limit + i + 1 }}</td>
+                                    <td class="w140">{{list.zone || '--'}}</td>
+                                    <td>
+                                        <div class="flex flex-wrap" *ngIf="list.state">
+                                            <span class="badge bg-light text-textmuted dark:text-textmuted/50 m-1 border border-defaultborder dark:border-defaultborder/10" *ngFor="let sublist of list.state">{{sublist}}</span>
+                                        </div>
+                                    </td>
+                                    <td class="w150 relative">
+                                        <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                            <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openModal('logs' , list)"> </app-icon-button>
+                                            <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="onUpdate(activeTab , list)" *ngIf="accessRight?.modifyRight"></app-icon-button>
+                                            <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="onDeleteRow(list._id,'Zone')" *ngIf="accessRight?.deleteRight"></app-icon-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            
+                            <!-- //--skeleton--// -->
+                            <ng-container *ngIf="skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                    <td *ngFor="let row of [].constructor(4)">
+                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                        </spk-reusable-tables>
+                        
+                        <ng-container *ngIf="!zoneMasterList.length && !skLoading">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </div>
+                    <app-pagination-footer
+                    [currentPage]="listingPagination.cur_page"
+                    [totalPage]="listingPagination.total_pages"
+                    [pageLimit]="listingPagination.limit"
+                    [listLength]="pincodeMasterList.length"
+                    [preBtn]="!listingPagination.prev"
+                    [nextBtn]="!listingPagination.next"
+                    (preButtonClick)="changeToPagination('Previous')"
+                    (nextButtonClick)="changeToPagination('Next')"
+                    (pageChange)="changeToPage($event)"></app-pagination-footer>
+                </app-showcode-card>
+            </div>
+        </div>
+        <!-- Zone Start -->
+        
+        <!-- Beat Route Start -->
+        <div class="grid grid-cols-12 gap-x-6" *ngIf="activeTab === 'Beat Route'">
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [title]="'Beat Route'" [boxHeader]="'pb-0 pt-0'" [classbody]="'pt-0'" [titleView]="true" [view]="false" [refresBtnShow]="true" [overallCountShow]="true" [overallCount]="listingPagination.total" [activeTab]="'Beat Route'" (refresh)="onRefresh($event)" [btn1]="showChangeStatusBtn" [iconName]="'ri-file-list-line'" [buttonName]="'Assign User'" (btnClick)="onAssignTeam()">
+                    <div class="table-responsive overflow-auto table-bordered-default">
+                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [tableHeight]="'630px'" [showCheckbox]="false" [columns]="beatRouteColumns">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 td-p-x-10">
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.state" placeholder="Search..." (keyup.enter)="getBeatRouteMaster()">
+                                            @if (filter.state) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.state='';getBeatRouteMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.district" placeholder="Search..." (keyup.enter)="getBeatRouteMaster()">
+                                            @if (filter.district) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.district='';getBeatRouteMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.beat_route_code" placeholder="Search..." (keyup.enter)="getBeatRouteMaster()">
+                                            @if (filter.beat_route_code) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.beat_route_code='';getBeatRouteMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.name" placeholder="Search..." (keyup.enter)="getBeatRouteMaster()">
+                                            @if (filter.name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.name='';getBeatRouteMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.description" placeholder="Search..." (keyup.enter)="getBeatRouteMaster()">
+                                            @if (filter.description) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.description='';getBeatRouteMaster()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <ng-container *ngIf="!skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let list of beatRouteMasterList; let i = index; trackBy: trackById">
+                                    <td class="task-checkbox">
+                                        <input class="form-check-input" type="checkbox" [(ngModel)]="list.checked" (change)="toggleRowChecked()">
+                                    </td>
+                                    <td class="!text-center">{{ (listingPagination.cur_page - 1) * listingPagination.limit + i + 1 }}</td>
+                                    <td>{{list.state || '--'}}</td>
+                                    <td>{{list.district || '--'}}</td>
+                                    <td>{{list.beat_route_code || '--'}}</td>
+                                    <td>
+                                        <div class="flex flex-wrap">
+
+                                            <span class="badge bg-primary/10 text-primary m-1 border border-defaultborder dark:border-defaultborder/10 ng-star-inserted p-1" *ngFor="let sublist of list?.assigned_users">
+                                                {{sublist.name}}
+                                                <span class="cursor-pointer" matTooltip="Remove User" (click)="onRemoveAssigning(list, sublist._id)"><i class="ri-close-line"></i></span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>{{list.description || '--'}}</td>
+                                    <td class="relative">
+                                        <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                            <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openModal('logs',list)"> </app-icon-button>
+                                            <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="onUpdate(activeTab , list)"> </app-icon-button>
+                                            <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="onDeleteRow(list._id,'Beat Route')"> </app-icon-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            
+                            <!-- //--skeleton--// -->
+                            <ng-container *ngIf="skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                    <td *ngFor="let row of [].constructor(8)">
+                                        <app-skeleton
+                                        [class]="'h20 bg-skeleton'"></app-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                        </spk-reusable-tables>
+                        
+                        <ng-container *ngIf="!beatRouteMasterList.length && !skLoading">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </div>
+                    <app-pagination-footer
+                    [currentPage]="listingPagination.cur_page"
+                    [totalPage]="listingPagination.total_pages"
+                    [pageLimit]="listingPagination.limit"
+                    [listLength]="pincodeMasterList.length"
+                    [preBtn]="!listingPagination.prev"
+                    [nextBtn]="!listingPagination.next"
+                    (preButtonClick)="changeToPagination('Previous')"
+                    (nextButtonClick)="changeToPagination('Next')"
+                    (pageChange)="changeToPage($event)"></app-pagination-footer>
+                </app-showcode-card>
+            </div>
+        </div>
+        <!-- Beat Route Start -->
+    </div>
+</div>

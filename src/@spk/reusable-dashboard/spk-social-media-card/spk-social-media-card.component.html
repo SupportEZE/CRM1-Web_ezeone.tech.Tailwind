@@ -1,0 +1,29 @@
+<div class="box social-cards {{socialmedia.web_icon}}">
+    <div class="box-body flex-auto">
+        <div class="flex flex-wrap gap-2 items-center justify-between {{socialmedia.customClass}}">
+            <div>
+                <p class="flex-auto text-[15px] font-medium mb-1 text-{{socialmedia.web_text_color}}">{{socialmedia.title}}</p>
+                <p class="mb-2 text-2xl font-medium" *ngIf="socialmedia.subscriber >= 1000">
+                    {{ (socialmedia.subscriber / 1000) | number: '1.0-1' }}K
+                </p>
+                <p class="mb-2 text-2xl font-medium" *ngIf="socialmedia.subscriber < 1000">
+                    {{ socialmedia.subscriber }}
+                </p>
+                <div class="flex-between">
+                    <span class="text-textmuted dark:text-textmuted/50 text-xs me-1">Bonus Point</span>
+                    <span class="text-{{socialmedia.web_text_color}} inline-block"><i class="me-1 {{socialmedia.percentageIcon}} text-[10px]"></i>{{socialmedia.points}}</span>
+                </div>
+                <!-- <div class="flex-between">
+                    <span class="text-textmuted dark:text-textmuted/50 text-xs me-1">{{socialmedia.graph}}</span>
+                    <span class="text-{{socialmedia.color}} inline-block"><i class="me-1 {{socialmedia.percentageIcon}} text-[10px]"></i>{{socialmedia.percentage}}</span>
+                </div> -->
+            </div>
+            <div class="align-self-center ms-auto">
+                <span class="avatar avatar-md bg-transparent text-{{socialmedia.color}}"><i class="ri-{{socialmedia.socialmedia}}-line text-[25px] leading-none"></i></span>
+                @if(showEditButton){
+                    <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light mt30 !rounded-full'" (clickEvent)="hitButton($event)"> </app-icon-button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

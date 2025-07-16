@@ -1,0 +1,47 @@
+
+<!-- <input  type="text" [placeholder]="placeholder" [(ngModel)]="rangeValue" mwlFlatpickr class="  {{class}} form-control flatpickr-inpu active "  [mode]="mode" [inline]="inline"  [noCalendar]="noCalendar"
+[altInput]="altInput" (ngModelChange)="emitDateChange()" [convertModelValue]="convertModelValue" [enableTime]="enableTime" [dateFormat]="dateFormat" />
+<h2>{{rangeValue}}</h2> -->
+<label class="form-label" *ngIf="label">{{ label }} <span class="text-red-500" *ngIf="fieldReq">*</span></label>
+<mat-form-field class="mat-custom-field">
+  <input 
+    matInput 
+    [min]="min"
+    [max]="max"
+    [placeholder]="label" 
+    [matDatepicker]="picker" 
+    [formControl]="control"
+    [value]="control.value" 
+    (dateChange)="onDateSelected($event)" 
+    class="{{class}} form-control" readonly>
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+
+
+
+
+   <!-- <mat-hint align="end" *ngIf="control.invalid && (control.touched || control.dirty)" class="mt-1 text-xs text-red-500 text-right">
+    <ng-container *ngIf="control.hasError('required')">
+      {{ label }} is required
+    </ng-container>
+  </mat-hint> -->
+
+  <mat-hint aign="end" *ngIf="control.invalid && (control.dirty || control.touched)" lass="mt-1 text-xs text-red-500 text-right">
+    <ng-container *ngIf="control.hasError('required')">
+      {{ label }} is required
+    </ng-container>
+    <ng-container *ngIf="control.hasError('minDate')">
+      Minimum allowed date is {{ min | date:'shortDate' }}
+    </ng-container>
+    <ng-container *ngIf="control.hasError('maxDate')">
+      Maximum allowed date is {{ max | date:'shortDate' }}
+    </ng-container>
+    <ng-container *ngIf="control.hasError('dateOrderInvalid')">
+      End date must be on or after start date
+    </ng-container>
+  </mat-hint>
+
+</mat-form-field>
+
+
+

@@ -1,0 +1,179 @@
+<!-- ***** Redeem Status Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.status_type ==='redeem_status'">
+    <app-modal-header [title]="'Update ' +  textFormat.formatText(modalData.status_type)" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    
+    <form #f="ngForm" (ngSubmit)="f.valid && submit()" >
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="col-span-12  xl:col-span-12 xxl:col-span-12">
+                    <label class="form-label mb-0">Status<span class="text-red-500">*</span></label>
+                    <mat-form-field class="mat-custom-field">
+                        <mat-select name="status" #status="ngModel" [(ngModel)]="data.status" required>
+                            <mat-option  value="Pending">Pending</mat-option>
+                            <mat-option  value="Approved">Approved</mat-option>
+                            <mat-option  value="Reject">Reject</mat-option>
+                        </mat-select>
+                        <mat-hint align="end" *ngIf="status.touched || f.submitted">
+                            <ng-container *ngIf="status.errors?.['required']">This field is required</ng-container>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                
+                <div class="col-span-12  xl:col-span-12 xxl:col-span-12" *ngIf="data.status === 'Reject'">
+                    <label class="form-label mb-0">Reason<span class="text-red-500">*</span></label>
+                    <mat-form-field class="mat-custom-field">
+                        <textarea matInput name="status_reason" #status_reason="ngModel" [(ngModel)]="data.status_reason" required></textarea>
+                        <mat-hint align="end" *ngIf="status_reason.touched || f.submitted">
+                            <ng-container *ngIf="status_reason.errors?.['required']">This field is required</ng-container>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- ***** Redeem Status End ***** -->
+
+
+<!-- *****  Transfer Status Start   ***** -->
+<div class="mat-dialoge" *ngIf="modalData.status_type ==='transfer_status' || modalData.status_type ==='shipped_status' || modalData.status_type ==='voucher_status'">
+    <app-modal-header [title]="'Update ' +  textFormat.formatText(modalData.status_type)"  [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    
+    <form #f="ngForm" (ngSubmit)="f.valid && submit()" >
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="col-span-12  xl:col-span-12 xxl:col-span-12">
+                    <label class="form-label mb-0">{{textFormat.formatText(modalData.status_type)}}<span class="text-red-500">*</span></label>
+                    <mat-form-field class="mat-custom-field">
+                        <mat-select name="transfer_status" #transfer_status="ngModel" [(ngModel)]="data.transfer_status" required>
+                            <mat-option  value="Pending">Pending</mat-option>
+                            <ng-container *ngIf="modalData.redeem_type === 'Cash' || modalData.redeem_type === 'Voucher'">
+                                <mat-option  value="Transfered">Transfered</mat-option>
+                            </ng-container>
+                            <ng-container *ngIf="modalData.redeem_type === 'Gift'">
+                                <mat-option  value="Shipped">Shipped</mat-option>
+                            </ng-container>
+                        </mat-select>
+                        <mat-hint align="end" *ngIf="transfer_status.touched || f.submitted">
+                            <ng-container *ngIf="transfer_status.errors?.['required']">This field is required</ng-container>
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                
+                <ng-container *ngIf="(data.transfer_status === 'Transfered' && modalData.redeem_type === 'Cash') && orgData?.org?.payment_gateway === 'MANUAL'">
+                    <div class="col-span-12  xl:col-span-12 xxl:col-span-12">
+                        <label class="form-label">Transaction Date<span class="text-red-500">*</span></label>
+                        <mat-form-field class="mat-custom-field">
+                            <input matInput [matDatepicker]="picker" matInput name="transaction_date" #transaction_date="ngModel"  [max]="today"  [(ngModel)]="data.transaction_date" required readonly>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                            <mat-hint align="end" *ngIf="transaction_date.touched || f.submitted">
+                                <ng-container *ngIf="transaction_date.errors?.['required']">This field is required</ng-container>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                    
+                    <div class="col-span-12  xl:col-span-12 xxl:col-span-12" >
+                        <label class="form-label mb-0">Payment Mode<span class="text-red-500">*</span></label>
+                        <mat-form-field class="mat-custom-field">
+                            <mat-select name="transfer_type" #transfer_type="ngModel" [(ngModel)]="data.transfer_type" required>
+                                <mat-option  value="Cash">Cash</mat-option>
+                                <mat-option  value="UPI">UPI</mat-option>
+                                <mat-option  value="NEFT">NEFT</mat-option>
+                                <mat-option  value="Net Banking">Net Banking</mat-option>
+                            </mat-select>
+                            <mat-hint align="end" *ngIf="transfer_type.touched || f.submitted">
+                                <ng-container *ngIf="transfer_type.errors?.['required']">This field is required</ng-container>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                    
+                    <div class="col-span-12  xl:col-span-12 xxl:col-span-12" *ngIf="data.transfer_type != 'Cash'">
+                        <label class="form-label mb-0">Transaction Number<span class="text-red-500">*</span></label>
+                        <mat-form-field class="mat-custom-field">
+                            <input matInput name="transaction_no" #transaction_no="ngModel" [(ngModel)]="data.transaction_no" required>
+                            <mat-hint align="end" *ngIf="transaction_no.touched || f.submitted">
+                                <ng-container *ngIf="transaction_no.errors?.['required']">This field is required</ng-container>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                    
+                    <div class="col-span-12  xl:col-span-12 xxl:col-span-12" >
+                        <label class="form-label mb-0">Remark</label>
+                        <mat-form-field class="mat-custom-field">
+                            <textarea matInput name="transfer_remark" #transfer_remark="ngModel" [(ngModel)]="data.transfer_remark"></textarea>
+                        </mat-form-field>
+                    </div>
+                </ng-container>
+                
+                <ng-container *ngIf="data.transfer_status === 'Shipped'">
+                    <div class="col-span-12  xl:col-span-12 xxl:col-span-12" >
+                        <label class="form-label mb-0">Shipping Type<span class="text-red-500">*</span></label>
+                        <mat-form-field class="mat-custom-field">
+                            <mat-select name="shipping_type" #shipping_type="ngModel" [(ngModel)]="data.shipping_type" required>
+                                <mat-option  value="Courier">Courier </mat-option>
+                                <mat-option  value="Hand Courier">Hand Courier </mat-option>
+                            </mat-select>
+                            <mat-hint align="end" *ngIf="shipping_type.touched || f.submitted">
+                                <ng-container *ngIf="shipping_type.errors?.['required']">This field is required</ng-container>
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                    
+                    <ng-container *ngIf="data.shipping_type === 'Courier'">
+                        <div class="col-span-12  xl:col-span-12 xxl:col-span-12" >
+                            <label class="form-label mb-0">Shipping Address <span class="text-red-500">*</span></label>
+                            <mat-form-field class="mat-custom-field">
+                                <textarea matInput name="shipping_address" #shipping_address="ngModel" [(ngModel)]="data.shipping_address" required></textarea>
+                                
+                                <mat-hint align="end" *ngIf="shipping_address.touched || f.submitted">
+                                    <ng-container *ngIf="shipping_address.errors?.['required']">This field is required</ng-container>
+                                </mat-hint>
+                            </mat-form-field>
+                        </div>
+                        
+                        <div class="col-span-12  xl:col-span-12 xxl:col-span-12" >
+                            <label class="form-label mb-0">Shipping Courier Name <span class="text-red-500">*</span></label>
+                            <mat-form-field class="mat-custom-field">
+                                <input matInput name="shipping_courier" #shipping_courier="ngModel" [(ngModel)]="data.shipping_courier" required>
+
+                                <mat-hint align="end" *ngIf="shipping_courier.touched || f.submitted">
+                                    <ng-container *ngIf="shipping_courier.errors?.['required']">This field is required</ng-container>
+                                </mat-hint>
+                            </mat-form-field>
+                        </div>
+                        
+                        <div class="col-span-12  xl:col-span-12 xxl:col-span-12" >
+                            <label class="form-label mb-0">Tracking Number <span class="text-red-500">*</span></label>
+                            <mat-form-field class="mat-custom-field">
+                                <input matInput name="shipping_tracking" #shipping_tracking="ngModel" [(ngModel)]="data.shipping_tracking" required>
+
+                                 <mat-hint align="end" *ngIf="shipping_tracking.touched || f.submitted">
+                                    <ng-container *ngIf="shipping_tracking.errors?.['required']">This field is required</ng-container>
+                                </mat-hint>
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    
+                    <div class="col-span-12  xl:col-span-12 xxl:col-span-12" >
+                        <label class="form-label mb-0">Remark</label>
+                        <mat-form-field class="mat-custom-field">
+                            <textarea matInput name="transfer_remark" #transfer_remark="ngModel" [(ngModel)]="data.transfer_remark"></textarea>
+                        </mat-form-field>
+                    </div>
+                </ng-container>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- *****  Transfer Status End   ***** -->

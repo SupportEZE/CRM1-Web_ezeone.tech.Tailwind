@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "spk-jobsearch-card.component.scss"
+    ],
+    "names": [],
+    "file": "spk-jobsearch-card.component.css"
+}

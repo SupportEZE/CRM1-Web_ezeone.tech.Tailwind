@@ -1,0 +1,552 @@
+<app-page-header [title]="'SFA'" [title1]="['Site Detail']" [activeitem]="'Site Detail'" [buttonText1]="'Edit Site'" [icon1]="'edit'" [btnShow1]="true" (buttonClick1)="editPage($event)"></app-page-header>
+
+<!-- Start:: row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="box profile-card">
+            <div class="profile-banner-img">
+                <img src="./assets/images/media/media-95.png" class="card-img-top" alt="...">
+            </div>
+            <div class="box-body pb-0 relative profile-content">
+                <!-- profile-content -->
+                <div class="grid grid-cols-12 sm:gap-x-6 profile-content" *ngIf="!skLoading">
+                    <div class="xl:col-span-3 col-span-12">
+                        <div class="box overflow-hidden">
+                            <div class="box-header">
+                                <div class="flex items-center justify-between wp100">
+                                    <div class="box-title">Activity Information</div>
+                                    
+                                    <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary m-0" (click)="onSaveFollowup()" *ngIf="accessRight?.addRight">
+                                        <i class="ri-apps-2-add-line font-medium align-middle"></i>
+                                        Followup
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="box-body p-0">
+                                <div class="p-2 flex gap-4 border-b bg-light border-defaultborder dark:border-defaultborder/10">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="upcomming" id="upcomming" [(ngModel)]="assignType"  [value]="'upcomming'">
+                                        <label class="form-check-label" for="upcomming">
+                                            Upcomming
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="last" id="last" [(ngModel)]="assignType"  [value]="'last'">
+                                        <label class="form-check-label" for="last">
+                                            Last
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <spk-reusable-tables tableClass="table text-nowrap" [showCheckbox]="false">
+                                        <ng-container *ngIf="assignType === 'upcomming'">
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td>
+                                                    <span class="font-medium text-[11px]">Name :</span>
+                                                </td>
+                                                <td>
+                                                    <div class="flex items-center">
+                                                        <span class="text-[11px]">{{ Detail?.upcoming_followup?.category_detail?.name || '--' }} ({{Detail?.upcoming_followup?.category_detail?.mobile || '--'}})</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td><span class="font-medium text-[11px]">Type :</span></td>
+                                                <td>
+                                                    <span class="badge bg-info/10 text-info text-[11px]">
+                                                        <i class="ri-{{Detail?.upcoming_followup?.followup_type === 'Call' ? 'phone' : 'walk'}}-fill text-[11px] me-1"></i> 
+                                                        {{ Detail?.upcoming_followup?.followup_type ? (Detail.upcoming_followup?.followup_type | titlecase) : '--' }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td><span class="font-medium text-[11px]">Date :</span></td>
+                                                <td>
+                                                    <span class="text-primary font-medium me-1 text-[11px]">
+                                                        {{ Detail?.upcoming_followup?.followup_date ? (Detail?.upcoming_followup?.followup_date | date:'d MMM yyyy') : '--' }}
+                                                    </span>
+                                                    <span class="badge bg-primary/10 text-primary text-[12px]">
+                                                        {{ getTatDaysReadable(Detail?.upcoming_followup?.tat_days) }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td class="vertical-align-top"><span class="font-medium text-[11px]">Remark :</span></td>
+                                                <td><span class="text-[11px] ellipsis w180" matTooltip="{{Detail?.upcoming_followup?.remark}}">{{Detail?.upcoming_followup?.remark || '--'}}</span></td>
+                                            </tr>
+                                        </ng-container>
+                                        
+                                        <ng-container *ngIf="assignType === 'last'">
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td>
+                                                    <span class="font-medium text-[11px]">Name :</span>
+                                                </td>
+                                                <td>
+                                                    <div class="flex items-center">
+                                                        <span class="text-[11px]">{{ Detail?.last_activity?.customer_details?.customer_name || '--' }} ({{Detail?.last_activity?.customer_details?.mobile || '--'}})</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td><span class="font-medium text-[11px]">Type :</span></td>
+                                                <td>
+                                                    <span class="badge bg-info/10 text-info text-[11px]">
+                                                        <i class="ri-{{ Detail?.last_activity?.visit_type === 'call' ? 'phone' : 'walk' }}-fill text-[11px] me-1"></i>
+                                                        {{ Detail?.last_activity?.visit_type ? (Detail.last_activity.visit_type | titlecase) : '--' }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td><span class="font-medium text-[11px]">Date :</span></td>
+                                                <td>
+                                                    <span class="text-primary font-medium me-1 text-[11px]">
+                                                        {{ Detail?.last_activity?.activity_date ? (Detail?.last_activity?.activity_date | date:'d MMM yyyy') : '--' }}
+                                                    </span>
+                                                    <span class="badge bg-primary/10 text-primary text-[12px]">
+                                                        {{ getTatDaysReadable(Detail?.last_activity?.tat_days) }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td class="vertical-align-top"><span class="font-medium text-[11px]">Remark :</span></td>
+                                                <td><span class="text-[11px] ellipsis w180" matTooltip="{{Detail?.last_activity?.remark}}">{{Detail?.last_activity?.remark || '--'}}</span></td>
+                                            </tr>
+                                        </ng-container>
+                                    </spk-reusable-tables>
+                                </div>
+                            </div>                            
+                        </div>
+                        
+                        <app-showcode-card [title]="'Other Contacts'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [boxHeader]="'py-0'" [classbody]="'pt-0'" [iconName]="'ri-add-line'" (action)="openModal('contact_person')">
+                            <ul class="ti-list-group list-group-flush !border-0 scroll-y-250">
+                                <li *ngFor="let row of contactPerson;">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-auto">
+                                            <div>
+                                                <span class="font-medium block">{{row.contact_person_name || '--'}}</span>
+                                                <span class="badge text-primary bg-primary/10">{{row.designation || '---'}}</span>
+                                                <p class="text-textmuted dark:text-textmuted/50">{{row.contact_person_mobile || '--'}}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="w70 mw70 flex"> 
+                                            <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="openModal('contact_person', row)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+                                            <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="delete(row._id, 'sites/delete-contact', 'Contact Person Delete')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <div *ngIf="!contactPerson?.length">
+                                    <label class="form-check-label !ps-0 text11px font-normal">
+                                        No data available!
+                                    </label>
+                                </div>
+                            </ul>
+                        </app-showcode-card>
+                        
+                        <div class="box overflow-hidden">
+                            <div class="box-header justify-between">
+                                <div class="box-title">Stages</div>
+                                <!-- <div>
+                                    <button type="button" class="ti-btn-secondary ti-btn-wave ti-btn !py-1 !px-2 !font-medium !text-[0.75rem] ti-btn-undefined">
+                                        <i class="ri-add-line  align-middle"></i>Stages
+                                    </button>
+                                </div> -->
+                            </div>
+                            <div class="box-body pt-0">
+                                
+                                <div class="mt-45px mb-3" id="total-orders">
+                                    <spk-apexcharts [chartOptions]="chartOptions1"></spk-apexcharts>
+                                </div>
+                                
+                                <ul class="ti-list-group">
+                                    <li class="ti-list-group-item" *ngFor="let stage of siteMainStages">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <input class="form-check-input form-checked-success me-2" type="checkbox" [id]="getKey(stage)" [(ngModel)]="stage[getKey(stage)]" (change)="onUpdateStage(getKey(stage), !stage[getKey(stage)], stage[getKey(stage)], 'stage')">
+                                                <div class="font-medium">{{ getKey(stage) }}</div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="box overflow-hidden">
+                            <div class="box-header justify-between">
+                                <div class="box-title">Competitor Analysis</div>
+                            </div>
+                            <div class="box-body pt-0">
+                                <ul class="ti-list-group">
+                                    <li class="ti-list-group-item" *ngFor="let stage of competitorStages">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <input class="form-check-input form-checked-success me-2" type="checkbox" [id]="getKey(stage)" [(ngModel)]="stage[getKey(stage)]" (change)="onUpdateStage(getKey(stage), !stage[getKey(stage)], stage[getKey(stage)], 'competitor')">
+                                                <div class="font-medium">{{ getKey(stage) }}</div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div *ngIf="!competitorStages?.length">
+                                    <label class="form-check-label !ps-0 text11px font-normal">
+                                        No data available!
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="xxl:col-span-9 xl:col-span-8 lg:col-span-8 md:col-span-7 col-span-12">
+                        <app-showcode-card  [titleView]="false"  [view]="false">
+                            <div class="flex justify-between mb-3">
+                                <div class="box-title flex items-center text-primarytint1color">Basic Detail</div>
+                            </div>
+                            
+                            <div class="flex gap-6 mb-1 flex-wrap text-[11px]">
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Site Id</span>
+                                        <span class="block font-medium">{{Detail?.site_id || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Created At</span>
+                                        <span class="block font-medium">{{Detail?.created_at ? (Detail?.created_at | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Created By</span>
+                                        <span class="block font-medium">{{Detail?.created_name || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Site Type</span>
+                                        <span class="block font-medium">{{Detail?.site_type || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Source</span>
+                                        <span class="block font-medium">{{Detail?.source || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Name</span>
+                                        <span class="block font-medium">{{Detail?.site_name || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Mobile</span>
+                                        <span class="block font-medium">{{Detail?.mobile_no || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Assigned Date</span>
+                                        <span class="block font-medium">{{Detail?.assigned_date ? (Detail?.assigned_date | date:'d MMM yyyy') : '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Assign Sales User</span>
+                                        <span class="block font-medium">{{Detail?.assigned_to_user_name || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Status</span>
+                                        <span class="flex items-center block font-medium badge bg-info/10 text-info">{{Detail?.status || '--'}}
+                                            <a class="text-info font-medium" (click)="updateStatus()" *ngIf="Detail?.status === 'Review Pending' || Detail?.status === 'Inprocess' || Detail?.status === 'Assigned'">
+                                                <i class="material-icons ms-1">edit</i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center" *ngIf="Detail.reason">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Reason</span>
+                                        <span class="block font-medium">{{Detail?.reason || '--'}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Addess</span>
+                                        <span class="block font-medium">{{Detail.address ? (Detail.address + ',') : ''}} {{Detail.city ? (Detail.city + ',') : ''}} {{Detail.district ? (Detail.district + ',') : ''}} {{Detail.state ? (Detail.state + ',') : ''}} {{Detail.pincode ? (Detail.pincode + '') : ''}} {{Detail.country ? (Detail.country + '') : ''}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dropdown-divider mb-3 mt-3"></div>
+                            
+                            <div class="flex gap-5 mb-1 flex-wrap text-[11px]">
+                                <div class="flex items-center gap-2" *ngFor="let key of formattedKeysFormData | keyvalue">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">{{ key.key }}</span>
+                                        <span class="block font-medium">{{ key.value }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </app-showcode-card>
+                        
+                        <div class="box">
+                            <div class="box-header justify-between">
+                                <nav class="nav nav-tabs tab-style-8 scaleX profile-settings-tab gap-2 flex mt-2" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='quotation'}" (click)="activeTab = 'quotation';getQuotation()">
+                                        Quotation
+                                    </button>
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='attachment'}" (click)="activeTab = 'attachment';">
+                                        Attachment
+                                    </button>
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md active" [ngClass]="{'active': activeTab ==='point_location'}" (click)="activeTab = 'point_location';loadMap()">
+                                        Point Location
+                                    </button>
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md active" [ngClass]="{'active': activeTab ==='Task Activity'}" (click)="activeTab = 'Task Activity';getTaskActivity();">
+                                        Task Activity
+                                    </button>
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='comments'}" (click)="activeTab = 'comments';">
+                                        Comments
+                                    </button>
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='logs'}" (click)="activeTab = 'logs'; getLogs();">
+                                        Logs
+                                    </button>
+                                </nav>
+                            </div>
+                            
+                            <div class="box-body tab-content pt-0">
+                                <div *ngIf="activeTab === 'quotation'">
+                                    <div class="table-responsive overflow-auto table-bordered-default">
+                                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [columns]="headers_one">
+                                            <ng-container *ngIf="!skLoading1">
+                                                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of quotationList; let i = index;">
+                                                    <td class="!text-center">{{i + 1 }}</td>
+                                                    <td>{{row.created_name}}</td>
+                                                    <td>{{row.created_at | date:'d MMM yyyy, hh:mm a' : '--'}}</td>
+                                                    <td>{{row.quotation_id || '--'}}</td>
+                                                    <td>{{row.title || '--'}}</td>
+                                                    <td>
+                                                        <div class="flex items-center">
+                                                            <div class="">
+                                                                <span class="block">
+                                                                    <a class="font-medium">{{row.customer_name || '--'}}</a>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{row.total_item || '--'}}</td>
+                                                    <td>{{row.total_qty || '--'}}</td>
+                                                    <td>{{row.total_amount || '--'}}</td>
+                                                    <td>
+                                                        <span class="badge" [ngClass]="{'text-success bg-success/10': row.status === 'Approved', 'text-warning bg-warning/10': row.status === 'Pending', 'text-danger bg-danger/10': row.status === 'Reject'}">{{row.status || '--'}}</span>
+                                                    </td>
+                                                    <td><span class="ellipsis" matTooltip="{{row.note}}">{{row.note || '--'}}</span></td>
+                                                </tr>
+                                            </ng-container>
+                                            <!-- //--skeleton--// -->
+                                            <ng-container *ngIf="skLoading1">
+                                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                                    <td *ngFor="let row of [].constructor(12)">
+                                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                            <!-- //--skeleton--// -->
+                                        </spk-reusable-tables>
+                                        <ng-container *ngIf="!quotationList.length && !skLoading">
+                                            <app-data-not-found></app-data-not-found>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                                <div *ngIf="activeTab === 'attachment'">
+                                    <ng-container *ngIf="Detail.files.length !== 0">
+                                        <div class="grid grid-cols-12 sm:gap-x-6">
+                                            <div class="xxl:col-span-2 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of Detail.files">
+                                                <spk-product-card [apiPath]="'sites/get-doc'" [imageData]="image" [editBtn]="false" [delBtn]="false" [heading]="false" [subHeading]="false">
+                                                </spk-product-card>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="Detail.files.length === 0">
+                                        <app-data-not-found></app-data-not-found>
+                                    </ng-container>
+                                </div>
+                                <div *ngIf="activeTab === 'Task Activity'">
+                                    <ng-container *ngIf="!skLoading1">
+                                        <ul class="list-none profile-timeline mb-3">
+                                            <li *ngFor="let row of taskActivity">
+                                                <div *ngIf="row.type === 'visit'">
+                                                    <span class="avatar avatar-sm avatar-rounded profile-timeline-avatar bg-primarytint3color">
+                                                        <i class="ri-walk-fill text-[14px]"></i> 
+                                                    </span>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-2">
+                                                        <span class="text-defaulttextcolor dark:text-defaulttextcolor/80">
+                                                            <span class="font-medium">{{row?.customer_details?.customer_name}} </span>{{row?.customer_details?.mobile}}
+                                                        </span>
+                                                        <span class="float-end text-[11px] badge bg-primarytint3color/10 text-primarytint3color">{{row.type | titlecase}} - {{ row?.activity_date ? (row?.activity_date | date:'d MMM yyyy, hh:mm a') : '--' }}</span>
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Visit Start : </span>{{ row?.visit_start ? (row?.visit_start | date:'hh:mm a') : '--' }}
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Start Address : </span>{{ row?.start_location || '--' }}
+                                                    </p>
+                                                    
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Visit Stop : </span>{{ row?.visit_end ? (row?.visit_end | date:'hh:mm a') : '--' }}
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Stop Address : </span>{{ row?.end_location || '--' }}
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Avarage Meeting Time : </span>
+                                                        <span class="font-medium text-success">{{ row?.avarage_meeting_time || '--' }}</span>
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Remark : </span>
+                                                        <span class="font-medium text-success">{{ row?.remark || '--' }}</span>
+                                                    </p>
+                                                </div>
+                                                
+                                                <div *ngIf="row.type === 'call'">
+                                                    <span class="avatar avatar-sm avatar-rounded profile-timeline-avatar bg-info">
+                                                        <i class="ri-phone-fill text-[14px]"></i> 
+                                                    </span>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-2">
+                                                        <span class="text-defaulttextcolor dark:text-defaulttextcolor/80">
+                                                            <span class="font-medium">{{row?.customer_details?.customer_name}} </span>{{row?.customer_details?.mobile}}
+                                                        </span>
+                                                        <span class="float-end text-[11px] badge bg-info/10 text-info">{{row.type | titlecase}} - {{ row?.activity_date ? (row?.activity_date | date:'d MMM yyyy, hh:mm a') : '--' }}</span>
+                                                    </p>
+                                                    
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Call Start : </span>
+                                                        {{ row?.call_start ? (row?.call_start | date:'hh:mm a') : '--' }}
+                                                    </p>
+                                                    
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Call End : </span>
+                                                        {{ row?.call_end ? (row?.call_end | date:'hh:mm a') : '--' }}
+                                                    </p>
+                                                    
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Remark : </span>
+                                                        {{ row?.remark || '--' }}
+                                                    </p>
+                                                    
+                                                    <audio id="player2" controls>
+                                                        <source src="./assets/audio/perfect-beauty.mp3" type="audio/mp3" >
+                                                    </audio>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <ng-container *ngIf="!taskActivity.length">
+                                            <app-data-not-found></app-data-not-found>
+                                        </ng-container>
+                                    </ng-container>
+                                    
+                                    <!-- //--skeleton--// -->
+                                    <ng-container *ngIf="skLoading1">
+                                        <div *ngFor="let card of [].constructor(5)">
+                                            <app-skeleton [class]="'h50 mb-2'"></app-skeleton>
+                                        </div>
+                                    </ng-container>
+                                    <!-- //--skeleton--// -->
+                                </div>
+                                <div *ngIf="activeTab === 'logs'">
+                                    <app-logs [logList]="logList" [scrollHeight]="'400'" [closeBtn]="false" [hideHeader]="false"></app-logs>
+                                </div>
+                                <div *ngIf="activeTab === 'point_location'">
+                                    <app-showcode-card [title]="'Point Location'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [boxHeader]="'pt-0 pb-0'" [classbody]="'pt-0'" [iconName]="!Detail.lat || !Detail.long ? 'ri-add-line' : 'ri-pencil-line'" (action)="openModal('point_location' , Detail)">
+                                        <ng-container *ngIf="Detail.lat && Detail.long">
+                                            <div id="map" style="width: 100%; height: 300px;"></div>
+                                            
+                                            <div class="flex gap-6 mt-2 flex-wrap text-[12px]">
+                                                <div class="flex items-center">
+                                                    <div>
+                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">latitude</span>
+                                                        <span class="block font-medium">{{Detail?.lat || '--'}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <div>
+                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">longitude</span>
+                                                        <span class="block font-medium">{{Detail?.long || '--'}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <div>
+                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">GPS Address</span>
+                                                        <span class="block font-medium">{{Detail?.gps_address || '--'}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        
+                                        <ng-container *ngIf="!Detail.lat || !Detail.long">
+                                            <div class="max-w-sm p-6 mx-auto text-center">
+                                                <div class="flex flex-col items-center space-y-3">
+                                                    <span class="material-icons text-6xl text-danger">location_on</span>
+                                                    <p class="text-lg font-semibold text-gray-800">Point your location first</p>
+                                                    <p class="text-sm text-gray-500">Once location is point, map will appear here.</p>
+                                                    
+                                                    <div class="border-t border-block-start-dashed sm:flex justify-end">
+                                                        <app-button [buttonType]="'submit'" [buttonClass]="'m-0 ti-btn ti-btn-outline-success'" [label]="'Point Your Location'" [iconClass]="'ri-map-pin-user-line'" (buttonClick)="openModal('point_location' , Detail)"></app-button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        
+                                    </app-showcode-card>
+                                </div>
+                                <div *ngIf="activeTab === 'comments'">
+                                    <app-comments [detailId]="DetailId" [module]="'sites'" [showAvatar]="true"></app-comments>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sk Loading Start -->
+                <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+                    <div class="xl:col-span-12 col-span-12">
+                        
+                        <div class="grid grid-cols-12 sm:gap-x-6">
+                            <div class="xl:col-span-12 col-span-12">
+                                <app-showcode-card [titleView]="false"  [view]="false">
+                                    <div >
+                                        <div class="flex gap-2 mb-1 flex-wrap">
+                                            <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                                <app-skeleton [class]="'w180'"></app-skeleton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </app-showcode-card>
+                            </div>
+                            
+                            <div class="xl:col-span-4 col-span-12">
+                                <app-showcode-card [titleView]="false"  [view]="false">
+                                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                                </app-showcode-card>
+                            </div>
+                            
+                            <div class="xl:col-span-8 col-span-12">
+                                <app-showcode-card [titleView]="false"  [view]="false">
+                                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                                </app-showcode-card>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sk Loading End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End:: row-1 -->

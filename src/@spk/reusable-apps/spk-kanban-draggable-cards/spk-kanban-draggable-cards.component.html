@@ -1,0 +1,44 @@
+
+  <div class="box mt-3">
+    <div class="box-header justify-between">
+        <div class="task-badges flex flex-wrap gap-1">
+            <span class="badge bg-{{idBg}}/10 text-{{idBg}}">{{ taskId }}</span>
+            @for(badge of taskBadges;track $index){
+            <span class="badge bg-{{badge.type}}/10 text-{{badge.type}}">{{ badge.label }}</span>
+            }
+        </div>
+        <spk-dropdowns [Customclass]="'dropdown [--placement:bottom-right] rtl:[--placement:bottom-left]'" [Drop]="'end'" [class]="'ti-btn ti-btn-sm bg-light no-caret'"
+        [Menuclass]="'dropdown-menu'" [Id]="'dropdownMenuOffset'" [Icon]="true" [IconClass]="'ri-more-2-fill'">
+                <li><a class="ti-dropdown-item" href="javascript:void(0);">View</a></li>
+                <li><a class="ti-dropdown-item" href="javascript:void(0);">Edit</a></li>
+                <li><a class="ti-dropdown-item" href="javascript:void(0);">Delete</a></li>
+        </spk-dropdowns>
+    </div>
+    <div class="box-body">
+        <h6 class="font-medium mb-1 text-[15px]">{{ taskTitle }}</h6>
+        <p class="kanban-task-description">{{ taskDescription }}</p>
+        <div class="kanban-box-footer flex flex-wrap gap-1">
+            <span class="badge bg-primary">{{ taskPriority }}</span>
+            <span class="badge bg-success">{{ taskStatus }}</span>
+        </div>
+    </div>
+    <div class="p-4 border-t border-dashed dark:border-defaultborder/10">
+        <div class="flex items-center justify-between">
+            <div class="avatar-list-stacked">
+              @for(avatar of avatars;track $index){
+                <span class="avatar avatar-sm avatar-rounded">
+                    <img [src]="avatar" alt="img">
+                </span>
+              }
+            </div>
+            <div>
+                <a href="javascript:void(0);" class="me-2 text-secondary">
+                    <span class="me-1"><i class="ri-thumb-up-fill align-middle font-normal"></i></span><span class="font-medium text-xs">{{ likes }}</span>
+                </a>
+                <a href="javascript:void(0);" class="text-info">
+                    <span class="me-1"><i class="ri-message-2-line align-middle font-normal"></i></span><span class="font-medium text-xs">{{comments}}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,154 @@
+<div class="timeline-1">
+    <div class="max-w-[100%]">
+        <div class="box border border-defaultborder dark:border-defaultborder/10 overflow-hidden">
+            <div class="box-body">
+                <div class="timeline scroll-y-600">
+                    <div class="max-w-[95%] mx-auto">
+                        <div>
+                            <!-- Loop through the grouped data -->
+                            <div *ngFor="let date of objectKeys(groupedData);">
+                                <div class="timeline-end">
+                                    <!-- Display the date -->
+                                    <span class="p-1 text-[11px] bg-primarytint2color text-white backdrop-blur text-center border border-primarytint2color border-opacity-10 rounded-sm leading-none font-medium">
+                                        {{ date }}
+                                    </span>
+                                </div>
+                                
+                                <div class="timeline-continue">
+                                    <!-- Loop through the items for this date -->
+                                    <div class="timeline-right" *ngFor="let row of groupedData[date]; let i = index;">
+                                        <div class="timeline-content mie-0" [attr.data-label]="i+1">
+                                            <!-- Activity date -->
+                                            <p class="timeline-date text-textmuted dark:text-textmuted/50 mb-2">
+                                                {{row.user_info ?(row.user_info.name + row.user_info.user_code) : ''}}  <span class="text-success">{{ row.activity_date | date:'hh:mm a' }}</span>
+                                            </p>
+                                            
+                                            <!-- Timeline box with customer info -->
+                                            <div class="timeline-box">
+                                                <p class="mb-2">
+                                                    <b>{{ row.customer_details?.customer_name }} -  
+                                                        <ng-container *ngIf="row.contact_person_Info?.length">
+                                                            - ({{ row.contact_person_Info[0]?.contact_person_name }} -
+                                                            {{ row.contact_person_Info[0]?.contact_person_mobile }})
+                                                        </ng-container>
+                                                    </b>
+                                                    ({{ remove.formatText(row.customer_details?.customer_type_name) }})
+                                                </p>
+                                                
+                                                
+                                                
+                                                <!-- Check-in, check-out, and total time spent -->
+                                                <div class="flex mt-4 mid-border flex-wrap gap-2 justify-between flex-auto">
+                                                    <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                                                        <span>Checkin Time</span>
+                                                        <p class="text-success font-medium text-[14px] mb-0">{{ row.visit_start ? (row.visit_start | date:'hh:mm a') : 'Not Available'}}</p>
+                                                    </div>
+                                                    <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                                                        <span>Checkout Time</span>
+                                                        <p class="text-danger font-medium text-[14px] mb-0">{{row.visit_end ? (row.visit_end | date:'hh:mm a') : 'Not Available'}}</p>
+                                                    </div>
+                                                    <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                                                        <span>Total Meeting Time</span>
+                                                        <p class="text-primary font-medium text-[14px] mb-0">{{row.avarage_meeting_time || 'Not Available'}}</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Start and end locations -->
+                                                <div class="flex gap-3 mb-2 mt-2">
+                                                    <p>
+                                                        <b>Start Location:</b> {{ row.start_location || 'Not Available' }}
+                                                    </p>
+                                                    <p>
+                                                        <b>End Location:</b> {{ row.end_location || 'Not Available' }}
+                                                    </p>
+                                                </div>
+                                                <!-- Check-in types (if available) -->
+                                                <div class="flex mt-4 gap-3">
+                                                    <div class="form-check flex items-center gap-2" >
+                                                        <i class="material-icons inline-block" [ngClass]="row.order ? 'text-success' : 'text-danger'">{{row.order ? 'check_circel' : 'cancel'}}</i>
+                                                        <label for="checkebox-sm" class="font-medium text-[.6875rem]">
+                                                            Order
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check flex items-center gap-2" >
+                                                        <i class="material-icons inline-block" [ngClass]="row.enquiry ? 'text-success' : 'text-danger'">{{row.enquiry ? 'check_circel' : 'cancel'}}</i>
+                                                        <label for="checkebox-sm" class="font-medium text-[.6875rem]">
+                                                            Enquiry
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check flex items-center gap-2" >
+                                                        <i class="material-icons inline-block" [ngClass]="row.stock_audit ? 'text-success' : 'text-danger'">{{row.stock_audit ? 'check_circel' : 'cancel'}}</i>
+                                                        <label for="checkebox-sm" class="font-medium text-[.6875rem]">
+                                                            Stock Audit
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check flex items-center gap-2" >
+                                                        <i class="material-icons inline-block" [ngClass]="row.photo_gallery ? 'text-success' : 'text-danger'">{{row.photo_gallery ? 'check_circel' : 'cancel'}}</i>
+                                                        <label for="checkebox-sm" class="font-medium text-[.6875rem]">
+                                                            Photo Gallery
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check flex items-center gap-2" >
+                                                        <i class="material-icons inline-block" [ngClass]="row.follow_up ? 'text-success' : 'text-danger'">{{row.follow_up ? 'check_circel' : 'cancel'}}</i>
+                                                        <label for="checkebox-sm" class="font-medium text-[.6875rem]">
+                                                            Follow Up
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check flex items-center gap-2" >
+                                                        <i class="material-icons inline-block" [ngClass]="row.payment_collection ? 'text-success' : 'text-danger'">{{row.payment_collection ? 'check_circel' : 'cancel'}}</i>
+                                                        <label for="checkebox-sm" class="font-medium text-[.6875rem]">
+                                                            Payment Collection
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check flex items-center gap-2" >
+                                                        <i class="material-icons inline-block" [ngClass]="row.branding_audit ? 'text-success' : 'text-danger'">{{row.branding_audit ? 'check_circel' : 'cancel'}}</i>
+                                                        <label for="checkebox-sm" class="font-medium text-[.6875rem]">
+                                                            Branding Audit
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check flex items-center gap-2" >
+                                                        <i class="material-icons inline-block" [ngClass]="row.pop_distribution ? 'text-success' : 'text-danger'">{{row.pop_distribution ? 'check_circel' : 'cancel'}}</i>
+                                                        <label for="checkebox-sm" class="font-medium text-[.6875rem]">
+                                                            Pop Distribution
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check flex items-center gap-2" >
+                                                        <i class="material-icons inline-block" [ngClass]="row.support_ticket ? 'text-success' : 'text-danger'">{{row.support_ticket ? 'check_circel' : 'cancel'}}</i>
+                                                        <label for="checkebox-sm" class="font-medium text-[.6875rem]">
+                                                            Support Ticket
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Topic Of DIscussion -->
+                                                <p class="mb-2 mt-2">
+                                                    <b>Topic Of DIscussion:</b> {{ row.checklist || 'N/A' }}
+                                                </p>
+                                                
+                                                <!-- Remark -->
+                                                <p class="mb-2 mt-2">
+                                                    <b>Remark:</b> {{ row.remark || 'N/A' }}
+                                                </p>
+                                                
+                                                <!-- Display images (if any) -->
+                                                <div class="grid grid-cols-12 gap-x-4" *ngIf="row?.files?.length">
+                                                    <div class="xxl:col-span-3 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of row?.files">
+                                                        <spk-product-card apiPath]="'timeline/get-doc'" [imageData]="image" [editBtn]="false" [heading]="true" [subHeading]="true" [delBtn]="false"></spk-product-card>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <ng-container *ngIf="groupedData && Object.keys(groupedData).length === 0">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

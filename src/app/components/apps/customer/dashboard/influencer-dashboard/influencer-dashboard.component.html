@@ -1,0 +1,245 @@
+<!-- Start::Row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            @for(card of cardData;track $index){
+                <div class="xxl:col-span-2 xl:col-span-3 col-span-12">
+                    <spk-sales-cards [card]="card"></spk-sales-cards>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-8 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xxl:col-span-8 xl:col-span-6 col-span-12">
+                <div class="box">
+                    <div class="box-header justify-between">
+                        <div class="box-title">
+                            Last 15 day's scanning
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="sales-overview">
+                            <spk-apexcharts [chartOptions]="chartOptions"></spk-apexcharts>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="xxl:col-span-4 xl:col-span-6 col-span-12">
+                <div class="box overflow-hidden">
+                    <div class="box-header pb-0 justify-between">
+                        <div class="box-title">
+                            Point Earning Statistics
+                        </div>
+                    </div>
+                    <div class="box-body py-4 px-3">
+                        <div class="flex gap-4 mb-3">
+                            <div class="avatar avatar-md bg-primary/10 !w-[3rem]">
+                                <i class="ti ti-trending-up text-[1.25rem] text-primary"></i>
+                            </div>
+                            <div class="flex-auto flex items-start justify-between w-full flex-wrap">
+                                <div>
+                                    <span class="text-[11px] mb-1 block font-medium">TOTAL POINTS</span> 
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="mb-0 flex items-center">3,736<span class="text-success text-xs ms-2 inline-flex items-center"><i class="ti ti-trending-up align-middle me-1"></i>0.57%</span></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="orders" class="my-2">
+                            <spk-apexcharts [chartOptions]="chartOptions1"></spk-apexcharts>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="xl:col-span-4 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xl:col-span12 col-span-12">
+                <div class="box overflow-hidden">
+                    <div class="box-header justify-between pb-1">
+                        <div class="box-title">
+                            Points Earning By Categories
+                        </div>
+                    </div>
+                    <div class="box-body p-0">
+                        <div class="p-4 pb-0">
+                            <div class="progress-stacked progress-sm mb-3 flex gap-1">
+                                <div class="progress-bar w-[25%]" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-primarytint1color w-[15%] !rounded-none" role="progressbar" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-primarytint2color !rounded-none w-[15%]" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-primarytint3color !rounded-none w-[20%]" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar !rounded-none !rounded-tr-md !rounded-br-md bg-secondary w-[25%]" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="flex items-center justify-between mb-2">
+                                <div>Overall Sales</div>
+                                <div class="h6 mb-0"><span class="text-success me-2 text-[11px]">2.74%<i class="ti ti-arrow-narrow-up"></i></span>1,25,875</div>
+                            </div>
+                        </div>
+                        <div class="table-responsive top-categories">
+                            <table class="table text-nowrap">
+                                <tbody>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name one">Scan/Purchase</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">31,245</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">25% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-success me-1">1 day<i class="ti ti-trending-up ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name two">Bonus</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">553</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">16% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-warning me-1"> 4 day <i class="ti ti-trending-up ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name three">Refferal</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">24,577</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">22% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-secondary me-1">6 day <i class="ti ti-trending-up ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name four">Social</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">19,278</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">18% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-primarytint1color me-1"> 1 day<i class="ti ti-trending-down ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End::Row-1 -->
+
+<!-- Start::Row-2 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-5 xl:col-span-5 col-span-12">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                    Redeem Statistics
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="flex flex-wrap gap-2 justify-between flex-auto">
+                    <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                        <span>Total Earning</span>
+                        <p class="font-medium text-[14px] mb-0">1500 PT</p>
+                    </div>
+                    <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                        <span>Total Redeem</span>
+                        <p class="text-success font-medium text-[14px] mb-0">600 PT</p>
+                    </div>
+                    <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                        <span>Balance</span>
+                        <p class="text-danger font-medium text-[14px] mb-0">900 PT</p>
+                    </div>
+                </div>
+                <div id="sales-statistics">
+                    <spk-apexcharts [chartOptions]="chartOptions2"></spk-apexcharts>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="xxl:col-span-4 xl:col-span-4 col-span-12">
+       <div class="box overflow-hidden">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                    Refferal Performance
+                </div>
+            </div>
+            <div class="box-body p-0 pb-1">
+                <div class="table-responsive">
+                    <spk-reusable-tables  [columns]="companiesColumn" tableClass="ti-custom-table text-nowrap"
+                    [showCheckbox]="false" checkboxClass="text-center">
+                            @for(product of products;track $index){
+                            <tr>
+                                <td><div class="flex items-center gap-2">
+                                    <div class="leading-none">
+                                      <span class="avatar avatar-sm">
+                                        <img [src]="product.image" alt="{{ product.name }}">
+                                      </span>
+                                    </div>
+                                    <div class="font-medium">{{ product.name }}</div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <span class="font-medium">{{ product.price }}</span>
+                                </td>
+                                <td>
+                                  <span class="badge" [ngClass]="product.badgeClass">{{ product.status }}</span>
+                                </td>
+                              </tr>
+                            }
+                       </spk-reusable-tables>
+            </div>
+            </div>
+            </div>
+    </div>
+    
+    <div class="xxl:col-span-3 xl:col-span-3 col-span-12">
+        <div class="box">
+            <div class="box-header justify-between pb-0">
+                <div class="box-title">
+                    Growth Rate
+                </div>
+            </div>
+            <div class="box-body pb-1">
+                <div class="flex items-center p-4 bg-light rounded-sm">
+                    <div>
+                        <p class="mb-1 text-[13px]">Comparison: 2025 vs. 2024</p>
+                        <div class="text-textmuted dark:text-textmuted/50 text-xs mb-2">Increased By <span class="text-success"> 2.62%<i class="ti ti-arrow-narrow-up text-[16px]"></i></span></div>
+                        <h5 class="mb-0">20%</h5>
+                    </div>
+                    <div class="ms-auto">
+                        <div class="p-2 bg-primary/10 rounded-full">
+                            <div class="avatar-md avatar bg-primary svg-white avatar-rounded shadow-sm mb-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31l-56,56V200H224A8,8,0,0,1,232,208Z"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="sales-growth" class="mt-1">  <spk-apexcharts [chartOptions]="chartOptions8"></spk-apexcharts></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End::Row-2 -->

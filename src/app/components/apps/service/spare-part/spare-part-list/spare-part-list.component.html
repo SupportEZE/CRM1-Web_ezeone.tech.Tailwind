@@ -1,0 +1,125 @@
+<app-page-header [title]="'WCMS'" [title1]="['Spare Part']" [activeitem]="'Spare Part List'"></app-page-header>
+
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-12 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            @for(card of cardData;track $index){
+                <div class="{{card.colClass}} xl:col-span-6 col-span-12">
+                    <spk-sales-cards [card]="card" [bgOnActive]="card.activeTab === activeTab ? 'bg-primary/10' : ''" (buttonClick)="card.activeTab ? onTabChange(card.activeTab) : null"></spk-sales-cards>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Spare Part List'" [listLength]="listing.length" 
+            [btnShow]="true" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()" 
+            [btnShow1]="true" [logsLabel]="'Logs'" (logBtn)="openMainLogModal('')" 
+            [btnShow2]="accessRight?.addRight" [addBtnLabel]="'Add Spare Part'" (button1)="openModal('', 'add')" 
+            [btnShow3]="accessRight?.addRight" [importLabel]="'Manage Transaction'" [importIcon]="'ri-box-3-line'" (importBtn)="openModal('', 'manage-transaction')"></app-page-sub-header>
+            
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <ng-container *ngIf="activeTab === 'company_stock'">
+                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showAction]="true" [showS_No]="true" [columns]="headers">
+                            <ng-container *ngIf="!skLoading">
+                                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                                    <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                                    <td>{{row?.created_name}}</td>
+                                    <td>{{row?.created_at | date:'d MMM yyyy, hh:mm a' : '--'}}</td>
+                                    <td>
+                                        <div class="flex items-center">
+                                            <span class="avatar avatar-sm me-2 avatar-rounded">
+                                                <ng-container *ngFor="let row of row.files">
+                                                    <img  [src]="row.signed_url" alt="Gift Image" (click)="comanFuncation.zoom(row._id, 'spare-part/get-doc')">
+                                                </ng-container>
+                                            </span>
+                                            <div class="">
+                                                <span class="block">{{row?.product_name}}</span>
+                                                <span class="block">
+                                                    <a class="text-primary font-medium underline" (click)="goToDetailPage(row._id)">{{row?.product_code}}</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-right"> {{CURRENCY_SYMBOLS.RUPEE}} {{row?.mrp || '--'}}</td>
+                                    <td>
+                                        <span class="block">{{row?.stock_quantity || '--'}}</span>
+                                        <span class="block">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-[11px]">Last Transaction </span>
+                                            <span class="badge text-primary bg-primary/10">{{row?.last_transaction_days || 0}} Days Ago</span>
+                                        </span>
+                                    </td>
+                                    <td><span class="ellipsis" matTooltip="{{row?.description}}">{{row?.description || '--'}}</span></td>
+                                    <td class="text-center">
+                                        <app-icon-button [icon]="'ri-edit-line'" matTooltip="Edit" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="openModal(row, 'edit')" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+                                        <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)"> </app-icon-button>
+                                        <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (click)="delete(row._id, 'spare-part/delete', 'Delete')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                            <ng-container *ngIf="skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                    <td *ngFor="let row of [].constructor(8)">
+                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                        </spk-reusable-tables>
+                    </ng-container>
+                    
+                    <ng-container *ngIf="activeTab !== 'company_stock'">
+                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showAction]="true" [showS_No]="true" [columns]="headers_one">
+                            <ng-container *ngIf="!skLoading">
+                                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                                    <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                                    <td>{{row.created_name}}</td>
+                                    <td>{{row.created_at | date:'d MMM yyyy, hh:mm a' : '--'}}</td>
+                                    <td>
+                                        <div class="flex items-center">
+                                            <span class="avatar avatar-sm me-2 avatar-rounded">
+                                                <img  src="./assets/images/faces/11.jpg" alt="Gift Image">
+                                            </span>
+                                            <div class="">
+                                                <span class="block">
+                                                    <a class="text-primary font-medium underline" (click)="goToDetailPage(row._id)">{{row.assigned_to_name || '--'}}</a>
+                                                </span>
+                                                <span class="block">{{row.mobile || '--'}}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">{{row.total_items}}</td>
+                                    <td class="text-center">{{row.stock_quantity}}</td>
+                                    <td>
+                                        {{row.last_transaction_date | date:'d MMM yyyy, hh:mm a' : '--'}}
+                                        <span class="badge text-primary bg-primary/10">{{row.last_transaction_days || 0}} Days Ago</span>
+                                    </td>  
+                                    <td class="text-center">
+                                        <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (click)="delete(row._id, 'spare-part/delete', 'Delete')"> </app-icon-button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-container *ngIf="skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                    <td *ngFor="let row of [].constructor(8)">
+                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </spk-reusable-tables>
+                    </ng-container>
+                    
+                    <ng-container *ngIf="!listing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+                <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+            </div>
+        </div>
+    </div>
+</div>

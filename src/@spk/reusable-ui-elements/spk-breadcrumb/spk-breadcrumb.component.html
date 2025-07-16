@@ -1,0 +1,47 @@
+<ol class="flex items-center whitespace-nowrap min-w-0">
+  <li
+    *ngFor="let item of items; let last = last"
+    [class]="last ? 'text-sm text-gray-500 dark:text-[#8c9097] dark:text-white/50 truncate' : 'text-sm'"
+    [attr.aria-current]="last ? 'page' : null"
+  >
+    <a
+      *ngIf="!last; else activeLabel"
+      class="flex items-center text-primary hover:text-primary dark:text-primary"
+    >
+      <!-- Prefix Icon -->
+      <svg
+        *ngIf="item.prefixIconPath"
+        [class]="item.prefixIconClass || defaultPrefixClass"
+        width="16"
+        height="16"
+        fill="currentColor"
+        viewBox="0 0 16 16"
+      >
+        <path [attr.d]="item.prefixIconPath" fill-rule="evenodd" />
+        <path [attr.d]="item.prefixIconPath1" fill-rule="evenodd" />
+      </svg>
+      {{ item.label }}
+      <!-- Separator Icon -->
+      <svg
+        *ngIf="!last"
+        [class]="item.svgClass || 'flex-shrink-0 mx-3 overflow-visible h-2.5 w-2.5 text-gray-300 dark:text-white/10 rtl:rotate-180'"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path
+          [attr.d]="item.svgPath || defaultSeparatorPath"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+    </a>
+    <ng-template #activeLabel>
+      {{ item.label }}
+    </ng-template>
+  </li>
+</ol>

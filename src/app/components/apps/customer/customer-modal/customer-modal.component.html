@@ -1,0 +1,458 @@
+<!-- ***** Profile Status Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'profile_status'">
+    <app-modal-header [title]="'Update Profile Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    
+    <form [formGroup]="profileForm" (ngSubmit)="updateStatus()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12">
+                    <spk-ng-select
+                    formControlName="profile_status"
+                    label="Status"
+                    [fieldReq]="true"
+                    [options]="profileStatusList"
+                    (selectedChange)="onSingleSelectChange($event)"></spk-ng-select>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12" *ngIf="profileForm.get('profile_status')?.value === 'Reject' || profileForm.get('profile_status')?.value === 'Suspect'">
+                    <spk-input label="Remark" formControlName="remark" class="remove-default-class" type="textarea"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- ***** Profile Status End ***** -->
+
+<!-- ***** Bank Detail Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'bank'">
+    <app-modal-header [title]="'Update Bank Detail'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="bankForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="mat-typography" *ngIf="!formIniatialized">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Beneficiary Name"  [fieldReq]="true" formControlName="beneficiary_name" class="remove-default-class" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Bank Name" [fieldReq]="true" formControlName="bank_name" class="remove-default-class" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Account Number" [fieldReq]="true" formControlName="account_no" class="remove-default-class"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="IFSC Code" [fieldReq]="true" formControlName="ifsc_code" class="remove-default-class" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Branch Name" [fieldReq]="true" formControlName="branch_name" class="remove-default-class" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="UPI Id " formControlName="upi_id" class="remove-default-class" type="text"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- ***** Bank Detail End ***** -->
+
+
+
+<!-- ***** Contact Person Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'contact_person'">
+    <app-modal-header [title]="(pageType | titlecase) + ' Contact Person'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    
+    <form [formGroup]="contactPersonForm" (ngSubmit)="submitContactPerson()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Conatct Person Name"  formControlName="contact_person_name" class="remove-default-class" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Mobile No." formControlName="contact_person_mobile" class="remove-default-class"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Designation" formControlName="designation" class="remove-default-class" type="text"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- ***** Contact Person End ***** -->
+
+
+
+<!-- ***** Marka Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'marka'">
+    <app-modal-header [title]="(pageType | titlecase) + ' Marka'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    
+    <form [formGroup]="markaForm" (ngSubmit)="submitMarka()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12">
+                    <spk-input label="Marka" formControlName="marka" [fieldReq]="true" class="remove-default-class" type="text"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'"
+            [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled"
+            [formType]="'add'" [iconClass]="'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- ***** Marka End ***** -->
+
+
+
+<!-- ***** Shipping Address Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'shipping_address'">
+    <app-modal-header [title]="(pageType | titlecase) + ' Shipping Address'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    
+    <form [formGroup]="shippingForm" (ngSubmit)="submitAddress()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <ng-container *ngIf="modalData.fromPrimaryOrderAdd">
+                    <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                        <spk-input label="Related Contact Person"  formControlName="shipping_contact_name" class="remove-default-class" type="text"></spk-input>
+                    </div>
+                    <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                        <spk-input label="Related Contact Number"  formControlName="shipping_contact_number" class="remove-default-class"></spk-input>
+                    </div>
+                </ng-container>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Pincode"  formControlName="shipping_pincode" class="remove-default-class" type="number" (valueChange)="onValueChange($event, 'pincode')"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-ng-select
+                    formControlName="shipping_state"
+                    label="State"
+                    [fieldReq]="true"
+                    [options]="this.CommonApiService.statList"
+                    [multiple]="false"
+                    (selectedChange)="onSingleSelectChange($event, 'state')"
+                    [search]="true"  (searchChanged)="onSearch($event, 'state')"
+                    >
+                </spk-ng-select>
+            </div>
+            <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                <spk-ng-select
+                formControlName="shipping_district"
+                label="District"
+                [fieldReq]="true"
+                [options]="districtList"
+                [multiple]="false"
+                (selectedChange)="onSingleSelectChange($event, 'district')"
+                [search]="true"  (searchChanged)="onSearch($event, 'district')">
+            </spk-ng-select>
+        </div>
+        <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+            <spk-input label="City" formControlName="shipping_city" class="remove-default-class" type="text"></spk-input>
+        </div>
+        
+        <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+            <spk-input label="Address" formControlName="shipping_address" class="remove-default-class" type="textarea"></spk-input>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</mat-dialog-actions>
+</form>
+</div>
+<!-- ***** Shipping Address End ***** -->
+
+
+<!-- ***** Assign Distibutor user Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'assign_distibutor'">
+    <app-modal-header [title]="'Assign Distributor'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="distributorForm" (ngSubmit)="assignDistributor()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12">
+                    <spk-ng-select
+                    formControlName="parent_customer_id"
+                    label="Assign Distributor"
+                    [fieldReq]="true"
+                    [options]="CommonApiService.customerData"
+                    [multiple]="true"
+                    [search]="true"
+                    (searchChanged)="onSearch($event , 'customer')"
+                    (selectedChange)="onSingleSelectChange($event); findName($event, 'customer')"
+                    
+                    >
+                </spk-ng-select>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </mat-dialog-actions>
+</form>
+</div>
+<!-- ***** Assign Distibutor user End ***** -->
+
+
+<!-- ***** Other Information Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'other_information'">
+    <app-modal-header [title]="'Other Information'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="otherForm" (ngSubmit)="addOtherInfo()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="GST Number" formControlName="gst_number" class="remove-default-class" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Credit Limit" formControlName="credit_limit" class="remove-default-class" type="number"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Credit Day's" formControlName="credit_days" class="remove-default-class" type="number"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-ng-select
+                    formControlName="beat_code_id"
+                    label="Beat Code"
+                    [search]="true" (searchChanged)="onSearch($event , 'beat_code')"
+                    [options]="beatList"
+                    (selectedChange)="onSingleSelectChange($event , 'beat_code_assign')"></spk-ng-select>                    
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- ***** Other Information End ***** -->
+
+<!-- ***** Point Location Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'point_location'">
+    <app-modal-header [title]="'Point Location'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="poinLocationForm" (ngSubmit)="updateLocation()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Latitude"  formControlName="lat" class="remove-default-class" type="number"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Longitude" formControlName="long" class="remove-default-class" type="number"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- ***** Point Location End ***** -->
+
+
+<!-- ***** Assign user Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'assign_user'">
+    <app-modal-header [title]="'Assign user'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="userAssignForm" (ngSubmit)="assignUser()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-12 col-span-12">
+                    <spk-ng-select
+                    formControlName="user_ids"
+                    label="Sales User"
+                    [options]="CommonApiService.userData"
+                    [multiple]="true"
+                    [search]="true"
+                    (searchChanged)="onSearch($event , 'user')"
+                    (selectedChange)="onSingleSelectChange($event); findName($event, 'user')"
+                    >
+                </spk-ng-select>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </mat-dialog-actions>
+</form>
+</div>
+<!-- ***** Assign user End ***** -->
+
+
+
+<!-- ***** KYC Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'kyc'">
+    <app-modal-header [title]="'Update KYC Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="kycForm" (ngSubmit)="updateKyc()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12">
+                    <spk-ng-select
+                    formControlName="kyc_status"
+                    label="Status"
+                    [fieldReq]="true"
+                    [options]="kycStatusList"
+                    (selectedChange)="onSingleSelectChange($event)"
+                    >
+                </spk-ng-select>
+            </div>
+            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12" *ngIf="kycForm.get('kyc_status')?.value === 'Reject'">
+                <spk-input label="Remark" formControlName="status_remark" class="remove-default-class" type="textarea"></spk-input>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </mat-dialog-actions>
+</form>
+</div>
+<!-- ***** KYC End ***** -->
+
+
+<!-- ***** Add New Document Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'document'">
+    <app-modal-header [title]="(pageType | titlecase) + ' Document'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="documentForm" (ngSubmit)="saveDocument()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12">
+                    <spk-input label="Aadhar Card No." [fieldReq]="true" formControlName="aadhar_no" class="remove-default-class" type="number"></spk-input>
+                </div>
+                <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12">
+                    <spk-input label="Pan Card No." [fieldReq]="true" formControlName="pan_no" class="remove-default-class" type="text"></spk-input>
+                </div>
+                
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-6 md:col-span-12 col-span-12">
+                    <label class="form-label ">Aadhar Front Image<span class="text-red-500">*</span></label>
+                    
+                    <file-pond #myPond  [options]="pondOptions" class="filepond filepond--root basic-filepond" [files]="aadharFrontImg" (onremovefile)="onFileRemove($event, 'Aadhar Front')"  (onprocessfile)="onFileProcessed($event, 'Aadhar Front')">
+                    </file-pond>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-6 md:col-span-12 col-span-12">
+                    <label class="form-label ">Aadhar Back Image<span class="text-red-500">*</span></label>
+                    <file-pond #myPond  [options]="pondOptions" class="filepond filepond--root basic-filepond" [files]="aadharBackImg" (onremovefile)="onFileRemove($event, 'Aadhar Back')"  (onprocessfile)="onFileProcessed($event, 'Aadhar Back')"></file-pond>
+                </div>
+                <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-6 md:col-span-12 col-span-12">
+                    <label class="form-label ">Pan Card Image<span class="text-red-500">*</span></label>
+                    <file-pond #myPond  [options]="pondOptions" class="filepond filepond--root basic-filepond" [files]="panImg" (onremovefile)="onFileRemove($event, 'Pan Card')"  (onprocessfile)="onFileProcessed($event, 'Pan Card')"></file-pond>
+                </div>
+                
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- ***** Add New  Document End ***** -->
+
+
+<!-- ***** UpdateDocument Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'document_image' || modalData.pageType === 'document_number'">
+    <app-modal-header [title]="' Update ' + data.label" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="updateDocumentForm" (ngSubmit)="updateDocument()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="col-span-12" *ngIf="modalData.pageType === 'document_number'">
+                    <spk-input label="{{data.label}}"  [fieldReq]="true" formControlName="doc_no" class="remove-default-class" [type]="data.label === 'Pan Card' ? 'text' : 'number'"></spk-input>
+                </div>
+                <div class="col-span-12" 
+                *ngIf="modalData.pageType === 'document_image'">
+                <label class="form-label ">{{data.label}} Image <span class="text-red-500">*</span></label>
+                <file-pond #myPond  [options]="pondOptions" class="filepond filepond--root basic-filepond" [files]="pondFiles"
+                (onremovefile)="onFileRemove($event, data.label)"  (onprocessfile)="onFileProcessed($event, data.label)">
+            </file-pond>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</mat-dialog-actions>
+</form>
+</div>
+<!-- ***** Update Document End ***** -->
+
+
+<!-- ***** Point Transfer Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'wallet_history'">
+    <app-modal-header [title]="' Point Transfer'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="pointForm" (ngSubmit)="updatePoint()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12">
+                    <spk-ng-select
+                    formControlName="transaction_type"
+                    label="Point Type"
+                    [fieldReq]="true"
+                    [options]="pointTypeList"
+                    >
+                </spk-ng-select>
+            </div>
+            
+            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12">
+                <spk-input label="Point" [fieldReq]="true" formControlName="points" class="remove-default-class" type="number"></spk-input>
+            </div>
+            
+            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12">
+                <spk-input label="Remark" [fieldReq]="true" formControlName="remark" class="remove-default-class" type="textarea"></spk-input>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </mat-dialog-actions>
+</form>
+</div>
+<!-- ***** Point Transfer End ***** -->
+
+
+
+
+<!-- ***** ShopGallery Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'shop_gallery'">
+    <app-modal-header [title]="'Shop Gallery Images'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <mat-dialog-content class="mat-typography">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="col-span-12" >
+                <label class="form-label ">Upload Shop Image <span class="text-red-500">*</span></label>
+                <file-pond #myPond  [options]="getPondOptions('shop_images')" class="filepond filepond--root basic-filepond" [files]="pondFiles"
+                (onremovefile)="onFileRemove($event, 'Shop Image')"  (onprocessfile)="onFileProcessed($event, 'Shop Image')">
+            </file-pond>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'" (buttonClick)="submitShopImages()"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</mat-dialog-actions>
+</div>
+<!-- ***** ShopGallery End ***** -->
+

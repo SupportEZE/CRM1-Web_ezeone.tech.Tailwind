@@ -1,0 +1,236 @@
+<app-page-header [title]="'Support'" [title1]="['Call Request']" [activeitem]="'Call Request List'"></app-page-header>
+
+<!-- Start:: row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-3 lg:col-span-5 col-span-12">
+        <div class="box products-navigation-card">
+            <div class="box-body p-0">
+                <ng-container *ngIf="!skLoadingLeft">
+                    <div class="task-navigation border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                        <ul class="list-none task-main-nav mb-0">
+                            <li class="px-0 pt-0">
+                                <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">General</span>
+                            </li>
+                            
+                            <li *ngFor="let tab of mainTabs"  [ngClass]="{'active': activeTab === tab.value}" (click)="setActiveTab(tab.value)">
+                                <a>
+                                    <div class="flex items-center">
+                                        <span class="me-2 leading-none">
+                                            <i [class]="tab.icon + ' align-middle text-[14px] text-primary'"></i>
+                                        </span>
+                                        <span class="flex-auto text-nowrap">
+                                            {{ tab.label }}
+                                        </span>
+                                        <span *ngIf="tab.count !== null" class="badge bg-{{tab.countClass}}/10 text-{{tab.countClass}} rounded-full">
+                                            {{ tab.count }}
+                                        </span>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="p-4 border-b dark:border-defaultborder/10">
+                        <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">
+                            Call By Area
+                        </span>
+                        <div class="px-0 py-3 pb-0 scroll-y-200">
+                            <div *ngFor="let location of stateData" class="form-check mb-2 !flex items-center">
+                                <input class="form-check-input me-2" type="checkbox" [checked]="location.checked" [id]="'Location-' + location.id" (change)="toggleStateSelection(location)">
+                                <label class="form-check-label !ps-0 text11px font-normal" [for]="'Location-' + location.id">
+                                    {{ location.state }}
+                                </label>
+                                <span class="badge bg-light text-defaulttextcolor float-end ms-auto">{{ location.count | number }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-navigation border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                        <ul class="list-none task-main-nav mb-0">
+                            <li class="px-0 pt-2 flex justify-between gap-2 items-center">
+                                <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">Status</span>
+                            </li>
+                            <li *ngFor="let row of priority">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <a class="flex" [ngClass]="{'text-primary': filter?.sub_status === row.label}" (click)="getFilters(row.label)">
+                                        <div>
+                                            <span class="me-2 leading-none">
+                                                <i class="{{row.icon}} {{row.colorClass}} align-middle text-[14px]"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-auto text-nowrap">
+                                            <span class="font-medium">{{row.label}}</span>
+                                        </div>
+                                    </a>
+                                    <span class="badge bg-{{row.colorClass}}/10 {{row.colorClass}} rounded-full">{{row.count}}</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="task-navigation border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                        <ul class="list-none task-main-nav mb-0">
+                            <li class="px-0 pt-2 flex justify-between gap-2 items-center">
+                                <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">Statistics</span>
+                            </li>
+                            <div id="sales-statistics">
+                                <div id="orders" class="my-2">
+                                    <spk-apexcharts [chartOptions]="chartOptions1"></spk-apexcharts>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                    
+                    <div class="task-navigation border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                        <ul class="list-none task-main-nav mb-0">
+                            <li class="px-0 pt-2 flex justify-between gap-2 items-center">
+                                <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">Last 6 Month Statistics</span>
+                            </li>
+                            <div id="sales-statistics">
+                                <spk-apexcharts [chartOptions]="chartOptions2"></spk-apexcharts>
+                            </div>
+                        </ul>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="skLoadingLeft">
+                    <div class="p-3" *ngFor="let row of [].constructor(10)">
+                        <app-skeleton [class]="'h30'"></app-skeleton>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <div class="xxl:col-span-9 lg:col-span-7 col-span-12">
+        <app-showcode-card [title]="'Call Request'" [titleView]="true" [view]="false" [overallCountShow]="true" [overallCount]="listPagination.total" [classbody]="'pt-0'" [refresBtnShow]="true" (refresh)="onRefresh()">
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables [tableHeight]="'630px'" [showCheckbox]="false" [showS_No]="true" [showAction]="true" [columns]="PageHeaders" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap">
+                    <ng-container *ngIf="!skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                            <td>&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                     <mat-form-field class="table-input">
+                                        <mat-date-range-input [rangePicker]="picker" >
+                                            <input matStartDate [(ngModel)]="filter.start_date" name="startDate" placeholder="Start date" (ngModelChange)="onDateChange('start', 'created_at', $event)">
+                                            <input matEndDate [(ngModel)]="filter.end_date" name="endDate" placeholder="End date"  (ngModelChange)="onDateChange('end', 'created_at', $event)">
+                                        </mat-date-range-input>
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-date-range-picker #picker  ></mat-date-range-picker>
+                                    </mat-form-field>
+                                    <!-- <mat-form-field class="table-input">
+                                        <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="getList()">
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>   -->
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.customer_type" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.customer_type) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_type=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.customer_name" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.customer_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_name=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.customer_mobile" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.customer_mobile) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_mobile=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.state" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.state) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.state=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.status" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.status) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.status=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                            <td class="text-center">{{(listPagination.cur_page - 1) * listPagination.limit + i + 1 }}</td>
+                            <td>{{ row.created_at ? (row.created_at | date:'d MMM yyyy, hh:mm a') : '--' }}</td>
+                            <td>{{row.created_name || '--'}}</td>
+                            <td>{{row.customer_type || '--'}}</td>
+                            <td>{{row.customer_name || '--'}}</td>
+                            <td class="text-center">{{row.customer_mobile || '--'}}</td>
+                            <td>
+                                <div class="flex flex-wrap">
+                                    <span class="badge bg-light text-textmuted dark:text-textmuted/50 m-1 border border-defaultborder dark:border-defaultborder/10">{{row.state || '--'}}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" [ngClass]="{'text-success bg-success/10': row.status === 'Completed', 'text-warning bg-warning/10': row.status === 'Review Pending', 'text-info bg-info/10': row.status === 'Technical Team'}">{{row.status || '--'}}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge" [ngClass]="{'text-danger': row.sub_status === 'Junk Call', 'text-warning': row.sub_status === 'Training Issue', 'text-info': row.sub_status === 'Technical Issue'}">{{row.sub_status || '--'}}</span>
+                            </td>
+                            <td>{{ row.closed_date ? (row.closed_date | date:'d MMM yyyy, hh:mm a') : '--' }}</td>
+                            <td class="text-center">{{row.tat || '--'}}</td>
+                            <td class="text-center">
+                                <app-icon-button *ngIf="activeTab === 'Review Pending' || activeTab === 'Technical Team'" [icon]="'ri-checkbox-circle-fill'" matTooltip="Change Status" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="openModal(row, 'edit')"> </app-icon-button>
+                                <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" matTooltip="View Logs" (clickEvent)="openListLogModal(row._id)"> </app-icon-button>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                            <td *ngFor="let row of [].constructor(12)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                </spk-reusable-tables>
+                <ng-container *ngIf="!listing.length && !skLoading">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+        </app-showcode-card>
+    </div>
+</div>
+<!-- End:: row-1 -->

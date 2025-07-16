@@ -1,0 +1,263 @@
+<!-- <app-page-header [title]="'Support'" [title1]="['Chat']" [activeitem]="'Chat'"></app-page-header> -->
+<div class="main-chart-wrapper lg:gap-2 gap-0 mb-2 lg:flex"  >
+    <!-- *ngIf="recents?.length || (search && !recents?.length) && reqSent" -->
+    <!-- *ngIf="(recents?.length || (search && !recents?.length)) && reqSent" -->
+    <div class="chat-info border border-defaultborder dark:border-defaultborder/10" >
+        <div class="chat-search bg-gray-200 p-2 border-b border-defaultborder dark:border-defaultborder/10"> 
+            <div class="input-group relative"> 
+                <input type="text" class="form-control pr-28 !border-s border-defaultborder dark:border-defaultborder/10" placeholder="Search Chat" aria-describedby="button-addon01" [(ngModel)]="search" name="search" (ngModelChange)="!search ? getPendingChats() : ''" (keyup)="search ? getPendingChats() : ''"> 
+                <button aria-label="button" matTooltip="Clear" class="ti-btn  !m-0 absolute right-0 top-1/2 -translate-y-1/2" type="button" id="button-addon01" *ngIf="search" (click)="search = ''; getPendingChats()">
+                    <i class="ri-close-line"></i>
+                </button> 
+            </div> 
+        </div>
+        <ng-container *ngIf="!recents.length && search && !skLoading">
+            <p class="text-[0.9375rem] p-4 m-[3rem] text-center">No chat or messages found</p>
+        </ng-container>
+        <div class="tab-content" id="myTabContent"  *ngIf="reqSent && recents?.length">
+            <div class="tab-pane show active border-0 chat-users-tab" id="users-tab1" role="tabpanel" aria-labelledby="users-tab">
+                <overlay-scrollbars>
+                    <ul class="list-none mb-0 mt-2 chat-users-tab" id="chat-msg-scroll">
+                        
+                        <ng-container *ngIf="skLoading">
+                            <li *ngFor="let row of [].constructor(8)" >
+                                <app-skeleton></app-skeleton>
+                            </li>
+                        </ng-container>
+                        <ng-container *ngIf="!skLoading">
+                            @for (recent of recents; track recent) {
+                                <li class="checkforactive border-b" [ngClass]="{'active': activeUser === recent}">
+                                    <a href="javascript:void(0);"  (click)="handleClick(recent);recent.pending_chat_count = 0">
+                                        <div class="flex items-top">
+                                            <div class="me-1 leading-none">
+                                                <span class="avatar avatar-md avatar-rounded me-2">
+                                                    <img  [src]="recent?.image" 
+                                                    (error)="onError($event)"
+                                                    [class.object-contain]="isFallback">
+                                                </span>
+                                            </div>
+                                            <div class="flex-auto">
+                                                <p class="mb-0 font-medium">
+                                                    {{ recent?.name }} <span
+                                                    class="float-end text-textmuted dark:text-textmuted/50 font-normal text-[11px]">{{recent?.time}}</span>
+                                                </p>
+                                                
+                                                <p class="text-xs mb-0">
+                                                    <span class="chat-msg truncate" [matTooltip]="recent?.message">{{recent?.message}}</span>
+                                                    @if(recent?.pending_chat_count){
+                                                        <span
+                                                        class="badge bg-primarytint2color rounded-full float-end">{{ recent?.pending_chat_count}}</span>
+                                                    }@else { 
+                                                        
+                                                    }
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            }
+                        </ng-container>
+                    </ul>
+                </overlay-scrollbars>
+            </div>
+        </div>
+        
+        <ng-container *ngIf="!reqSent">
+            <div class="p-3" *ngFor="let row of [].constructor(10)">
+                <app-skeleton [class]="'h30'"></app-skeleton>
+            </div>
+        </ng-container>
+    </div>
+    <ng-container  *ngIf="activeUser._id">
+        <div class="main-chat-area border border-defaultborder dark:border-defaultborder/10">
+            <div  class="flex items-center border-b border-defaultborder dark:border-defaultborder/10 main-chat-head flex-wrap">
+                <span class="avatar avatar-md avatar-rounded  chatstatusperson me-2 leading-none">
+                    <img class="chatimageperson" 
+                    [src]="activeUser.image" 
+                    (error)="onError($event)"
+                    [class.object-contain]="isFallback">
+                </span>
+                <div class="flex-auto">
+                    <p class="mb-0 font-medium text-[14px] leading-none">
+                        <a href="javascript:void(0);" data-hs-overlay="#offcanvasRight" class="chatnameperson responsive-userinfo-open">{{activeUser.name}}</a>
+                    </p>
+                    <p class="text-textmuted dark:text-textmuted/50 mb-0 chatpersonstatus">{{ activeUser?.designation }}  ({{ activeUser?.mobile }})</p>
+                    <!-- <p class="text-textmuted dark:text-textmuted/50 mb-0 chatpersonstatus" *ngIf="userStatus">{{userStatus}}</p> -->
+                    <!-- [ngClass]="{'text-primary':userStatus == 'online','text-danger':userStatus == 'offline','':userStatus == 'typing'}" -->
+                </div>
+            </div>
+            <!-- overlay-scrollbars -->
+            <div class="chat-content bg-gray-100 dark:bg-slate-800 p-[10px_10px_10px_5px]" id="main-chat-content">
+                <ul class="list-none" #scrollContainer class="scrollBlock">
+                    <ng-container *ngFor="let msg of messages">
+                        
+                        <!-- Incoming Message (theming enabled) -->
+                        <li class="chat-item-start" *ngIf="msg.sender_id != loginId">
+                            <div class="chat-bubble bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-slate-600 p-2 rounded-lg relative">
+                                <div class="corner text-white dark:text-slate-700">
+                                    <svg viewBox="0 0 8 13" height="18" width="10" preserveAspectRatio="xMidYMid meet">
+                                        <title>tail-in</title>
+                                        <path opacity="0.13" fill="#0000000" d="M1.533,3.568L8,12.193V1H2.812 C1.042,1,0.474,2.156,1.533,3.568z"></path>
+                                        <path fill="currentColor" d="M1.533,2.568L8,11.193V0L2.812,0C1.042,0,0.474,1.156,1.533,2.568z"></path>
+                                    </svg>
+                                </div>
+                                <span class="message">{{ msg.message }}</span>
+                                <span class="time">{{ msg.time }}</span>
+                            </div>
+                        </li>
+                        
+                        <!-- Outgoing Message (fixed styling for both modes) -->
+                        <li class="chat-item-end" *ngIf="msg.sender_id == loginId">
+                            <div class="chat-bubble me bg-[#4F46E5] text-white p-2 rounded-lg relative">
+                                <div class="corner text-[#4F46E5]">
+                                    <svg viewBox="0 0 8 13" height="18" width="10" preserveAspectRatio="xMidYMid meet">
+                                        <title>tail-out</title>
+                                        <path opacity="0.13" d="M5.188,1H0v11.193l6.467-8.625 C7.526,2.156,6.958,1,5.188,1z"></path>
+                                        <path fill="currentColor" d="M5.188,0H0v11.193l6.467-8.625C7.526,1.156,6.958,0,5.188,0z"></path>
+                                    </svg>
+                                </div>
+                                <span class="message">{{ msg.message }}</span>
+                                <span class="time">{{ msg.time }}</span>
+                            </div>
+                        </li>
+                        
+                    </ng-container>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="chat-footer !border-defaultborder dark:!border-defaultborder/10  z-10">
+                <input id="myInput" class="form-control chat-message-space" [(ngModel)]="message" name="message" placeholder="Type your message here..." type="text" (keyup.enter)="message ? sendMessage() : ''" >
+                <button aria-label="anchor" [disabled]="!message.trim()" class="ti-btn text-primary ms-2 ti-btn-icon btn-send" (click)="message.trim() ? sendMessage() : ''">
+                    <i class="ri-send-plane-2-line text-[22px]"></i>
+                </button>
+            </div>
+        </div>
+    </ng-container>
+    <div class="no-chat-content" *ngIf="!activeUser._id">
+        
+        <img src="./assets\images\media\svg/no-chat.svg">
+        <h2 class="text-[1.5rem] text-secondary/80">Welcome to Support Chat</h2>
+        <p class="text-[0.75rem] p-4 wp70 text-center">Select a conversation from the left to view messages or start chatting with a customer. This is your central hub for resolving queries and staying connected with users in real time.</p>
+    </div>
+</div>
+<!-- <ng-container *ngIf="!recents.length && !search && reqSent">
+    <app-data-not-found></app-data-not-found>
+</ng-container> -->
+<!-- Start::chat user details offcanvas -->
+<div class="hs-overlay hidden ti-offcanvas ti-offcanvas-right" id="offcanvasRight">
+    <div class="ti-offcanvas-body">
+        <button type="button"
+        class="ti-btn  btn-wave flex-shrink-0 p-0 transition-none text-gray-500 hover:text-gray-700 focus:ring-gray-400 focus:ring-offset-white text-textmuted dark:text-textmuted/50 dark:hover:text-white/80 dark:focus:ring-white/10 dark:focus:ring-offset-white/10"
+        data-hs-overlay="#offcanvasRight">
+        <span class="sr-only">Close modal</span>
+        <svg class="w-3.5 h-3.5" width="8" height="8" viewBox="0 0 8 8" fill="none"
+        xmlns="http://www.w3.org/2000/svg">
+        <path
+        d="M0.258206 1.00652C0.351976 0.912791 0.479126 0.860131 0.611706 0.860131C0.744296 0.860131 0.871447 0.912791 0.965207 1.00652L3.61171 3.65302L6.25822 1.00652C6.30432 0.958771 6.35952 0.920671 6.42052 0.894471C6.48152 0.868271 6.54712 0.854471 6.61352 0.853901C6.67992 0.853321 6.74572 0.865971 6.80722 0.891111C6.86862 0.916251 6.92442 0.953381 6.97142 1.00032C7.01832 1.04727 7.05552 1.1031 7.08062 1.16454C7.10572 1.22599 7.11842 1.29183 7.11782 1.35822C7.11722 1.42461 7.10342 1.49022 7.07722 1.55122C7.05102 1.61222 7.01292 1.6674 6.96522 1.71352L4.31871 4.36002L6.96522 7.00648C7.05632 7.10078 7.10672 7.22708 7.10552 7.35818C7.10442 7.48928 7.05182 7.61468 6.95912 7.70738C6.86642 7.80018 6.74102 7.85268 6.60992 7.85388C6.47882 7.85498 6.35252 7.80458 6.25822 7.71348L3.61171 5.06702L0.965207 7.71348C0.870907 7.80458 0.744606 7.85498 0.613506 7.85388C0.482406 7.85268 0.357007 7.80018 0.264297 7.70738C0.171597 7.61468 0.119017 7.48928 0.117877 7.35818C0.116737 7.22708 0.167126 7.10078 0.258206 7.00648L2.90471 4.36002L0.258206 1.71352C0.164476 1.61976 0.111816 1.4926 0.111816 1.36002C0.111816 1.22744 0.164476 1.10028 0.258206 1.00652Z"
+        fill="currentColor"></path>
+    </svg>
+</button>
+<div class="chat-user-details" id="chat-user-details">
+    <div class="text-center mb-4">
+        <span class="avatar avatar-rounded  avatar-xxl me-2 mb-3 chatstatusperson">
+            <img class="chatimageperson" src="./assets/images/faces/2.jpg" alt="img">
+        </span>
+        <p class="mb-1 text-[15px] font-medium text-dark leading-none chatnameperson">Jamison Jen</p>
+        <p class="text-xs text-textmuted dark:text-textmuted/50 mb-4"><span class="chatnameperson">jamisonjen0114</span>&#64;gmail.com</p>
+        <p class="text-center mb-0 flex gap-2 flex-wrap">
+            <button type="button" aria-label="button" class="ti-btn ti-btn-soft-primary btn-wave flex-auto">
+                <i class="ri-phone-line me-2 align-middle"></i>Call
+            </button>
+            <button type="button" aria-label="button" class="ti-btn bg-primarytint1color/10 text-primarytint1color btn-wave flex-auto">
+                <i class="ri-video-add-line me-2 align-middle"></i>Video Call
+            </button>
+            <button type="button" aria-label="button" class="ti-btn bg-info/10 text-info btn-wave flex-auto">
+                <i class="ri-chat-1-line me-2 align-middle"></i>Message
+            </button>
+        </p>
+    </div>
+    <div class="mb-4 pt-2">
+        <div class="font-medium mb-4">Shared Files
+            <span class="badge bg-primarytint2color ms-1 rounded-full">17</span>
+            <span class="float-end text-[11px]"><a href="javascript:void(0);" class="text-xs text-textmuted dark:text-textmuted/50"> View All<i class="ti ti-arrow-narrow-right ms-1"></i> </a></span>
+        </div>
+        <ul class="shared-files list-none">
+            <li>
+                <div class="flex items-center">
+                    <div class="me-2 bg-primary/10 !rounded-full">
+                        <span class="shared-file-icon">
+                            <i class="ti ti-file-text text-primary"></i>
+                        </span>
+                    </div>
+                    <div class="flex-auto">
+                        <p class="text-xs font-medium mb-0">notification.pdf</p>
+                        <p class="mb-0 text-textmuted dark:text-textmuted/50 text-[11px]">15,Dec 2024 - 12:45PM</p>
+                    </div>
+                    <div class="text-lg">
+                        <a aria-label="anchor" href="javascript:void(0)"><i class="ri-download-2-line text-textmuted dark:text-textmuted/50"></i></a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <div class="me-2 bg-secondary/10 !rounded-full">
+                        <span class="shared-file-icon">
+                            <i class="ri-image-line text-secondary"></i>
+                        </span>
+                    </div>
+                    <div class="flex-auto">
+                        <p class="text-xs font-medium mb-0">Image_file1.Jpg</p>
+                        <p class="mb-0 text-textmuted dark:text-textmuted/50 text-[11px]">03,Oct 2024 - 03:20AM</p>
+                    </div>
+                    <div class="text-lg">
+                        <a aria-label="anchor" href="javascript:void(0)"><i class="ri-download-2-line text-textmuted dark:text-textmuted/50"></i></a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <div class="me-2 bg-success/10 !rounded-full">
+                        <span class="shared-file-icon">
+                            <i class="ri-image-line text-success"></i>
+                        </span>
+                    </div>
+                    <div class="flex-auto">
+                        <p class="text-xs font-medium mb-0">Imagefile_12.Jpg</p>
+                        <p class="mb-0 text-textmuted dark:text-textmuted/50 text-[11px]">19,Oct 2024 - 01:23PM</p>
+                    </div>
+                    <div class="text-lg">
+                        <a aria-label="anchor" href="javascript:void(0)"><i class="ri-download-2-line text-textmuted dark:text-textmuted/50"></i></a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <div class="me-2 bg-orangemain/10 !rounded-full">
+                        <span class="shared-file-icon">
+                            <i class="ri-video-line text-orangemain"></i>
+                        </span>
+                    </div>
+                    <div class="flex-auto">
+                        <p class="text-xs font-medium mb-0">Video-rec-20-10-2021.MP4</p>
+                        <p class="mb-0 text-textmuted dark:text-textmuted/50 text-[11px]">13,May 2024 - 16:25AM</p>
+                    </div>
+                    <div class="text-lg">
+                        <a href="javascript:void(0)"><i class="ri-download-2-line text-textmuted dark:text-textmuted/50"></i></a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="mb-0 pt-2">
+        <div class="font-medium mb-4">Photos & Media
+            <span class="badge bg-primarytint3color ms-1 rounded-full">15</span>
+            <span class="float-end text-[11px]"><a href="javascript:void(0);" class="text-xs text-textmuted dark:text-textmuted/50"> View All<i class="ti ti-arrow-narrow-right ms-1"></i> </a></span>
+        </div>
+        <!-- <spk-gallery  [mainClass]="'grid grid-cols-12 gap-x-6 gap-y-3'" [lightboxClass]="'glightbox box mb-0'" [colClass]="'lg:col-span-4 md:col-span-4 sm:col-span-6 col-12'" [imageData]="imageData"></spk-gallery> -->
+    </div>
+</div>
+</div>
+</div>
+<!-- End::chat user details offcanvas -->

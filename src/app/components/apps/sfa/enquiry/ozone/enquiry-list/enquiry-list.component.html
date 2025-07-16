@@ -1,0 +1,100 @@
+<app-page-header 
+[title]="'SFA Ozone'" 
+[title1]="['Enquiry List']"
+[activeitem]="'Enquiry List'"
+[buttonText]="'Header Config'" 
+[icon]="'settings'"
+[btnShow]="false" 
+[buttonValue]="''"
+[btnShow]="accessRight?.modifyRight" 
+[buttonValue1]="''"
+(buttonClick)="openHeaderSettingModal()">
+</app-page-header>
+
+
+<div class="box py-3 px-4">
+    <ng-container *ngIf="skLoading">
+        <div class="flex items-center gap-3">
+            <app-skeleton [class]="'w100 h30 bg-skeleton'" *ngFor="let row of [].constructor(6)"></app-skeleton>
+        </div>
+    </ng-container>
+    
+    <ng-container *ngIf="!skLoading">
+        <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+            <app-listing-tab *ngFor="let tab of mainTabs"
+            [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon, count: tab.count, subTab: tab.subTab }]"
+            [activeTab]="activeTab"
+            (tabChange)="onTabChange($event.tab, $event.subTab)"></app-listing-tab>
+        </nav>
+    </ng-container>
+    
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1 mt-2" aria-label="Tabs" role="tablist" *ngIf="activeTab === 'Inprocess'">
+        <app-listing-tab *ngFor="let subTab of inProcessTabs"
+        [tabs]="[{ name: subTab.name, label: subTab.label, icon: subTab.icon, count: subTab.count, subTab: subTab.name }]"
+        [activeTab]="activeSubTab"
+        (tabChange)="onSubTabChange($event.subTab)"></app-listing-tab>
+    </nav>
+    
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1 mt-2" aria-label="Tabs" role="tablist" *ngIf="activeTab === 'Close'">
+        <app-listing-tab *ngFor="let subTab of closeTabs"
+        [tabs]="[{ name: subTab.name, label: subTab.label, icon: subTab.icon, count: subTab.count, subTab: subTab.name }]"
+        [activeTab]="activeSubTab"
+        (tabChange)="onSubTabChange($event.subTab)"></app-listing-tab>
+    </nav>
+    
+</div>
+
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Enquiry List'" [listLength]="listing.length" [btnShow]="true" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()" [btnShow1]="true" [logsLabel]="'Logs'" (logBtn)="openMainLogModal('')"   [btnShow2]="accessRight?.addRight" [addBtnLabel]="'Add Enquiry'"  (button1)="goToAddPage()"></app-page-sub-header>
+            
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="true" [showAction]="true" [columns]="visibleHeaders" (textSearchChange)="updateSearchFilter($event)" (selectionChange)="handleSelectChange($event)" [subModule]="subModule" #reusableTable>
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;" [class.bg-gray-400]="isHighlighted(row._id)">
+                                <td class="!text-center">{{i+1}}</td>
+                                <ng-container *ngFor="let header of visibleHeaders">
+                                    <td>
+                                        <span *ngIf="header.name.includes('date') || header.name.endsWith('_at'); elseNonDate">
+                                            {{ (row?.[header.name] || row?.form_data?.[header.name]) | date: 'd MMM yyyy, hh:mm a' }}
+                                        </span>
+                                        <span *ngIf="header.name === 'enquiry_id'">
+                                            <a class="text-primary font-semibold underline" (click)="goToDetailPage(row._id)">
+                                                {{ row?.[header.name] || row?.form_data?.[header.name] || '--' }}
+                                            </a>
+                                        </span>
+                                        <span *ngIf="!(header.name.includes('date') || header.name.endsWith('_at') || header.name === 'enquiry_id')">
+                                            {{ row?.[header.name] || row?.form_data?.[header.name] || '--' }}
+                                        </span>
+                                    </td>
+                                </ng-container>
+                                <td class="!text-center">
+                                    <app-icon-button [icon]="'ri-eye-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="goToDetailPage(row._id)"> </app-icon-button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                <td *ngFor="let row of [].constructor(11)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!listing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+            
+            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

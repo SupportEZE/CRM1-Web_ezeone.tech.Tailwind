@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "spk-search-candidate-card.component.scss"
+    ],
+    "names": [],
+    "file": "spk-search-candidate-card.component.css"
+}

@@ -1,0 +1,32 @@
+<div class="{{mainClass}} "  gallerize>
+    @for (image of imageData; track $index) {
+        <div class="{{colClass}}">
+            <a class="glightbox box {{lightboxClass}}" data-gallery="gallery1">
+                <img  [src]="image.srcUrl" alt="image" >
+                <!-- @if(imageWithText){ -->
+                    <a class="badge text-[10px]  text-black py-2 flex justify-center flex" [ngClass]="{'justify-between': imageWithText}">{{image.imageName}}
+                        @if(imageWithDelete){
+                            <button type="button" aria-label="button" class="ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light" matTooltip="Delete" (click)="onDeleteImage(image)">
+                                <i class="material-icons">delete_sweep</i>
+                            </button>
+                        }
+                    </a>
+                <!-- } -->
+            </a>
+        </div>
+    }
+    
+    @if(badge){
+        @for (image of imageData1; track $index) {
+            <a href="javascript:void(0);" class="glightbox box border-0 mb-0" data-gallery="gallery1" data-title="Compact Laptop (1/5)" data-type="image" data-draggable="true">
+                <div class="ecommerce-gallery flex text-center">
+                    <span class="badge bg-primarytint2color tag-badge">{{badge}}</span>
+                    <img [src]="image.srcUrl" alt="image" class="">
+                    <span class="p-4 py-2 rounded-md text-white view-lightbox ">View More Images</span>
+                </div>
+            </a>
+        }
+    }
+    <ng-content></ng-content>
+</div>
+

@@ -1,0 +1,165 @@
+    <app-page-header [title]="'Master Modules'" [title1]="['Role & Permission']" [activeitem]="'Role & Permission List'"></app-page-header>
+    
+    <!-- Start::row-1 -->
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="box">
+                <div class="box-header flex items-center justify-between flex-wrap gap-4 pt-1 pb-2">
+                    <div class="box-title">
+                        Role & Permission
+                    </div>
+                    <div class="flex gap-2 items-center flex-wrap">
+                        <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-success" (click)="updateRoleWiseModule()">
+                            <i class="ri-save-3-line font-medium align-middle"></i>
+                            Update
+                        </button>
+                        
+                        <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="onRefresh()">
+                            <i class="ri-refresh-line font-medium align-middle"></i>
+                            Refresh
+                        </button>
+                        
+                        <button type="button" class="ti-btn-sm !py-1 btn ti-btn ti-btn-soft-primary" (click)="addRoleModal($event)" *ngIf="accessRight?.addRight">
+                            <i class="ri-apps-2-add-line font-medium align-middle"></i>
+                            Add Role
+                        </button>
+                        
+                        <div class="">
+                            <mat-form-field  appearance="outline" class="mat-custom-field remove-space">
+                                <mat-label>Select Role</mat-label>
+                                <mat-select placeholder="Select an option" [(ngModel)]="data.selectedRole" name="selectedRole" #selectedRole="ngModel"  (selectionChange)="getModuleListRoleWise()"  required>
+                                    <mat-option *ngFor="let row of roleListArray" [value]="row._id">{{row.user_role_name}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body pt-0">
+                    <div class="grid grid-cols-12 gap-x-6">
+                        <div class="xxl:col-span-8 xl:col-span-8 lg:col-span-8 md:col-span-7 col-span-12">
+                            <div class="table-responsive overflow-auto table-bordered-default">
+                                <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [tableHeadColumn]="'!text-center'" [tableHeight]="'630px'" [showCheckbox]="false" [columns]="listColumns"> 
+                                    <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                        <td class="!text-center">&nbsp;</td>
+                                        <td class="!text-center">
+                                            <input type="text" class="form-control" id="input-text" placeholder="Search..."  [(ngModel)]="search_key" (keyup.enter)="getModuleListRoleWise()">
+                                        </td>
+                                        <td class="!text-center">
+                                            Select All <br><input class="form-check-input" type="checkbox" id="selectAllCol4" (change)="toggleSelectAll('add')" [checked]="allSelected('add')">
+                                        </td>
+                                        <td class="!text-center">
+                                            Select All <br><input class="form-check-input" type="checkbox" id="selectAllCol4" (change)="toggleSelectAll('approve')" [checked]="allSelected('approve')">
+                                        </td>
+                                        <td class="!text-center">
+                                            Select All <br><input class="form-check-input" type="checkbox" id="selectAllCol2" (change)="toggleSelectAll('delete')" [checked]="allSelected('delete')">
+                                        </td>
+                                        <td class="!text-center">
+                                            Select All <br><input class="form-check-input" type="checkbox" id="selectAllCol4" (change)="toggleSelectAll('export')" [checked]="allSelected('export')">
+                                        </td>
+                                        <td class="!text-center">
+                                            Select All <br><input class="form-check-input" type="checkbox" id="selectAllCol3" (change)="toggleSelectAll('import')" [checked]="allSelected('import')">
+                                        </td>
+                                        <td class="!text-center">
+                                            Select All <br><input class="form-check-input" type="checkbox" id="selectAllCol2" (change)="toggleSelectAll('modify')" [checked]="allSelected('modify')">
+                                        </td>
+                                        <td class="!text-center">
+                                            Select All <br><input class="form-check-input" type="checkbox" id="selectAllCol1" (change)="toggleSelectAll('view')" [checked]="allSelected('view')">
+                                        </td>
+                                    </tr>
+                                    <ng-container *ngIf="moduleListing.length">
+                                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let list of moduleListing; let i = index;">
+                                            <td class="!text-center">{{i + 1}}</td>
+                                            <td>
+                                                <div class="flex items-center">
+                                                    <p class="mr-1">{{list.module_name || '--'}}</p>
+                                                    <p class="text-[11px] text-textmuted dark:text-textmuted/50 mb-0">{{ list.parent_module_name ? '(' + list.parent_module_name + ')' : '' }}</p>
+                                                </div>
+                                            </td>
+                                            <td class="!text-center">
+                                                <ng-container *ngIf="list.default_access?.add === 'disable'">
+                                                    <i class="material-icons text-textmuted/50" style="font-size: 20px !important;">indeterminate_check_box</i>
+                                                </ng-container>
+                                                <ng-container *ngIf="list.default_access?.add !== 'disable'">
+                                                    <input class="form-check-input" type="checkbox" [checked]="list.permission_access.add" (change)="updatePermission(list, 'add', $event)">
+                                                </ng-container>
+                                                <!-- [disabled]="isAccessDisabled(list, 'add')" -->
+                                            </td>
+                                            <td class="!text-center">
+                                                <ng-container *ngIf="list.default_access?.approve === 'disable'">
+                                                    <i class="material-icons text-textmuted/50" style="font-size: 20px !important;">indeterminate_check_box</i>
+                                                </ng-container>
+                                                <ng-container *ngIf="list.default_access?.approve !== 'disable'">
+                                                    <input class="form-check-input" type="checkbox" [checked]="list.permission_access.approve" (change)="updatePermission(list, 'approve', $event)">
+                                                </ng-container>
+                                            </td>
+                                            <td class="!text-center">
+                                                <ng-container *ngIf="list.default_access?.delete === 'disable'">
+                                                    <i class="material-icons text-textmuted/50" style="font-size: 20px !important;">indeterminate_check_box</i>
+                                                </ng-container>
+                                                <ng-container *ngIf="list.default_access?.delete !== 'disable'">
+                                                    <input class="form-check-input" type="checkbox" [checked]="list.permission_access.delete" (change)="updatePermission(list, 'delete', $event)">
+                                                </ng-container>
+                                                <!-- [disabled]="isAccessDisabled(list, 'delete')" -->
+                                            </td>
+                                            <td class="!text-center">
+                                                <ng-container *ngIf="list.default_access?.export === 'disable'">
+                                                    <i class="material-icons text-textmuted/50" style="font-size: 20px !important;">indeterminate_check_box</i>
+                                                </ng-container>
+                                                <ng-container *ngIf="list.default_access?.export !== 'disable'">
+                                                    <input class="form-check-input" type="checkbox" [checked]="list.permission_access.export" (change)="updatePermission(list, 'export', $event)">
+                                                </ng-container>
+                                            </td>
+                                            <td class="!text-center">
+                                                <ng-container *ngIf="list.default_access?.import === 'disable'">
+                                                    <i class="material-icons text-textmuted/50" style="font-size: 20px !important;">indeterminate_check_box</i>
+                                                </ng-container>
+                                                <ng-container *ngIf="list.default_access?.import !== 'disable'">
+                                                    <input class="form-check-input" type="checkbox" [checked]="list.permission_access.import" (change)="updatePermission(list, 'import', $event)">
+                                                </ng-container>
+                                            </td>
+                                            <td class="!text-center">
+                                                <ng-container *ngIf="list.default_access?.modify === 'disable'">
+                                                    <i class="material-icons text-textmuted/50" style="font-size: 20px !important;">indeterminate_check_box</i>
+                                                </ng-container>
+                                                <ng-container *ngIf="list.default_access?.modify !== 'disable'">
+                                                    <input class="form-check-input" type="checkbox" [checked]="list.permission_access.modify" (change)="updatePermission(list, 'modify', $event)">
+                                                </ng-container>
+                                            </td>
+                                            <td class="!text-center">
+                                                <ng-container *ngIf="list.default_access?.view === 'disable'">
+                                                    <i class="material-icons text-textmuted/50" style="font-size: 20px !important;">indeterminate_check_box</i>
+                                                </ng-container>
+                                                <ng-container *ngIf="list.default_access?.view !== 'disable'">
+                                                    <input class="form-check-input" type="checkbox" [checked]="list.permission_access.view" (change)="updatePermission(list, 'view', $event)">
+                                                </ng-container>
+                                                <!-- [disabled]="isAccessDisabled(list, 'view')" -->
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    
+                                    <!-- //--skeleton--// -->
+                                    <ng-container *ngIf="skLoading">
+                                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                            <td *ngFor="let row of [].constructor(9)">
+                                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <!-- //--skeleton--// -->
+                                </spk-reusable-tables>
+                                
+                                <ng-container *ngIf="!moduleListing.length && !skLoading">
+                                    <app-data-not-found></app-data-not-found>
+                                </ng-container>
+                            </div>
+                        </div>
+                        
+                        <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-5 col-span-12">
+                            <app-logs [logList]="logList" [scrollHeight]="'520'" [closeBtn]="false"></app-logs>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End::row-1 -->

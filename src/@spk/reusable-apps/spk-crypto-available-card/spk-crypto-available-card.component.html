@@ -1,0 +1,32 @@
+<div class="box">
+    <div class="box-header">
+        <div class="box-title">
+            {{title }}
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <div class="leading-none">
+                    <span class="avatar avatar-rounded">
+                        <img [src]="imgSrc" alt="">
+                    </span>
+                </div>
+                <div>
+                    <span class="block text-textmuted dark:text-textmuted/50 text-xs font-normal">Available {{currencySymbol }}</span>
+                    <span class="font-medium text-[15px]">{{available }}</span>
+                </div>
+            </div>
+            <div>
+                <span class="font-medium">{{usdValue }} USD</span>
+                <span class="block text-textmuted dark:text-textmuted/50 text-xs font-normal">In USD</span>
+            </div>
+        </div>
+    </div>
+    <div class="box-footer">
+        <div class="flex gap-2 flex-wrap">
+            <button class="ti-btn ti-btn-soft-primary !m-0  btn-w-lg btn-wave flex-auto">Deposit</button>
+            <button class="ti-btn ti-btn-soft-primary1 btn-w-lg btn-wave flex-auto !m-0">Withdraw</button>
+        </div>
+    </div>
+</div>

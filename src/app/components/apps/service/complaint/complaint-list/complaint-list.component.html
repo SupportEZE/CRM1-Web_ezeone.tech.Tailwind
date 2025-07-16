@@ -1,0 +1,143 @@
+<app-page-header [title]="'WCMS'" [title1]="['Complaint List']" [activeitem]="'Complaint List'" [buttonText]="'Header Config'" [icon]="'settings'"
+[btnShow]="false" [buttonValue]="''" [btnShow]="accessRight?.modifyRight" [buttonValue1]="''" (buttonClick)="openHeaderSettingModal()"></app-page-header>
+
+
+<!-- Start::row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-3 col-span-12">
+        <div class="box">
+            <div class="box-header gap-2 items-center pb-3 border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                <span class="avatar avatar-md bg-primary avatar-rounded"><i class="ri-file-list-3-line text-[1rem]"></i></span>
+                <div class="box-title">
+                    Complaint
+                </div>
+                <button class="ti-btn ti-btn-sm ti-btn-soft-primary1 ms-auto !rounded-full" (click)="goToAddPage()" *ngIf="accessRight?.addRight">
+                    <i class="ri-add-line"></i>Add New
+                </button>
+            </div>
+            <div class="box-body p-0">
+                <div class="p-4 task-navigation border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                    <ul class="list-none task-main-nav mb-0">
+                        <li class="px-0 pt-0">
+                            <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">Status</span>
+                        </li>
+                        
+                        <li *ngFor="let tab of tabs"  [ngClass]="{'active': activeTab === tab.value}" (click)="filter.status = '';filter.priority = null;setActiveTab(tab.label);getList();">
+                            <a>
+                                <div class="flex items-center">
+                                    <span class="me-2 leading-none">
+                                        <i [class]="tab.icon + ' align-middle text-[14px] text-primary'"></i>
+                                    </span>
+                                    <span class="flex-auto text-nowrap">
+                                        {{ tab.label }}
+                                    </span>
+                                    <span *ngIf="tab.count !== null" class="badge bg-{{tab.countClass}}/10 text-{{tab.countClass}} rounded-full">
+                                        {{ tab.count }}
+                                    </span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="list-none task-main-nav mb-0">
+                        <li class="px-0 pt-2 flex justify-between gap-2 items-center">
+                            <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">Team</span>
+                        </li>
+                        <ul class="scroll-y-250 mb-0">
+                            <li *ngFor="let row of listingData.userViceCounts">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <a class="flex" (click)="updateFilter(row.service_engineer_name)">
+                                        <div>
+                                            <span class="me-2 leading-none">
+                                                <i class="ri-account-circle-fill text-primarytint1color align-middle text-[14px]"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-auto text-nowrap">
+                                            <span class="font-medium">{{row.service_engineer_name}}</span>
+                                        </div>
+                                    </a>
+                                    <span class="badge bg-primarytint1color/10 text-primarytint1color rounded-full">{{row.assigned_count}}</span>
+                                </div>
+                            </li>
+                            <div *ngIf="!listingData.userViceCounts?.length">
+                                <label class="form-check-label !ps-0 text11px font-normal">
+                                    No data available!
+                                </label>
+                            </div>
+                        </ul>
+                    </ul>
+                    
+                    <ul class="list-none task-main-nav mb-0">
+                        <li class="px-0 pt-2 flex justify-between gap-2 items-center">
+                            <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">Priority</span>
+                        </li>
+                        <li *ngFor="let priority of priorityKeys"  [ngClass]="{'active': filter.priority === priority}" (click)="filter.status = '';activeTab='All';filter.ticket_category=null; filter.priority = priority;getList();">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <a class="flex" (click)="updatePriorityFilter(priority.priorityKeys)">
+                                    <div class="flex-auto text-nowrap">
+                                        <span class="font-medium">{{priority}}</span>
+                                    </div>
+                                </a>
+                                <span class="badge bg-primary/10 rounded-full text-primary">{{priorityCount[priority]}}</span>
+                            </div>
+                        </li>
+                        <div class="px-3" *ngIf="!priorityKeys?.length">
+                            <label class="form-check-label !ps-0 text11px font-normal">
+                                No data available!
+                            </label>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="xl:col-span-9 col-span-12">
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Complaint List'" [listLength]="listing.length" [btnShow]="true" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()" [btnShow1]="true" [logsLabel]="'Logs'" (logBtn)="openMainLogModal()"></app-page-sub-header>
+            
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="true" [showAction]="true" [columns]="tableHeader" (textSearchChange)="updateSearchFilter($event)" (selectionChange)="handleSelectChange($event)" [subModule]="subModule">
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                                <td class="!text-center">{{i+1}}</td>
+                                <ng-container *ngFor="let header of tableHeader">
+                                    <td>
+                                        <span *ngIf="header.name.includes('date') || header.name.endsWith('_at'); elseNonDate">
+                                            {{ (row?.[header.name] || row?.form_data?.[header.name]) | date: 'd MMM yyyy, hh:mm a' }}
+                                        </span>
+                                        <span *ngIf="header.name === 'complaint_no'">
+                                            <a class="text-primary font-semibold underline" (click)="goToDetailPage(row._id)">
+                                                {{ row?.[header.name] || row?.form_data?.[header.name] || '--' }}
+                                            </a>
+                                        </span>
+                                        <span *ngIf="!(header.name.includes('date') || header.name.endsWith('_at') || header.name === 'complaint_no')">
+                                            {{ row?.[header.name] || row?.form_data?.[header.name] || '--' }}
+                                        </span>
+                                    </td>
+                                </ng-container>
+                                <td class="!text-center">
+                                    <app-icon-button [icon]="'ri-eye-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="goToDetailPage(row._id)"> </app-icon-button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                <td *ngFor="let row of [].constructor(11)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!listing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+            
+            <app-pagination-footer [currentPage]="listPagination.cur_page" [totalPage]="listPagination.total_pages" [pageLimit]="listPagination.limit" [listLength]="listing.length" [preBtn]="!listPagination.prev" [nextBtn]="!listPagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

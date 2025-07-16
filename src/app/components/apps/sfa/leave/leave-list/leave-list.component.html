@@ -1,0 +1,69 @@
+<app-page-header [title]="'SFA'" [title1]="['Leave']" [activeitem]="'Leave List'" [btnShow1]="true" [buttonText1]="'Header Config'" [icon1]="'settings'" [dataHsOverlay]="'#leave-header-config'" (buttonClick1)="openHeaderSettingModal()"></app-page-header>
+
+<!-- Start::row-1 -->
+<div class="box py-3 px-4">
+    <div class="col-xl-12">
+        <div class="row">
+            <ng-container *ngIf="skLoading">
+                <div class="flex items-center gap-3">
+                    <app-skeleton [class]="'w100 h30 bg-skeleton'" *ngFor="let row of [].constructor(3)"></app-skeleton>
+                </div>
+            </ng-container>
+            
+            <ng-container *ngIf="!skLoading">
+                <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+                    <app-listing-tab *ngFor="let tab of mainTabs"
+                    [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon, count: tab.count}]"
+                    [activeTab]="activeTab"
+                    (tabChange)="onTabChange($event.tab)"></app-listing-tab>
+                </nav>
+            </ng-container>
+            
+            <app-page-sub-header [pageTitle]="'Leave List'" [class]="'p-0 pt-2'" 
+            [btnShow]="true" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()"
+            [addBtnLabel]="'Add Leave'" [btnShow2]="accessRight?.addRight" (button1)="updateLeaveWiseLeave('')"></app-page-sub-header>
+            <!-- <div class="box-body"> -->
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="true" [showAction]="true" [columns]="visibleHeaders" (sortChanged)="onSortChanged($event)" (selectionChange)="handleSelectionChange($event)" (textSearchChange)="updateSearchFilter($event)" (dateChange)="handleDateChange($event)" (dateRangeChange)="handleDateRangeChange($event)" #reusableTable>
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="leave-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of leaveListing; let i = index;">
+                                <td class="!text-center">{{i+1}}</td>
+                                <ng-container *ngFor="let header of visibleHeaders">
+                                    <td>
+                                        <span *ngIf="header.name.includes('date') || header.name.endsWith('_at'); elseNonDate">
+                                            {{ (row?.[header.name] || row?.form_data?.[header.name]) | date: 'd MMM yyyy, hh:mm a' }}
+                                        </span>
+                                        
+                                        <span *ngIf="!(header.name.includes('date') || header.name.endsWith('_at'))">
+                                            {{ row[header?.actual_name || header?.name] ?? (row['form_data']?.[header?.name]) ?? '--' }}
+                                        </span>
+                                    </td>
+                                </ng-container>
+                                <td class="!text-center relative w100">
+                                    <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                        <app-icon-button [icon]="'ri-eye-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="goToDetailPage(row._id)"> </app-icon-button>
+                                        <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave leave-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="onDeleteLeave(row._id)" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                <td *ngFor="let row of [].constructor(11)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!leaveListing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en" data-vertical-style="overlay" data-nav-layout="vertical"  data-header-styles="light" class="light" data-menu-styles="dark">
+<head>
+  <meta charset="utf-8">
+  <title>EZEONE TECHNOLOGIES</title>
+  <base href="/">
+  <!-- <base href="/ezeone-tailwind/preview/"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="Description" content="Tailwind Responsive Admin Dashboard Angular Template">
+  <meta name="Author" content="Spruko Technologies Private Limited">
+  <meta name="keywords" content="angular,angular template, admin,angular dashboard,angular ui,dashboard,angular framework,angular admin template,
+  angular components,tailwind template,tailwind dashboard,template admin,admin panel template,angular template ">
+  <link rel="icon" type="image/x-icon" href="./assets/images/brand-logos/favicon.ico">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+  <script src="https://maps.google.com/maps/api/js?key=AIzaSyAYTE_mIlB7522_rXXkpfEhXWsSYQLGm9g"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" crossorigin="anonymous"
+  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function () {
+      const storedOrgLogin = localStorage.getItem('OrgLoginData');
+      if (storedOrgLogin) {
+        try {
+          const OrgLoginData = JSON.parse(storedOrgLogin);
+          if (OrgLoginData?.org?.org_name) {
+            document.title = OrgLoginData.org.org_name;
+          }
+          
+          // // Update favicon if custom logo is available
+          // if (OrgLoginData?.org?.logo_url) {
+          //   const favicon = document.getElementById('dynamicFavicon');
+          //   if (favicon) {
+          //     favicon.href = OrgLoginData.org.logo_url;
+          //   }
+          // }
+          
+          // // Update splash logo
+          // window.addEventListener('DOMContentLoaded', () => {
+          //   const splashLogo = document.querySelector('#webLoading img');
+          //   if (splashLogo && OrgLoginData?.org?.logo_url) {
+          //     splashLogo.src = OrgLoginData.org.logo_url;
+          //   }
+          // });
+          
+          // Dynamically update splash screen logo
+          window.addEventListener('DOMContentLoaded', () => {
+            const splashLogo = document.getElementById('dynamicLogo');
+            const rootUrl = window.APP_ROOT_URL || 'https://works.ezeone.tech'; // fallback
+            if (splashLogo && OrgLoginData?.org?.org_name) {
+              const orgName = OrgLoginData.org.org_name;
+              // const dynamicPath = `${rootUrl}brand-logos/${orgName}/desktop-dark.png`;
+              
+              
+              // // Create a temp image to preload and handle error fallback
+              // const img = new Image();
+              // img.onload = function () {
+              //   splashLogo.src = dynamicPath;
+              //   splashLogo.classList.remove('Hide'); // show only after load
+              // };
+              // img.onerror = function () {
+              //   console.warn('Dynamic logo failed to load. Using default logo.');
+              //   splashLogo.src = './assets/images/brand-logos/desktop-white.png';
+              //   splashLogo.classList.remove('Hide');
+              // };
+              // img.src = dynamicPath;
+              
+            }
+          });
+          
+        } catch (e) {
+          console.error('Error parsing OrgLoginData from localStorage', e);
+        }
+      }
+    })();
+  </script>
+</head>
+<style>
+  .Hide {
+    opacity: 0;
+    display: none !important;
+  }
+</style>
+<body>
+  <app-root></app-root>
+  <div id="webLoading" class="logo-loading">
+    <!-- <img id="dynamicLogo" class="logo Hide" alt="logo"> -->
+    <img src="./assets/images/brand-logos/desktop-white.png" alt="logo"  class="logo">
+    <!-- <img id="dynamicLogo" src="./assets/images/brand-logos/desktop-white.png" alt="logo" class="logo"> -->
+    <div class="skeleton-overlay"></div>
+  </div>
+</body>
+</html>
+
+<!-- <img src="{{api.rootUrl}}brand-logos/{{local.org.org_name}}/desktop-dark.png" alt="logo" class="desktop-dark">  -->
+<!-- <img id="dynamicLogo" class="logo"> -->
+
+<!-- <img src="./assets/images/brand-logos/desktop-white.png" alt="logo"  > -->

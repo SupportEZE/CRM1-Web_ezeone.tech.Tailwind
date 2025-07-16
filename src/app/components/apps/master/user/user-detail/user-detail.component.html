@@ -1,0 +1,354 @@
+<app-page-header [title]="'User'" [title1]="['User Detail']" [activeitem]="'User Detail'" [buttonText]="'Filter'"  [icon]="'filter_list'"  [btnShow]="false" [buttonValue]="''"  [buttonText1]="'Edit User'"  [icon1]="'edit'"  [btnShow1]="true"  [buttonValue1]="''" (buttonClick1)="editPage($event)"></app-page-header>
+
+<!-- Start:: row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="box profile-card">
+            <div class="profile-banner-img">
+                <img src="./assets/images/media/media-3.jpg" class="card-img-top" alt="...">
+            </div>
+            <div class="box-body pb-0 relative">
+                <div class="grid grid-cols-12 sm:gap-x-6 profile-content" style="margin-top: -12rem !important;" *ngIf="!skLoading">
+                    <div class="xl:col-span-3 col-span-12">
+                        <div class="box overflow-hidden border border-defaultborder dark:border-defaultborder/10">
+                            <div class="box-body border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                                <div class="text-center">
+                                    <span class="avatar avatar-xxl avatar-rounded mb-3">
+                                        <img 
+                                        [src]="profilePic?.signed_url" 
+                                        alt="Profile Image" 
+                                        (error)="onError($event)"
+                                        [class.object-contain]="isFallback"
+                                        (click)="profilePic?.signed_url && comanFuncation.zoom(profilePic?._id, 'user/get-doc')">
+                                    </span>
+                                    <h5 class="font-semibold mb-1">{{userDetail?.name}}</h5>
+                                    <span class="badge font-medium ti-btn-soft-primary1 mb-2" *ngIf="userDetail?.designation">{{userDetail?.designation}}</span>
+                                    <p class="text-xs mb-0 text-textmuted dark:text-textmuted/50" *ngIf="userDetail?.login_type_id !== LOGIN_TYPES.FIELD_USER && userDetail?.login_type_id !== LOGIN_TYPES.SERVICE_FIELD_USER"> 
+                                        <span class="block flex align-items gap-2">
+                                            <i class="ri-account-circle-line me-1 align-middle"></i>{{userDetail?.username}}
+                                            <button (click)="comanFuncation.copy(userDetail?.username)" matTooltip="Copy To Clipboard">
+                                                <i class="material-icons">content_copy</i>
+                                            </button>
+                                        </span> 
+                                        <span class="block flex align-items gap-2">
+                                            <i class="ri-key-2-line me-1 align-middle"></i>{{userDetail?.password}}
+                                            <button (click)="comanFuncation.copy(userDetail?.password)" matTooltip="Copy To Clipboard">
+                                                <i class="material-icons">content_copy</i>
+                                            </button>
+                                        </span> 
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <ng-container *ngIf="userDetail?.juniors?.data?.length > 0">
+                                <div class="p-4 pb-1 flex flex-wrap justify-between">
+                                    <div class="font-medium text-[13px] text-primarytint1color">
+                                        Team :
+                                    </div>
+                                </div>
+                                <div class="box-body p-0">
+                                    <ul class="ti-list-group list-group-flush !border-0 text-[11px] scroll-y-250">
+                                        <li class="ti-list-group-item border-0 py-1" *ngFor="let row of userDetail?.juniors?.data">
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <div class="leading-none">
+                                                    <span class="avatar avatar-sm avatar-rounded !text-primary bg-primary/10">{{nameUtils.getInitials(row.child_user_name)}} </span>
+                                                </div>
+                                                <div class="flex-auto">
+                                                    <span class="font-medium">{{row.child_user_name || '--'}}</span>
+                                                </div>
+                                                <!-- <div> 
+                                                    <button class="ti-btn ti-btn-sm ti-btn-icon ti-btn-soft-primary"> <i class="bi bi-arrow-right leading-none align-middle"></i> </button> 
+                                                </div> -->
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </ng-container>
+                            
+                            <ng-container *ngIf="userDetail?.data_right_values">
+                                <div class="p-4 pb-1 flex flex-wrap justify-between">
+                                    <div class="font-medium text-[13px] text-primarytint1color">
+                                        Data Right Values :
+                                    </div>
+                                </div>
+                                <div class="box-body p-0">
+                                    <ul class="ti-list-group list-group-flush !border-0 text-[11px] scroll-y-250">
+                                        <li class="ti-list-group-item border-0 py-1" *ngFor="let sublist of userDetail?.data_right_values">
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <div class="leading-none">
+                                                    <span class="avatar avatar-sm avatar-rounded !text-primary bg-primary/10">{{nameUtils.getInitials(sublist)}} </span>
+                                                </div>
+                                                <div class="flex-auto">
+                                                    <span class="font-medium ellipsis w200" matTooltip="{{sublist}}">{{sublist || '--'}}</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="xl:col-span-9 col-span-12">
+                        <div class="box overflow-hidden border border-defaultborder dark:border-defaultborder/10">
+                            <div class="box-body">
+                                <nav class="nav nav-tabs tab-style-6 mb-3 p-0 flex bg-white dark:bg-bodybg" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                    <button type="button" class="nav-link text-start rounded-md active" id="profile-about-pane" aria-selected="true" data-hs-tab="#profile-about" aria-controls="profile-about" role="tab">
+                                        About
+                                    </button>
+                                    <!-- <button type="button" class="nav-link text-start rounded-md" id="profile-about-pane1-1" aria-selected="true" data-hs-tab="#profile-about1" aria-controls="profile-about1" role="tab">
+                                        Network
+                                    </button>
+                                    <button type="button" class="nav-link text-start rounded-md" id="profile-about-pane2-1" aria-selected="true" data-hs-tab="#profile-about2" aria-controls="profile-about2" role="tab">
+                                        Leave
+                                    </button>
+                                    <button type="button" class="nav-link text-start rounded-md" id="profile-about-pane3-1" aria-selected="true" data-hs-tab="#profile-about3" aria-controls="profile-about3" role="tab">
+                                        Check In
+                                    </button>
+                                    <button type="button" class="nav-link text-start rounded-md" id="profile-about-pane4-1" aria-selected="true" data-hs-tab="#profile-about4" aria-controls="profile-about4" role="tab">
+                                        Travel Plan
+                                    </button>
+                                    <button type="button" class="nav-link text-start rounded-md" id="profile-about-pane5-1" aria-selected="true" data-hs-tab="#profile-about5" aria-controls="profile-about5" role="tab">
+                                        Expense
+                                    </button>
+                                    <button type="button" class="nav-link text-start rounded-md" id="profile-about-pane6-1" aria-selected="true" data-hs-tab="#profile-about6" aria-controls="profile-about6" role="tab">
+                                        Event Plan
+                                    </button>
+                                    <button type="button" class="nav-link text-start rounded-md" id="profile-about-pane7-1" aria-selected="true" data-hs-tab="#profile-about7" aria-controls="profile-about7" role="tab">
+                                        Task
+                                    </button>
+                                    <button type="button" class="nav-link text-start rounded-md" id="logs-tab-pane" aria-selected="true" data-hs-tab="#logs" aria-controls="logs" role="tab">
+                                        Logs
+                                    </button> -->
+                                </nav>
+                                
+                                
+                                <div class="tab-content" id="profile-tabs">
+                                    <div id="profile-about" class="tab-pane show active p-0 border-0" role="tabpanel" aria-labelledby="profile-about-pane">
+                                        <ul class="ti-list-group list-group-flush border rounded-3 text-[11px]">
+                                            <li class="ti-list-group-item">
+                                                <div class="flex gap-6 mb-3 flex-wrap">
+                                                    <div class="flex items-center me-2 flex-wrap">
+                                                        <div>
+                                                            <span class="text-textmuted dark:text-textmuted/50">Date Created</span>
+                                                            <span class="block font-medium text-primay">{{userDetail?.created_at ? (userDetail?.created_at | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center me-2 flex-wrap">
+                                                        <div>
+                                                            <span class="text-textmuted dark:text-textmuted/50">Created By</span>
+                                                            <span class="block font-medium text-primay">{{userDetail?.created_name || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Login Type</span>
+                                                            <span class="block font-medium">{{userDetail?.login_type_name || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">User Code</span>
+                                                            <span class="block font-medium">{{userDetail?.user_code || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Email</span>
+                                                            <span class="block font-medium">{{userDetail?.email || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Mobile</span>
+                                                            <span class="block font-medium">{{userDetail?.mobile || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Address</span>
+                                                            <span class="block font-medium text-primay" >{{userDetail?.address ? (userDetail?.address + ',') : ''}} {{userDetail?.city ? (userDetail?.city + ',') : ''}} {{userDetail?.district ? (userDetail?.district + ',') : ''}} {{userDetail?.state ? (userDetail?.state + ',') : ''}} {{userDetail?.pincode ? (userDetail?.pincode + '') : ''}} {{userDetail?.country ? (userDetail?.country + '') : ''}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2" *ngIf="userDetail?.reporting_manager_name">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Reporting Manager</span>
+                                                            <span class="block font-medium">{{userDetail?.reporting_manager_name || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2" *ngIf="userDetail?.user_role_name">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">User Role</span>
+                                                            <span class="block font-medium">{{userDetail?.user_role_name || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Weekly Off</span>
+                                                            <span class="block font-medium">{{userDetail?.weekly_off || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2" *ngIf="userDetail?.data_rights">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Data Rights</span>
+                                                            <span class="block font-medium">{{userDetail?.data_rights || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">First App Login</span>
+                                                            <span class="block font-medium text-primay">{{userDetail?.first_app_login ? (userDetail?.first_app_login | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Last App Login</span>
+                                                            <span class="block font-medium text-primay">{{userDetail?.latest_app_login ? (userDetail?.latest_app_login | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex gap-2 items-center me-2 flex-wrap">
+                                                        <div>
+                                                            <span class="block text-textmuted dark:text-textmuted/50 font-medium">Status</span>
+                                                            <div class="flex gap-2">
+                                                                <span [ngClass]="userDetail?.status === 'Active' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'" 
+                                                                class=" text-[11px] badge">{{userDetail?.status}}</span>
+                                                                <app-toggle [class]="'ti-switch-custom'" [checked]="userDetail?.status === 'Active' ? true: false" 
+                                                                (checkedChange)="onToggleChange($event, userDetail?._id, userDetail?.status)" *ngIf="accessRight?.approveRight"></app-toggle>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center me-2 flex-wrap">
+                                                        <div>
+                                                            <span class="text-textmuted dark:text-textmuted/50">Device Information</span>
+                                                            <span class="block font-medium text-primay">{{userDetail?.device_info?.brand ? (userDetail?.device_info?.brand + ',') : ''}} {{userDetail?.device_info?.model ? (userDetail?.device_info?.model + ',') : ''}} {{userDetail?.device_info?.system_name ? (userDetail?.device_info?.system_name + ',') : ''}} {{userDetail?.device_info?.system_version ? (userDetail?.device_info?.system_version + ',') : ''}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center me-2 flex-wrap">
+                                                        <div>
+                                                            <span class="text-textmuted dark:text-textmuted/50">Updated At</span>
+                                                            <span class="block font-medium text-primay">{{userDetail?.updated_at ? (userDetail?.updated_at | date:'d MMM yyyy') : '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center me-2 flex-wrap">
+                                                        <div>
+                                                            <span class="text-textmuted dark:text-textmuted/50">Updated By</span>
+                                                            <span class="block font-medium text-primay">{{userDetail?.updated_name || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex gap-6 mb-3 flex-wrap">
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Punch In Address</span>
+                                                            <span class="block font-medium">{{userDetail?.start_address || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Punch out Address</span>
+                                                            <span class="block font-medium">{{userDetail?.stop_address || '--'}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                                <div class="dropdown-divider mb-3"></div>
+                                                
+                                                <div class="flex gap-6 mb-1 flex-wrap">
+                                                    <div class="flex items-center gap-2" *ngFor="let key of formattedKeysFormData | keyvalue">
+                                                        <div>
+                                                            <span class="text-xs text-textmuted dark:text-textmuted/50">{{ key.key }}</span>
+                                                            <span class="block font-medium">
+                                                                <ng-container *ngIf="key.key.toLowerCase().includes('date') || key.key.toLowerCase().endsWith('_at'); else normalValue">
+                                                                    {{ key.value | date: 'd MMM yyyy' }}
+                                                                </ng-container>
+                                                                <ng-template #normalValue>
+                                                                    {{ key.value || '--' }}
+                                                                </ng-template>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sk Loading Start -->
+                <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+                    <div class="xl:col-span-3 col-span-12">
+                        <app-showcode-card>
+                            <div class="box-body border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                                <div class="text-center">
+                                    <span class="avatar avatar-xxl avatar-rounded  mb-3">
+                                        <app-skeleton [class]="'w90 h90 radius'"></app-skeleton>
+                                    </span>
+                                    <h5 class="font-semibold mb-1">
+                                        <app-skeleton [class]="'wp100 h10 mt15'"></app-skeleton>
+                                    </h5>
+                                    <span class="block font-medium text-textmuted dark:text-textmuted/50 mb-2">
+                                        <app-skeleton [class]="'wp70 h10 mt10'"></app-skeleton>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex mb-0 flex-wrap gap-4 p-4 border-b border-dashed border-defaultborder dark:border-defaultborder/10"> 
+                                <div class="flex items-center gap-4 me-2 flex-wrap" *ngFor="let row of [].constructor(3)">
+                                    <div>
+                                        <span class="avatar avatar-md">
+                                            <app-skeleton [class]="'w50 h50'"></app-skeleton>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <div>                                
+                                            <app-skeleton [class]="'w150 h10'"></app-skeleton>
+                                        </div>
+                                        <div>
+                                            <app-skeleton [class]="'w100 h10 mt5'"></app-skeleton>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </app-showcode-card>
+                    </div>
+                    <div class="xl:col-span-9 col-span-12">
+                        
+                        <div class="grid grid-cols-12 sm:gap-x-6">
+                            <div class="xl:col-span-12 col-span-12">
+                                <app-showcode-card [titleView]="false"  [view]="false">
+                                    <div >
+                                        <!-- *ngIf="skLoading" -->
+                                        <div class="flex gap-2 mb-1 flex-wrap">
+                                            <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                                <app-skeleton [class]="'w180'"></app-skeleton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </app-showcode-card>
+                                
+                            </div>
+                            <div class="xl:col-span-6 col-span-12">
+                                <app-showcode-card [titleView]="false"  [view]="false">
+                                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                                </app-showcode-card>
+                            </div>
+                            
+                            <div class="xl:col-span-6 col-span-12">
+                                <app-showcode-card [titleView]="false"  [view]="false">
+                                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                                </app-showcode-card>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sk Loading End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End:: row-1 -->

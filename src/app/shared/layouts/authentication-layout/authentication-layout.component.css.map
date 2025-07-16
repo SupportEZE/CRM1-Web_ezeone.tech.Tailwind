@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "authentication-layout.component.scss"
+    ],
+    "names": [],
+    "file": "authentication-layout.component.css"
+}

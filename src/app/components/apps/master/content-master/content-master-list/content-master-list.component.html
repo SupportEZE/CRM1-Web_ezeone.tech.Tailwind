@@ -1,0 +1,452 @@
+<app-page-header [title]="'Master'" [title1]="['Content Master']"
+[activeitem]="'Content Master'"></app-page-header>
+
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-3 xl:col-span-3 col-span-12">
+        <div class="xl:col-span-12 col-span-12">
+            <div class="box">
+                <div
+                class="flex p-4 flex-wrap gap-2 items-center justify-between border-b border-defaultborder dark:border-defaultborder/10">
+                <div class="flex-auto">
+                    <h6 class="font-medium mb-0">Headers</h6>
+                </div>
+            </div>
+            <div class="box-body !pt-0 !p-3">
+                <ul class="list-none files-main-nav"
+                id="files-main-nav">
+                @for(item of fileNavItems;track $index){
+                    <li class="files-type flex items-center justify-between h50 border-b border-defaultborder dark:border-defaultborder/10"
+                    [ngClass]="{'active': item.name === activeTab}"
+                    (click)="activeTab = item.name; callApi(activeTab)">
+                    <a>
+                        <div class="flex items-center">
+                            <div class="me-2">
+                                <i
+                                class="{{item.icon}} text-[1rem]"></i>
+                            </div>
+                            <span class="flex-auto text-nowrap">
+                                {{ item.name }}
+                            </span>
+                            <!-- @if(item.badge){
+                            <span
+                            class="badge bg-{{item.badgeColor}}">{{
+                            item.badge }}</span>
+                            } -->
+                        </div>
+                    </a>
+                    @if(item.name === 'Banner' || item.name === 'Videos'
+                    || item.name === 'Document' || item.name === 'FAQ\'S'){
+                        <button
+                        class="ti-btn ti-btn-sm ti-btn-icon ti-btn-soft-primary !rounded-full"
+                        (click)="buttonClick($event, item.name)"
+                        matTooltip="{{'Add New' + item.name}}">
+                        <i
+                        class="ri-add-line leading-none align-middle"></i>
+                    </button>
+                }
+                
+            </li>
+        }
+    </ul>
+</div>
+</div>
+</div>
+</div>
+
+<div class="xxl:col-span-9 xl:col-span-9 col-span-12">
+    <!-- banner start -->
+    <ng-container *ngIf="activeTab === 'Banner'">
+        <div class="grid grid-cols-12 gap-x-4 gap-4" *ngIf="!skLoading">
+            <div class="xxl:col-span-2 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12"  *ngFor="let image of ImageItem">
+                <spk-product-card [apiPath]="'banner/get-doc'"  [imageData]="image"  [editBtn]="false" [heading]="true" [subHeading]="false" (delete)="delete(image._id, 'banner/delete-file', 'delete')">
+                </spk-product-card>
+            </div>
+        </div>
+        <div class="grid grid-cols-12 gap-x-6" *ngIf="skLoading">
+            <div
+            class="col-span-12 lg:col-span-3 md:col-span-3 sm:col-span-6 mb-6"
+            *ngFor="let row of [].constructor(6)">
+            <app-skeleton class="box m-0 h120"></app-skeleton>
+        </div>
+    </div>
+    
+    <app-data-not-found *ngIf="ImageItem.length === 0 && !skLoading"></app-data-not-found>
+    
+</ng-container>
+<!-- banner end -->
+
+<!-- Document start -->
+<ng-container *ngIf="activeTab === 'Document'">
+    <div class="box-body p-0" *ngIf="!skLoading">
+        <ul class="ti-list-group grid-three list-group-flush !border-t-0 !border-b-0">
+            <li class="ti-list-group-item mb-0 box" *ngFor="let row of DocumentItem; let i = index">
+                <div class="flex items-center flex-wrap gap-2">
+                    <div class="leading-none">
+                        <span class="avatar avatar-rounded {{row.avatarClass}} bg-light">
+                            <img [src]="'./assets/images/doc-img/'+row.fileExtension+'.png'" alt="logo" class="desktop-logo" /> 
+                        </span>
+                    </div>
+                    <div class="flex-auto">
+                        <a href="javascript:void(0);">
+                            <span class="block font-medium">{{row.doc_no ? row.doc_no : ''}} </span>
+                        </a>
+                        <span class="block text-textmuted dark:text-textmuted/50 text-xs font-normal">{{row.label}}</span>
+                    </div>
+                    <div class="btn-list">
+                        <app-icon-button [icon]="'ri-download-line'" [buttonClass]="'ti-btn ti-btn-sm ti-btn-icon ti-btn-soft-info btn-wave'" matTooltip="Download" (click)="downloadFile(row.signed_url)" *ngIf="accessRight?.modifyRight"> </app-icon-button> 
+                        
+                        <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" matTooltip="Delete" (clickEvent)="delete(row._id, 'document/delete-file', 'delete')" *ngIf="accessRight?.deleteRight"> </app-icon-button> 
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="xxl:col-span-9 xl:col-span-9 col-span-12" *ngIf="skLoading">
+        <div class="grid grid-cols-12 gap-x-6" >
+            <div  class="col-span-12 lg:col-span-3 md:col-span-3 sm:col-span-6 mb-6"
+            *ngFor="let row of [].constructor(6)">
+            <app-skeleton class="box m-0 h120"></app-skeleton>
+        </div>
+    </div>
+</div>
+<app-data-not-found *ngIf="DocumentItem.length === 0 && !skLoading"></app-data-not-found>
+</ng-container>
+<!-- Document end -->
+
+<!-- Video Start -->
+<ng-container *ngIf="activeTab === 'Videos'">
+    <div class="grid grid-cols-12 gap-x-6" >
+        <ng-container *ngIf="!skLoading">
+            <ng-container *ngFor="let row of videoData">
+                <div class="xxl:col-span-4 col-span-4">
+                    <div class="box overflow-hidden relative">
+                        <div class="box-body">
+                            <div class="plyr__video-embed" id="player1">
+                                <iframe width="100%" height="200"
+                                [src]="row.safeUrl"
+                                title="YouTube video player"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen></iframe>
+                            </div>
+                            <p class="text-[0.8rem] mt-2 font-bold">{{ (row.title | titlecase) || 'No title available' }}</p>
+                            <div class="flex justify-between gap-2 items-center mt-2">
+                                <p class="text-[0.8rem]">User Type: 
+                                    <ng-container *ngFor="let subRow of row.customer_type_name">
+                                        {{subRow}}
+                                    </ng-container>
+                                </p>
+                                <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" matTooltip="Delete" (clickEvent)="delete(row._id, 'videos/delete', 'delete')" *ngIf="accessRight?.deleteRight"> </app-icon-button> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+        <ng-container *ngIf="skLoading">
+            <div class="xxl:col-span-4 col-span-4 mb-6"
+            *ngFor="let row of [].constructor(6)">
+            <app-skeleton class="box m-0 h150"></app-skeleton>
+        </div>
+    </ng-container>
+</div>
+<app-data-not-found *ngIf="videoData.length === 0 && !skLoading"></app-data-not-found>
+</ng-container>
+<!-- Video End -->
+
+<!-- About Us Start -->
+<div class="grid grid-cols-12 gap-x-6" *ngIf="activeTab === 'About Us'">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="box" *ngIf="skLoading">
+            <div class="p-4">
+                <div class="grid grid-cols-12 gap-x-6">
+                    <div class="xl:col-span-12 col-span-12 mb-4">
+                        <app-skeleton></app-skeleton>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form #f="ngForm" (ngSubmit)="f.valid && submitAboutUs()">
+            <div id="product-features" *ngIf="!skLoading"  class="ngx-editor-custom editor-height455">
+                <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+                <ngx-editor [editor]="editor" name="editorContent" class="overflow-auto" [(ngModel)]="aboutData">
+                </ngx-editor>
+            </div>
+            <div class="col-span-12 flex justify-end pt-3 pb-3" *ngIf="!skLoading">
+                <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- About Us End -->
+
+<!-- Contact Us Start -->
+<div class="grid grid-cols-12 gap-x-6"
+*ngIf="activeTab === 'Contact Us'">
+<div class="xl:col-span-12 col-span-12">
+    <div class="box" *ngIf="skLoading">
+        <div class="p-4">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xl:col-span-3 col-span-12 mb-4"
+                *ngFor="let card of [].constructor(7)">
+                <app-skeleton></app-skeleton>
+            </div>
+        </div>
+    </div>
+</div>
+<app-showcode-card *ngIf="!skLoading"
+[title]="'Contact Us Details'" [view]="false">
+<form #f="ngForm" (ngSubmit)="f.valid && submitContact()"
+class="grid grid-cols-12 gap-4 mt-0">
+<div class="md:col-span-4 col-span-12">
+    <label class="ti-form-label">Contact No. 1</label>
+    <input type="text" minlength="10" maxlength="10"
+    class="form-control" name="mobile"
+    placeholder="Contact No." #mobile="ngModel"
+    [(ngModel)]="data.mobile"
+    aria-label="Contact No." required>
+    <ng-container *ngIf="mobile.touched || f.submitted">
+        <div *ngIf="mobile.errors?.['required']"
+        class="mt-1 text-xs text-red-500 text-right">
+        Contact No. 1 is required
+    </div>
+</ng-container>
+</div>
+<div class="md:col-span-4 col-span-12">
+    <label class="ti-form-label">Contact No. 2</label>
+    <input type="text" minlength="10" maxlength="10"
+    class="form-control" name="mobile_1"
+    placeholder="Contact No. 2" #mobile_1="ngModel"
+    [(ngModel)]="data.mobile_1"
+    aria-label="Last name">
+    
+</div>
+<div class="md:col-span-4 col-span-12">
+    <label class="ti-form-label">Email</label>
+    <input type="email" class="form-control"
+    name="email" placeholder="Email"
+    #email="ngModel" [(ngModel)]="data.email"
+    aria-label="Email">
+</div>
+<div class="md:col-span-4 col-span-12">
+    <label class="ti-form-label">Website</label>
+    <input type="text" class="form-control"
+    name="website" placeholder="Website"
+    #website="ngModel" [(ngModel)]="data.website"
+    aria-label="Website" required>
+    <ng-container
+    *ngIf="website.touched || f.submitted">
+    <div *ngIf="website.errors?.['required']"
+    class="mt-1 text-xs text-red-500 text-right">
+    Website is required
+</div>
+</ng-container>
+</div>
+<div class="md:col-span-4 col-span-12">
+    <label class="ti-form-label">Latitude</label>
+    <input type="number" class="form-control"
+    name="latitude" placeholder="Latitude"
+    #latitude="ngModel" [(ngModel)]="data.latitude"
+    [(ngModel)]="data.latitude"
+    aria-label="Latitude" required>
+    <ng-container
+    *ngIf="latitude.touched || f.submitted">
+    <div *ngIf="latitude.errors?.['required']"
+    class="mt-1 text-xs text-red-500 text-right">
+    Latitude is required
+</div>
+</ng-container>
+</div>
+<div class="md:col-span-4 col-span-12">
+    <label class="ti-form-label">Longitude</label>
+    <input type="number" class="form-control"
+    name="longitude" placeholder="Longitude"
+    #longitude="ngModel"
+    [(ngModel)]="data.longitude"
+    [(ngModel)]="data.longitude"
+    aria-label="longitude" required>
+    <ng-container
+    *ngIf="longitude.touched || f.submitted">
+    <div *ngIf="longitude.errors?.['required']"
+    class="mt-1 text-xs text-red-500 text-right">
+    Longitude is required
+</div>
+</ng-container>
+</div>
+<div class="col-span-12">
+    <label class="ti-form-label">Address</label>
+    <textarea type="text" class="form-control"
+    name="address" placeholder="Address"
+    #address="ngModel" [(ngModel)]="data.address"
+    [(ngModel)]="data.address"
+    aria-label="Address" required></textarea>
+    <ng-container
+    *ngIf="address.touched || f.submitted">
+    <div *ngIf="address.errors?.['required']"
+    class="mt-1 text-xs text-red-500 text-right">
+    Address is required
+</div>
+</ng-container>
+</div>
+
+<div class="col-span-12 flex justify-end">
+    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</div>
+</form>
+</app-showcode-card>
+</div>
+</div>
+<!-- Contact Us Start -->
+
+
+
+<!-- Privacy Policy Start -->
+<div class="grid grid-cols-12 gap-x-6"
+*ngIf="activeTab === 'Privacy Policy'">
+<div class="xl:col-span-12 col-span-12">
+    <div class="box" *ngIf="skLoading">
+        <div class="p-4">
+            <app-skeleton></app-skeleton>
+        </div>
+    </div>
+    <form #f="ngForm" (ngSubmit)="f.valid && submitPrivacyPolicy()">
+        <div id="product-features" class="ngx-editor-custom editor-height455" *ngIf="!skLoading">
+            <ngx-editor-menu [editor]="editor" [toolbar]="toolbar">
+            </ngx-editor-menu>
+            <ngx-editor [editor]="editor" name="editorContent"
+            class="overflow-auto"
+            [(ngModel)]="privacyPolicyData">
+        </ngx-editor>
+    </div>
+    <div class="col-span-12 flex justify-end pt-3 pb-3" *ngIf="!skLoading">
+        <button align="end" type="submit"  class="ti-btn ti-btn-primary m-0" [ngClass]="{'ti-btn-loader ti-btn-disabled': api.disabled}" [disabled]="api.disabled">
+            <span>{{ data.id ? 'Update' : 'Save' }}
+                <i class="ri-save-line ms-2 text-[16px] inline-block" *ngIf="!api.disabled"></i>
+            </span>
+            <span class="loading" *ngIf="api.disabled">
+                <i  class="ri-loader-2-fill text-[1rem] animate-spin"></i>
+            </span>
+        </button>
+    </div>
+</form>
+</div>
+</div>
+<!-- Privacy Policy End -->
+
+<!-- Term & Condition Start -->
+<div class="grid grid-cols-12 gap-x-6" *ngIf="activeTab === 'Term & Condition'">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="box" *ngIf="skLoading">
+            <div class="p-4">
+                <app-skeleton></app-skeleton>
+            </div>
+        </div>
+        <form #f="ngForm" (ngSubmit)="f.valid && submitTermsConditionsData()" *ngIf="!skLoading">
+            <div id="product-features" class="ngx-editor-custom editor-height455">
+                <ngx-editor-menu [editor]="editor" [toolbar]="toolbar">
+                </ngx-editor-menu>
+                <ngx-editor [editor]="editor" name="editorContent" class="overflow-auto" [(ngModel)]="termsConditionsData">
+                </ngx-editor>
+            </div>
+            <div class="col-span-12 flex justify-end pt-3 pb-3" *ngIf="!skLoading">
+                <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Term & Condition End -->
+
+<!-- FAQ Start -->
+<div class="grid grid-cols-12 gap-x-6" *ngIf="activeTab === 'FAQ\'S'">
+    <div class="xxl:col-span-12 col-span-12">
+        <div class="tab-pane show active border-0 p-0 mb-5" >
+            <div class="box" *ngIf="skLoading">
+                <div class="p-4">
+                    <div class="grid grid-cols-12 gap-x-6">
+                        <div class="xl:col-span-12 col-span-12 mb-4"
+                        *ngFor="let card of [].constructor(3)">
+                        <app-skeleton></app-skeleton>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div
+        class="accordion accordion-customicon1 accordion-primary accordions-items-seperate"
+        id="accordionFAQ1" *ngIf="!skLoading">
+        <div class="hs-accordion-group"
+        *ngFor="let row of collaps; let i = index">
+        <div
+        class="hs-accordion bg-white dark:bg-bodybg border dark:border-defaultborder/10 border-defaultborder mt-[0.5rem] rounded-sm active"
+        id="faq-one">
+        <button type="button"
+        class=" dark:border-defaultborder/10  justify-between inline-flex items-center w-full font-semibold text-start text-[0.85rem] transition py-3 px-4 dark:text-gray-200 dark:hover:text-white/80"
+        [ngClass]="{ 'hs-accordion-toggle hs-accordion-active:!text-primary hs-accordion-active:border hs-accordion-active:border-transparent hs-accordion-active:bg-primary/10   dark:hs-accordion-active:!text-primary dark:hs-accordion-active:border ': openIndex === i }"
+        aria-controls="faq-collapse-one"
+        (click)="toggleCollapse(i)">
+        <div class="flex items-center gap-3">
+            <svg
+            class="hs-accordion-active:hidden hs-accordion-active:!text-primary hs-accordion-active:!bg-primary hs-accordion-active:group-hover:!text-primary block sm:w-[1.25rem] h-[1.25rem] w-[2.25rem] ms-2 p-[3px] rounded-full text-gray-600 bg-light group-hover:text-defaulttextcolor dark:text-defaulttextcolor/80 "
+            width="16" height="16"
+            viewBox="0 0 16 16" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.5 8.85999L14.5 8.85998"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></path>
+            <path d="M8 15.36L8 2.35999"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></path>
+        </svg>
+        <svg
+        class="hs-accordion-active:block hs-accordion-active:!text-white hs-accordion-active:!bg-primary hs-accordion-active:group-hover:!text-primary hidden sm:w-[1.25rem] h-[1.25rem] w-[2.25rem] ms-2 p-[3px] rounded-full text-gray-600 bg-light group-hover:text-defaulttextcolor dark:text-defaulttextcolor/80 "
+        width="16" height="16"
+        viewBox="0 0 16 16" fill="none"
+        xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.5 8.85999L14.5 8.85998"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"></path>
+    </svg>
+    
+    {{row.question ?
+        row.question : ''}}
+    </div>
+    
+    <div class="flex items-center gap-1">
+        <a (click)="openModal('FAQ\'S', row)"
+        class="ti-btn ti-btn-icon bg-success/10 text-success hover:bg-success hover:text-white !rounded-full btn-wave" *ngIf="accessRight?.modifyRight">
+        <i class="ri-pencil-line"></i>
+    </a>
+    
+    <a (click)="delete(row._id, 'faq/delete', 'delete')" class="ti-btn ti-btn-icon bg-danger/10 text-danger hover:bg-danger hover:text-white !rounded-full btn-wave" *ngIf="accessRight?.deleteRight">
+        <i class="ri-delete-bin-line"></i>
+    </a>
+    
+</div>
+</button>
+
+<div id="faq-collapse-one"
+class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300"
+aria-labelledby="faq-one"
+[ngStyle]="{ display: openIndex === i ? 'block' : 'none' }">
+<div class="p-5">
+    <p
+    class="text-defaulttextcolor dark:text-defaulttextcolor/80 "
+    [innerHTML]="row.answer">
+    <!-- {{row.answer ? row.answer : ''}} -->
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<app-data-not-found *ngIf="collaps.length === 0 && !skLoading"></app-data-not-found>
+
+</div>
+</div>
+<!-- FAQ End -->
+
+</div>
+</div>

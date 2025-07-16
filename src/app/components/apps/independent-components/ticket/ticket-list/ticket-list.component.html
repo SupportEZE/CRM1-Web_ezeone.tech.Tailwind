@@ -1,0 +1,275 @@
+<app-page-header [title]="'Ticket'" [title1]="['Ticket']" [activeitem]="'Ticket List'"
+[btnShow]="true" [buttonText]="'Dropdown Config'" [icon]="'settings'" (buttonClick)="openDropdownModal()"></app-page-header>
+
+
+<!-- Start::row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-3 col-span-12">
+        <div class="box">
+            <div class="box-header gap-2 items-center pb-3 border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                <span class="avatar avatar-md bg-primary avatar-rounded"><i class="ri-file-list-3-line text-[1rem]"></i></span>
+                <div class="box-title">
+                    Ticket
+                    <span class="text-textmuted dark:text-textmuted/50 block text-xs">Create Ticket</span>
+                </div>
+                <button class="ti-btn ti-btn-sm ti-btn-soft-primary1 ms-auto !rounded-full" (click)="openModal('')" *ngIf="accessRight?.addRight">
+                    <i class="ri-add-line"></i>Add New
+                </button>
+            </div>
+            <div class="box-body p-0">
+                <div class="p-4 task-navigation border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                    <ul class="list-none task-main-nav mb-0">
+                        <li class="px-0 pt-0">
+                            <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">General</span>
+                        </li>
+                        
+                        <li *ngFor="let tab of tabs"  [ngClass]="{'active': activeTab === tab.value}" (click)="filter.status = '';filter.ticket_category=null; filter.ticket_priority = null;setActiveTab(tab.label);getList();">
+                            <a>
+                                <div class="flex items-center">
+                                    <span class="me-2 leading-none">
+                                        <i [class]="tab.icon + ' align-middle text-[14px] text-primary'"></i>
+                                    </span>
+                                    <span class="flex-auto text-nowrap">
+                                        {{ tab.label }}
+                                    </span>
+                                    <span *ngIf="tab.count !== null" class="badge bg-{{tab.countClass}}/10 text-{{tab.countClass}} rounded-full">
+                                        {{ tab.count }}
+                                    </span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="list-none task-main-nav mb-0">
+                        <li class="px-0 pt-2 flex justify-between gap-2 items-center">
+                            <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">Category</span>
+                        </li>
+                        
+                        
+                        <li *ngFor="let category of categoryKeys" [ngClass]="{'active': filter.ticket_category === category}" (click)="filter.status = ''; filter.ticket_category = category ;activeTab='All'; filter.ticket_priority=null;getList();">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <a class="flex">
+                                    <div class="flex-auto text-nowrap">
+                                        <span class="font-medium">{{ category }}</span>
+                                    </div>
+                                </a>
+                                <span class="badge bg-primarytint1color/10 text-primarytint1color rounded-full">
+                                    {{ tabCount[category] }}
+                                </span>
+                            </div>
+                        </li>
+                        <div class="px-3" *ngIf="!categoryKeys?.length">
+                            <label class="form-check-label !ps-0 text11px font-normal">
+                                No data available!
+                            </label>
+                        </div>
+                    </ul>
+                    
+                    <ul class="list-none task-main-nav mb-0">
+                        <li class="px-0 pt-2 flex justify-between gap-2 items-center">
+                            <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">Priority</span>
+                        </li>
+                        <li *ngFor="let priority of priorityKeys"  [ngClass]="{'active': filter.ticket_priority === priority}" (click)="filter.status = '';activeTab='All';filter.ticket_category=null; filter.ticket_priority = priority;getList();">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <a class="flex">
+                                    <div class="flex-auto text-nowrap">
+                                        <span class="font-medium">{{priority}}</span>
+                                    </div>
+                                </a>
+                                <span class="badge bg-primary/10 rounded-full text-primary">{{priorityCount[priority]}}</span>
+                            </div>
+                        </li>
+                        <div class="px-3" *ngIf="!priorityKeys?.length">
+                            <label class="form-check-label !ps-0 text11px font-normal">
+                                No data available!
+                            </label>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="xl:col-span-9 col-span-12">
+        <app-showcode-card [title]="'Ticket List'" [titleView]="true" [boxHeader]="'pb-0 pt-0'" [classbody]="'pt-0'" [view]="false" [refresBtnShow]="true" [logBtnShow]="false" [overallCountShow]="true" [overallCount]="listing?.length" [showSearch]="false" [searchPlaceholder]="'Search by Company Name'"  (search)="onSearch($event)" (refresh)="onRefresh();">
+            <div class="relative">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables [tableHeight]="'630px'" [showCheckbox]="false" [showS_No]="true" [showAction]="true" [columns]="todolistColumn" tableClass="ti-custom-table text-nowrap">
+                        <tr class="todo-box border-b !border-defaultborder dark:!border-defaultborder/10">
+                            <td class="!text-center">&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="getList()">
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>  
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.created_name" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.created_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.created_name=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.ticket_no" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.ticket_no) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.ticket_no=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.customer_type_name" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.customer_type_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_type_name=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.customer_detail" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.customer_detail) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_detail=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.ticket_category" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.ticket_category) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.ticket_category=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td *ngIf="orgData?.org?.sfa">
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.login_type_name" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.login_type_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.login_type_name=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.ticket_priority" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.ticket_priority) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.ticket_priority=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.ticket_description" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.ticket_description) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.ticket_description=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.status" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.status) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.status=''; getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td class="text-end">&nbsp;</td>
+                        </tr>
+                        
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="todo-box border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing;let i = index;"  [class.bg-gray-400]="isHighlighted(row._id)">
+                                <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                                <td>{{row.created_at | date : 'dd MMM yyyy hh:mm a'}}</td>
+                                <td>{{row.created_name}}</td>
+                                <td>
+                                    <a class="text-primary font-semibold underline" [routerLink]="['/apps/independent/ticket-list/ticket-detail', row._id]" (click)="setHighLight(row._id)"> {{row.ticket_no}}</a>                                            
+                                </td>
+                                <td>{{row.customer_detail?.customer_type_name || '--'}}</td>
+                                <td>{{row?.customer_detail?.customer_name+ ' ' + row?.customer_detail?.mobile }}</td>
+                                <td>
+                                    <span class="badge " [ngClass]="row.ticket_category === 'Marketing' ? 'bg-warning/10 text-warning' : row.ticket_category === 'Billing' ? 'bg-danger/10 text-danger' : row.ticket_category === 'Quality' ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'">
+                                        {{row.ticket_category}}
+                                    </span> 
+                                </td>
+                                <td *ngIf="orgData?.org?.sfa">
+                                    {{
+                                        (row.assign_to_user_detail?.name ? row.assign_to_user_detail?.name : '-') +
+                                        ' (' +
+                                        (row.assign_to_user_detail?.user_code ? row.assign_to_user_detail?.user_code : '-') +
+                                        ')'
+                                    }}
+                                </td>
+                                <td>
+                                    <span class="badge" [ngClass]="row.ticket_priority === 'High' ? 'bg-primarytint1color/10  text-primarytint1color' : row.ticket_priority === 'low' ? 'bg-danger/10 text-danger' : row.ticket_priority === 'Medium' ? 'bg-warning/10 text-warning' : 'bg-primary/10 text-primary'">
+                                        {{row.ticket_priority}}
+                                    </span>    
+                                </td>
+                                <td class="w-200">
+                                    <span class="ellipsis" matTooltip="{{row.ticket_description}}">{{row.ticket_description || '--'}}</span>
+                                </td>
+                                <td>  <span class="badge" [ngClass]="{'bg-success/10 text-success': row.status === 'Complete','bg-warning/10 text-warning': row.status === 'Pending', 'bg-danger/10 text-danger': row.status === 'Cancel'}">{{row.status}}</span>
+                                </td>
+                                <td class="text-end">
+                                    <!-- <app-icon-button *ngIf="row.status === 'Pending' || row.status === ''" [icon]="'ri-edit-line'" matTooltip="Edit" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="openModal(row)"> </app-icon-button> -->
+                                    <app-icon-button (clickEvent)="updateStatus(row)" *ngIf="row.status === 'Pending' || row.status === ''" [icon]="'ri-pencil-line'" matTooltip="Change Status" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'"> </app-icon-button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(6)">
+                                <td *ngFor="let row of [].constructor(this.orgData?.org?.sfa ? 12 : 11)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!listing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+            <app-pagination-footer [class]="'p-0'" [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </app-showcode-card>
+    </div>
+</div>
+<!--End::row-1 -->

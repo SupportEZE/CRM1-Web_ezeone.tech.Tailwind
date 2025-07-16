@@ -1,0 +1,65 @@
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'folloup-list'">
+    <!-- <p mat-dialog-title>{{(pageType.formType | titlecase) + '  Followup'}}</p> -->
+    <app-modal-header [title]="'Followup'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="addForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <label class="form-label mb-0">Date<span class="text-red-500">*</span></label>
+                    <mat-form-field class="mat-custom-field remove-space">
+                        <input matInput [matDatepicker]="pickerStart" [min]="today" placeholder="Select an date" formControlName="followup_date">
+                        <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerStart></mat-datepicker>
+                    </mat-form-field>
+                    <div *ngIf="addForm.get('followup_date')?.invalid && addForm.get('followup_date')?.touched" class="error">
+                        Date is required.
+                    </div>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12 mb-3">
+                    <label class="form-label mb-0">Time<span class="text-red-500">*</span></label>
+                    <mat-form-field class="mat-custom-field remove-space">
+                        <input
+                        matInput
+                        [ngxTimepicker]="followup_time"
+                        formControlName="followup_time"
+                        placeholder="Select Time"
+                        readonly
+                        />
+                    </mat-form-field>
+                    <ngx-material-timepicker #followup_time></ngx-material-timepicker>
+                    <div *ngIf="addForm.get('followup_time')?.invalid && addForm.get('followup_time')?.touched" class="error">
+                        Time is required.
+                    </div>
+                </div>
+                
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-ng-select formControlName="followup_type" [label]="'Meeting Type'" [fieldReq]="true"  [options]="followup_type"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-ng-select formControlName="category_type" [label]="'Followup Type'" [fieldReq]="true"  [options]="category_type" (selectedChange)="getCategoryTypeValue();"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12" *ngIf="addForm.value.category_type">
+                    <spk-ng-select formControlName="category_id" [label]="addForm.value.category_type" [fieldReq]="true"  [options]="categoryTypeValue"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-ng-select formControlName="assigned_to_user_id" [label]="'User'" [fieldReq]="true"  [options]="CommonApiService.userData" [search]="true" (searchChanged)="onSearch($event)" (selectedChange)="findName($event, 'user_name');"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-input formControlName="remark" [label]="'Remark'" [fieldReq]="true" class="remove-default-class textarea" type="textarea"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="pageType.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>

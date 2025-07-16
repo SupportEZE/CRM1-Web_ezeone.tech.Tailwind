@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "spk-flatpickr.component.scss"
+    ],
+    "names": [],
+    "file": "spk-flatpickr.component.css"
+}

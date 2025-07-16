@@ -1,0 +1,103 @@
+
+    <div class="box">
+        <div class="box-body">
+            <div class="float-end">
+                <div class="hs-tooltip inline-block [--placement:top] me-1">
+                    <a href="javascript:void(0);" class="hs-tooltip-toggle avatar avatar-rounded avatar-sm bg-{{candidate.downloadbg}}/10 !text-{{candidate.downloadbg}}">
+                        <span><i class="ri-download-cloud-line text-[14px]"></i></span>
+                      <span class="hs-tooltip-content ti-main-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 !bg-black !text-xs !font-medium !text-white shadow-sm dark:bg-slate-700" role="tooltip">
+                        Download CV
+                      </span>
+                    </a>
+                </div>
+                <div class="hs-tooltip inline-block [--placement:top] me-1">
+                    <a href="javascript:void(0);" class="hs-tooltip-toggle avatar avatar-rounded avatar-sm bg-{{candidate.wishlistbg}}/10 !text-{{candidate.wishlistbg}}">
+                        <span><i class="ri-heart-line text-[14px]"></i></span>
+                      <span class="hs-tooltip-content ti-main-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 !bg-black !text-xs !font-medium !text-white shadow-sm dark:bg-slate-700" role="tooltip">
+                        Add to Wishlist
+                      </span>
+                    </a>
+                </div>
+            </div>
+            <div class="flex mb-3 items-center flex-wrap gap-2">
+                <div>
+                    <span class="avatar avatar-lg avatar-rounded">
+                        <img [src]="candidate.profilePic" alt="Profile Picture">
+                    </span>
+                </div>
+                <div>
+                    <h6 class="font-medium mb-1 flex items-center"><a
+                        routerLink="/apps/jobs/candidate-details"> {{candidate. name }}
+                            <div class="hs-tooltip ti-main-tooltip">
+                                <span class="text-primary text-[13px]">
+                                    <i class="ri-verified-badge-fill"></i>
+                                    <span
+                                        class="hs-tooltip-content  ti-main-tooltip-content py-1 px-2 !bg-black !text-xs !font-medium !text-white shadow-sm "
+                                        role="tooltip">
+                                        Verified candidate
+                                    </span>
+                                </span>
+                            </div>
+                        </a>
+                    </h6>
+                    <div class="flex gap-2 flex-wrap">
+                        <a href="javascript:void(0);">{{candidate. role }}</a>
+                        <p class="mb-0 text-xs text-textmuted dark:text-textmuted/50"><i
+                                class="ri-map-pin-line text-[11px]"></i>  {{candidate. location }}
+                        </p>
+                    </div>
+                    <div
+                        class="flex items-center text-xs text-textmuted dark:text-textmuted/50 flex-wrap">
+                        <p class="text-xs mb-0">Ratings : </p>
+                        <div class="min-w-fit-content ms-2">
+                            <span class="text-warning me-1"><i
+                                    class="bi bi-star-fill"></i></span>
+                            <span class="text-warning me-1"><i
+                                    class="bi bi-star-fill"></i></span>
+                            <span class="text-warning me-1"><i
+                                    class="bi bi-star-fill"></i></span>
+                            <span class="text-warning me-1"><i
+                                    class="bi bi-star-fill"></i></span>
+                            <span class="text-warning me-1"><i
+                                    class="bi bi-star-half"></i></span>
+                        </div>
+                        <a href="javascript:void(0);"
+                            class="ms-1 min-w-fit-content text-textmuted dark:text-textmuted/50">
+                            <span>({{candidate. ratingCount }})</span>
+                            <span>Ratings</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="popular-tags mb-3 flex gap-2 flex-wrap">
+                <a href="javascript:void(0);"
+                    class="badge rounded-full text-[11px] border border-primary/10 text-primary"><i
+                        class="ri-file-text-line me-1"></i> {{candidate. degree }}</a>
+                        <a href="javascript:void(0);"
+                    class="badge rounded-full text-[11px] border border-primarytint1color/10 text-primarytint1color"><i
+                        class="ri-remote-control-line me-1"></i> {{candidate. workType }}</a>
+                        @if(candidate.experience){
+                
+                <a href="javascript:void(0);"
+                    class="badge rounded-full text-[11px] border border-info/10 text-info"><i
+                        class="ri-time-line me-1"></i> {{candidate. experience }}</a>
+                <a href="javascript:void(0);"
+                    class="badge rounded-full text-[11px] border border-primarytint2color/10 text-primarytint2color"><i
+                        class="ri-time-fill me-1"></i> {{candidate. jobType }}</a>
+                        }
+            </div>
+            <div class="flex items-center flex-wrap gap-4">
+                <div>
+                    <p class="mb-1 grow"><span
+                            class="text-textmuted dark:text-textmuted/50">Annual Pay
+                            :</span> <span class="font-medium"> {{candidate. payRange }}</span> </p>
+                    <p class="mb-0"><span class="text-textmuted dark:text-textmuted/50">
+                            Languages :</span> <span class="font-medium">  {{candidate. languages }}</span></p>
+                </div>
+                <div class="ms-auto">
+                    <div class="ti-btn ti-btn-primary">View Profile <i
+                            class="ri-arrow-right-line"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>

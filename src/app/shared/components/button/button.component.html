@@ -1,0 +1,12 @@
+<button [type]="buttonType || 'button'"  [class]="buttonClass" [disabled]="disabled" (click)="!disabled ? handleClick() : ''">
+    <!-- Normal State (Button Enabled) -->
+    <span *ngIf="!disabled">
+        {{ buttonText }}
+        <i *ngIf="iconClass" [class]="iconClass + ' ms-2 text-[16px] inline-block lh22'"></i>
+    </span>
+    <!-- Loading State (Button Disabled) -->
+    <span *ngIf="disabled">
+        {{ buttonText }}
+        <i *ngIf="loadingIconClass" [class]="loadingIconClass + ' text-[1rem] animate-spin lh22'"></i>
+    </span>
+</button>

@@ -1,0 +1,148 @@
+<app-page-header [title]="'Event Plan'" [title1]="['Event Plan']" [activeitem]="'Event Plan List'"></app-page-header>
+
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-12 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            @for (stat of stats; track $index) {
+                <div class="sm:col-span-2 col-span-12">
+                    <div class="box relative rounded-md overflow-hidden">
+                        <div class="box-body" [ngClass]="stat.activeTab === activeTab ? 'bg-primary/10' : ''" (click)="onTabChange(stat.activeTab)">
+                            <h5 class="mb-1">{{ stat.count }}</h5>
+                            <div class="font-medium opacity-70">{{ stat.title }}</div>
+                            <div class="icon svg-icon-med absolute end-0 bottom-0 opacity-1 {{ stat.svgIconClass }}">
+                                <i class="{{ stat.svgIconPath }} text-[25px]"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-12 col-span-12">
+        <app-showcode-card [title]="'Event List'" [boxHeader]="'pt-3'" [classbody]="'pt-0'"  [titleView]="true" 
+        [overallCountShow]="true" [overallCount]="listing.length" 
+        [refresBtnShow]="true" (refresh)="onRefresh()" 
+        [btn1]="true" [buttonName]="'Add Event Plan'" [iconName]="'ri-draft-line'" (btnClick)="goToAddPage();" 
+        [logBtnShow]="true" (logBtn)="openMainLogModal('')">
+        
+        <div class="upcoming-shedule">
+            <ul class="nav nav-pills flex gap-2 overflow-auto" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                <li class="nav-link text-center mb-2 px-4 py-3 cursor-pointer" *ngFor="let day of calenderData; let i = index" [ngClass]="day.event_date === dateActiveTab ? 'text-primary bg-primary/10' : ''" (click)="onDateTabChange(day.event_date)">
+                    <p class="sh-dt mb-0 text-lg font-medium">{{ day.date }}</p>
+                    <div class="flex items-center justify-center">
+                        <span class="sh-day text-[11px] mr-2">{{ day.day }}</span>
+                        <span class="sh-day text-[11px]">{{ day.month }}</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <spk-reusable-tables [columns]="headers" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [showCheckbox]="false" [showAction]="true">
+                <ng-container *ngIf="!skLoading">
+                    <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                        <td>&nbsp;</td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.assigned_to_user_name" placeholder="Search..." (keyup.enter)="getList()">
+                                    @if (filter.assigned_to_user_name) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.assigned_to_user_name=''; getList()">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.event_type" placeholder="Search..." (keyup.enter)="getList()">
+                                    @if (filter.event_type) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.event_type=''; getList()">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.customer_name" placeholder="Search..." (keyup.enter)="getList()">
+                                    @if (filter.customer_name) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_name=''; getList()">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.event_venue" placeholder="Search..." (keyup.enter)="getList()">
+                                    @if (filter.event_venue) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.event_venue=''; getList()">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    
+                    <tr class="border-b !border-defaultborder dark:!border-defaultborder/10"  *ngFor="let row of listing; let i = index;">
+                        <td>{{ row.event_date ? (row.event_date | date:'d MMM yyyy') : '--' }}</td>
+                        <td>
+                            <div class="flex items-center gap-2">
+                                <img src="./assets/images/faces/12.jpg" alt="" class="avatar avatar-sm avatar-rounded">
+                                <div class="">
+                                    <span class="block">{{row.assigned_to_user_name || '--'}} | {{row.user_mobile || '--'}}</span>
+                                    <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">RM: </span>{{row.reporting_manager_name || '--'}}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="block">{{row.event_type || '--'}}</span>
+                            <span class="block">
+                                <a class="text-primary font-medium underline" (click)="goToDetailPage(row._id)">{{row.event_id || '--'}}</a>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]"></span>{{row.customer_name || '--'}}</span>
+                            <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">Type: </span>{{row.customer_type_name || '--'}}</span>
+                        </td>
+                        <td>
+                            <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">Invite: </span>{{row.invite_members || '--'}}</span>
+                            <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">Request: </span>{{CURRENCY_SYMBOLS.RUPEE}} {{row.budget_request_per_person || '--'}}/Person</span>
+                        </td>
+                        <td><span class="ellipsis" matTooltip="{{row.event_venue}}">{{row.event_venue || '--'}}</span></td>
+                        <td class="text-center">
+                            <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (click)="delete(row._id, 'event/delete', 'Delete')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                        </td>
+                    </tr>
+                </ng-container>
+                <!-- //--skeleton--// -->
+                <ng-container *ngIf="skLoading">
+                    <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                        <td *ngFor="let row of [].constructor(7)">
+                            <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                        </td>
+                    </tr>
+                </ng-container>
+                <!-- //--skeleton--// -->
+            </spk-reusable-tables>
+            <ng-container *ngIf="!listing.length && !skLoading">
+                <app-data-not-found></app-data-not-found>
+            </ng-container>
+        </div>
+    </app-showcode-card>
+</div>
+</div>
+

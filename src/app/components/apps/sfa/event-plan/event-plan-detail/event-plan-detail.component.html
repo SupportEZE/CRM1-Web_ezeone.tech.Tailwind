@@ -1,0 +1,264 @@
+<app-page-header [title]="'Event Plan'" [title1]="['Event Plan Detail']" [activeitem]="'Event Plan Detail'"></app-page-header>
+
+
+<div class="grid grid-cols-12 sm:gap-x-6" *ngIf="!skLoading">
+    <div class="xl:col-span-8 col-span-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-title text-primarytint1color wp100 flex justify-between">
+                    Basic Detail
+                </div>
+            </div>
+            <div class="box-body pt-0">
+                <ul class="ti-list-group list-group-flush border-0">
+                    <li>
+                        <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.created_at ? (Detail?.created_at | date:'d MMM yyyy, hh:mm a') : '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Created At</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.created_name || '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Created By</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.event_date ? (Detail?.event_date | date:'d MMM yyyy, hh:mm a') : '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Event Date</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.assigned_to_user_name || '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Request By</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{ Detail?.customer_name || '---' }}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Details</span>
+                                </div>
+                            </div>                              
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.event_id || '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Event Id</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.event_type || '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Event Type</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.invite_members || '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Invite Members</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{CURRENCY_SYMBOLS.RUPEE}}{{Detail?.budget_request_per_person || '---'}} / Person</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Request Budget</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap" *ngIf="Detail?.remark">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.remark || '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Remark</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.event_venue || '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Event Venue</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div>
+                                    <span class="flex items-center block font-medium badge bg-info/10 text-info">{{Detail?.status || '--'}}
+                                        <a class="text-info font-medium" (click)="updateStatus()" *ngIf="accessRight?.approveRight">
+                                            <i class="material-icons ms-1">edit</i>
+                                        </a>
+                                    </span>
+                                    <span class="text-xs text-textmuted dark:text-textmuted/50">Status</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap" *ngIf="Detail?.reason">
+                                <div>
+                                    <span class="block font-medium">{{Detail?.reason || '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Reason</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-12 sm:gap-x-6">
+            <div class="xl:col-span-6 col-span-12">
+                <app-showcode-card [title]="'Event Gallery'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true"  [actionIcons]="EDIT_STATUS_PEN_REJ.includes(Detail?.status) && accessRight?.addRight"  [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="addEventGallery()" [classbody]="'pt-0'" [iconName]="'ri-add-line'">
+                    <div class="grid grid-cols-12 gap-x-4" *ngIf="eventDetailImages.length > 0">
+                        <ng-container >
+                            <div class="xxl:col-span-2 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of eventDetailImages">
+                                <spk-product-card [apiPath]="'event/get-doc'" [imageData]="image" [editBtn]="false" [heading]="false" [subHeading]="false" (delete)="delete(image._id, 'event/delete-file', 'Delete Event Image')">
+                                </spk-product-card>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <ng-container *ngIf="eventDetailImages.length === 0">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </app-showcode-card>
+            </div>
+            
+            <div class="xl:col-span-6 col-span-12">
+                <app-showcode-card [title]="'Participants'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="EDIT_STATUS_PEN_REJ.includes(Detail?.status) && accessRight?.addRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'" (action)="addEventModal()" [iconName]="'ri-add-line'">
+                    <ul class="ti-list-group list-group-flush border-0 scroll-y-220">
+                        <li class="border-b-2 pb-2 pt-2" *ngFor="let row of participantDetail">
+                            <div class="flex items-center">
+                                <span class="avatar avatar-sm bg-primarytint1color">
+                                    {{nameUtils.getInitials(row.name)}} 
+                                </span>
+                                <div class="ms-2 font-semibold">
+                                    {{row.name ? (row.name | titlecase) : '---'}} {{row.mobile ? ( '('+row.mobile+')') : ''}}
+                                </div>
+                            </div>
+                        </li>
+                        <ng-container *ngIf="participantDetail.length === 0">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </ul>
+                </app-showcode-card>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-12 sm:gap-x-6">
+            <div class="xl:col-span-6 col-span-12">
+                <app-showcode-card [title]="'Event Expense'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="EDIT_STATUS_PEN_REJ.includes(Detail?.status) && accessRight?.addRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'" (action)="addEventExpenseModal()" [iconName]="'ri-add-line'">
+                    <ul class="ti-list-group list-group-flush border-0 scroll-y-325">
+                        <li class="border-b-2 pb-2 pt-2" *ngFor="let row of eventDetail">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="avatar avatar-sm bg-primarytint1color">
+                                        {{nameUtils.getInitials(row.expense_type)}} 
+                                    </span>
+                                    <div class="ms-2 font-semibold">
+                                        {{row.expense_type ? (row.expense_type | titlecase) : '---'}} 
+                                    </div>
+                                </div>
+                                <span class="badge bg-light bg-textmuted/10 text-textmuted float-end ms-auto">{{CURRENCY_SYMBOLS.RUPEE}} {{row.expense_amount}}</span>
+                            </div>
+                        </li>
+                        <ng-container *ngIf="eventDetail.length === 0">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </ul>
+                </app-showcode-card>
+            </div>
+            
+            <div class="xl:col-span-6 col-span-12">
+                <app-showcode-card [title]="'Expense Attachment'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true"  [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'" [iconName]="'ri-add-line'">
+                    <div class="grid grid-cols-12 gap-x-4" *ngIf="eventExpenseDetailImages.length > 0">
+                        <ng-container >
+                            <div class="xxl:col-span-4 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of eventExpenseDetailImages">
+                                <spk-product-card [apiPath]="'expense/get-doc'" [imageData]="image" [editBtn]="false" [heading]="false" [subHeading]="false" (delete)="delete(image._id, 'expense/delete-file', 'Delete Expense Image')">
+                                </spk-product-card>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <ng-container *ngIf="eventExpenseDetailImages.length === 0">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </app-showcode-card>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-5 col-span-12">
+        <app-showcode-card [title]="'Event Overview'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'"  [titleView]="true">
+            <div class="grid grid-cols-12">
+                <ng-container *ngFor="let stat of stats">
+                    <div class="xl:col-span-6 lg:col-span-6 md:col-span-6 sm:col-span-6 col-span-6 border-e border-defaultborder dark:border-defaultborder/10 p-2">
+                        <div class="flex flex-wrap">
+                            <div>
+                                <span class="avatar avatar-md avatar-rounded p-2" [ngClass]="'bg-' + stat.color + '/10 !text-' + stat.color">
+                                    <i [class]="stat.icon + ' text-[17px]'"></i>
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <h6 class="mb-1 font-medium">{{ stat.label }}</h6>
+                                <p class="mb-0 text-textmuted dark:text-textmuted/50 flex">{{ stat.value }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            
+            <!-- Circular Progress -->
+            <div class="relative size-30">
+                <svg class="size-full" width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Background Circle -->
+                    <circle cx="25" cy="25" r="16" fill="none" class="stroke-current text-success" stroke-width="2"></circle>
+                    <!-- Progress Circle inside a group with rotation -->
+                    <g class="origin-center -rotate-90 transform">
+                        <circle cx="25" cy="25" r="16" fill="none" class="stroke-current text-gray-200 dark:text-white/10" stroke-width="2" stroke-dasharray="100" [attr.stroke-dashoffset]="countDetail.successRatePercent"></circle>
+                    </g>
+                </svg>
+                <!-- Percentage Text -->
+                <div class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+                    <span class="block text-center text-[11px] font-bold">{{countDetail.successRatePercent}}%</span>
+                    <span class="block text-center text9px font-bold mt-1">Success Rate</span>
+                </div>
+            </div>
+            <!-- End Circular Progress -->
+        </app-showcode-card>
+        <app-logs [logList]="logList" [scrollHeight]="'400'" [closeBtn]="false"></app-logs>  
+    </div>
+</div>
+
+
+<!-- Sk Loading Start -->
+<div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+    <div class="xl:col-span-12 col-span-12">
+        
+        <div class="grid grid-cols-12 sm:gap-x-6">
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <div >
+                        <div class="flex gap-2 mb-1 flex-wrap">
+                            <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                <app-skeleton [class]="'w180'"></app-skeleton>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+            
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+            
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sk Loading End -->

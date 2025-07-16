@@ -1,0 +1,148 @@
+<app-page-header [title]="'IRP'" [title1]="['Purchase']" [activeitem]="'Purchase Add'" [btnShow1]="false"></app-page-header>
+
+<div class="box" *ngIf="skLoading">
+    <div class="p-4">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xl:col-span-3 col-span-12 " *ngFor="let card of [].constructor(10)">
+                <app-skeleton></app-skeleton>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="xl:col-span-12 col-span-12" *ngIf="!skLoading">
+    <form [formGroup]="stockForm" (ngSubmit)="onSubmit()">
+        <div class="box">
+            <div class="p-4">
+                <div class="grid grid-cols-12 sm:gap-x-4 sm:gap-y-4">
+                    <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                        <div class="grid grid-cols-12 sm:gap-x-4 sm:gap-y-4">
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                                <spk-ng-select formControlName="customer_type_id" label="Influencer Category"
+                                [fieldReq]="true" [options]="customerCategorySubType"
+                                (selectedChange)="getReceiverCustomer($event); product=[]; getProduct(); findName($event, 'customer_type_id');"
+                                [multiple]="false"></spk-ng-select>
+                            </div>
+                            
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                                <spk-ng-select formControlName="customer_id" label="Influencer"
+                                [fieldReq]="true" [search]="true" (searchChanged)="onSearch($event , 'customer')"
+                                [options]="customerData" [multiple]="false"
+                                (selectedChange)="findName($event, 'customer_id');"></spk-ng-select>
+                            </div>
+                            
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                                <spk-ng-select formControlName="product_id" label="Select Product" [search]="true"
+                                (searchChanged)="onSearch($event , 'product')" 
+                                [fieldReq]="selectedItems.length === 0" [options]="product"
+                                [multiple]="false"></spk-ng-select>
+                            </div>
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                                <div class="flex gap-2 justify-center items-end ">
+                                    <spk-input label="QTY" formControlName="qty" [fieldReq]="selectedItems.length === 0"
+                                    class="remove-default-class wp100" type="number"></spk-input>
+                                    
+                                    <button type="button" aria-label="button" class="ti-btn m-0 ti-btn-icon ti-btn-primary btn-wave" (click)="addToList()">
+                                        <i class="ri-add-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="xl:col-span-12 col-span-12" *ngIf="selectedItems.length > 0">
+                                <div class="table-responsive mt-4 table-bordered-default">
+                                    <spk-reusable-tables [columns]="headerColumn" tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [showCheckbox]="false">
+                                        <tr *ngFor="let row of selectedItems; let i = index;">
+                                            <td class="w60 text-center">{{i+1}}</td>
+                                            <td>{{row.label ? row.label : '---'}}</td>
+                                            <td class="w50 text-center">{{row.qty ? row.qty : '0'}}</td>
+                                            <td class="w120 text-right">{{row.point_value ? row.point_value : '0'}}</td>
+                                            <td class="w60 relative">
+                                                <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                                    <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="delete(i)">
+                                                    </app-icon-button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </spk-reusable-tables>
+                                </div>
+                                
+                                <table class="ti-custom-table text-nowrap" >
+                                    <tbody>
+                                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                            <td class="text-right">
+                                                <div class="font-semibold">Total Item :</div>
+                                            </td>
+                                            <td class="text-right"><span class="font-medium">{{selectedItems.length}}</span></td>
+                                        </tr>
+                                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                            <td class="text-right">
+                                                <div class="font-semibold">Total Item Qty:</div>
+                                            </td>
+                                            <td class="text-right"><span class="font-medium">{{totalItemQuantity}}</span></td>
+                                        </tr>
+                                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                            <td class="text-right">
+                                                <div class="font-semibold">Total Point Value</div>
+                                            </td>
+                                            <td class="text-right"><span class="text-right font-medium">{{totalPointValue}}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                        <div class="grid grid-cols-12 sm:gap-x-4 sm:gap-y-4">
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6">
+                                <spk-flatpickr placeholder="Bill Date" label="Bill Date" [fieldReq]="true" [max]="today"
+                                class="form-control custom-datepickr" formControlName="bill_date"></spk-flatpickr>
+                            </div>
+                            
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6">
+                                <spk-input label="Bill Number" formControlName="bill_number" [fieldReq]="true"
+                                class="remove-default-class" type="text"></spk-input>
+                            </div>
+                            
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6">
+                                <spk-input label="Bill Amount Without GST" formControlName="bill_amount" [fieldReq]="true"
+                                class="remove-default-class" type="number"></spk-input>
+                            </div>
+                            
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                                <spk-ng-select formControlName="purchase_from" label="Purchase From" [search]="false" [fieldReq]="true"
+                                (searchChanged)="onSearch($event , 'product')"   [options]="customerType"
+                                [multiple]="false"></spk-ng-select>
+                            </div>
+                            
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6" *ngIf="stockForm.value.purchase_from != 'Factory' && stockForm.value.purchase_from">
+                                <spk-input [label]="stockForm.value.purchase_from" formControlName="purchase_from_name" [fieldReq]="true"
+                                class="remove-default-class" type="text"></spk-input>
+                            </div>
+                            
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6">
+                                <spk-input label="Remark" formControlName="remark" [fieldReq]="false"
+                                class="remove-default-class" type="textarea"></spk-input>
+                            </div>
+                            
+                            <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6">
+                                <label class="form-label mb-0">Upload Bill Copy
+                                    <!-- <span class="text-red-500">*</span> -->
+                                </label>
+                                <file-pond class="filepond basic-filepond" [options]="getPondOptions('image')"
+                                [files]="pondImages" (onremovefile)="onFileRemove($event, 'image')"
+                                (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="flex items-center justify-end mt-10 gap-2">
+                    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'"
+                    [iconClass]="api.disabled ? 'ri-loader-2-fill animate-spin' : 'ri-save-line'"
+                    [loadingIconClass]="'ri-loader-2-fill'" [disabled]="api.disabled"></app-button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

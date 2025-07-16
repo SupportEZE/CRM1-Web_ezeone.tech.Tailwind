@@ -1,0 +1,132 @@
+<!-- Start::row-1 -->
+<app-page-header [title]="'IRP'" [title1]="['Purchase']" [activeitem]="'Purchase list'" [btnShow1]="false" *ngIf="pageHeader"></app-page-header>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="py-4"  [ngClass]="pageHeader ? 'box px-4' : ''">
+            <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+                <app-listing-tab
+                [tabs]="mainTabs"
+                [activeTab]="activeTab"
+                [countShow]="true"
+                (tabChange)="onTabChange($event.tab)">
+            </app-listing-tab>
+        </nav>
+        <app-page-sub-header [pageTitle]="'Purchase List'" [listLength]="listing.length" 
+        [btnShow]="true" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()" 
+        [btnShow2]="accessRight?.addRight" [addBtnLabel]="'Add Purchase'" [class]="'p-0 pt-3'" (button1)="goToPage()"></app-page-sub-header>
+        
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [columns]="invoiceColumn"> 
+                <ng-container *ngIf="!skLoading">
+                    <tr
+                    class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                    <td class="!text-center">&nbsp;</td>
+                    <td>
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="created_at" placeholder="Date Created" (ngModelChange)="getList()">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>  
+                        </div>
+                    </td>
+                    <td class="!text-center">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text"
+                                [(ngModel)]="filter.created_name"
+                                placeholder="Search..."
+                                (keyup.enter)="getList()">
+                                @if (filter.created_name) {
+                                    <button matSuffix mat-icon-button
+                                    aria-label="Clear"
+                                    (click)="filter.created_name='';getList()">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            }
+                        </mat-form-field>
+                    </div>
+                </td>
+                <td class="!text-center">
+                    <div class="table-search-filters">
+                        <mat-form-field class="table-input">
+                            <input matInput type="text" [(ngModel)]="filter.sender_customer_type_name" placeholder="Search..."
+                            (keyup.enter)="getList()">
+                            @if (filter.sender_customer_type_name) {
+                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.sender_customer_type_name='';getList()">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            }
+                        </mat-form-field>
+                    </div>
+                </td>
+                <td class="!text-center">
+                    <div class="table-search-filters">
+                        <mat-form-field class="table-input">
+                            <input matInput type="text" [(ngModel)]="filter.receiver_customer_name" placeholder="Search..."
+                            (keyup.enter)="getList()">
+                            @if (filter.receiver_customer_name) {
+                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.receiver_customer_name='';getList()">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            }
+                        </mat-form-field>
+                    </div>
+                </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr *ngFor="let row of listing; let i = index;" class="invoice-list border-b !border-defaultborder dark:!border-defaultborder/10" [class.bg-gray-400]="isHighlighted(row._id)">
+                <td>{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                <td>{{row.created_at ? (row.created_at | date : 'dd MMM yyyy hh:mm a') : '' }}</td>
+                <td class="w150">{{row.created_name ? (row.created_name | titlecase) : '---'}}</td>
+                <td>{{row.bill_date ? (row.bill_date | date : 'dd MMM yyyy') : '' }}</td>
+                <td>
+                    <a (click)="goToDetail(row._id)" class="font-medium text-primary underline">
+                        {{row.bill_number ? (row.bill_number) : '' }}
+                    </a>
+                </td>
+                <td>{{row.customer_type_name ? row.customer_type_name : '---'}}</td>
+                <td>{{row.customer_name ? row.customer_name : '---'}}</td>
+                <td class="text-center">{{row.total_item ? row.total_item : '---'}}</td>
+                <td class="text-center">{{row.total_qty ? row.total_qty : '---'}}</td>
+            </tr>
+        </ng-container>
+        
+        
+        <!-- //--skeleton--// -->
+        <ng-container *ngIf="skLoading">
+            <tr
+            class="border-b !border-defaultborder dark:!border-defaultborder/10"
+            *ngFor="let row of [].constructor(5)">
+            <td *ngFor="let row of [].constructor(9)">
+                <app-skeleton
+                [class]="'h20 bg-skeleton'"></app-skeleton>
+            </td>
+        </tr>
+    </ng-container>
+    <!-- //--skeleton--// -->
+    
+</spk-reusable-tables>
+
+
+<ng-container *ngIf="listing.length === 0 && !skLoading">
+    <app-data-not-found></app-data-not-found>
+</ng-container>
+
+<app-pagination-footer
+[currentPage]="pagination.cur_page"
+[totalPage]="pagination.total_pages"
+[pageLimit]="pagination.limit"
+[listLength]="listing.length"
+[preBtn]="!pagination.prev"
+[nextBtn]="!pagination.next"
+(preButtonClick)="changeToPagination('Previous')"
+(nextButtonClick)="changeToPagination('Next')"
+(pageChange)="changeToPage($event)"></app-pagination-footer>
+</div>
+</div>
+</div>
+</div>
+<!--End::row-1 -->

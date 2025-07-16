@@ -1,0 +1,131 @@
+<app-page-header [title]="'SFA'" [title1]="['Target']" [activeitem]="'Target List'"></app-page-header>
+
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Target'" [listLength]="listing.length" [btnShow]="true" [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()" [btnShow1]="true" [logsLabel]="'Logs'" (logBtn)="openMainLogModal('')"   [btnShow2]="accessRight?.addRight" [addBtnLabel]="'Add Target'"  (button1)="goToAddPage()"></app-page-sub-header>
+
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [showAction]="true" [columns]="PageHeaders">
+                        <ng-container *ngIf="!skLoading">
+                            <!-- <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.title" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.title) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.title=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.login_type_name" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.login_type_name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.login_type_name=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.customer_type_name" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.customer_type_name) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_type_name=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.state" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.state) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.state=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.description" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.description) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.description=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-search-filters">
+                                        <mat-form-field class="table-input">
+                                            <input matInput type="text" [(ngModel)]="filter.status" placeholder="Search..." (keyup.enter)="getList()">
+                                            @if (filter.status) {
+                                                <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.status=''; getList()">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            }
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr> -->
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                                <td class="!text-center">{{(listPagination.cur_page - 1) * listPagination.limit + i + 1 }}</td>
+                                <td>{{ row.created_at ? (row.created_at | date:'d MMM yyyy, hh:mm a') : '--' }}</td>
+                                <td>{{row.created_name || '--'}}</td>
+                                <td>
+                                    <a class="text-primary font-semibold underline" (click)="goToDetailPage(row._id)">{{row.title || '--'}}</a>
+                                </td>
+                                <td>{{row.target_type || '--'}}</td>
+                                <td>{{ row.start_date ? (row.start_date | date:'d MMM yyyy') : '--' }}</td>
+                                <td>{{ row.end_date ? (row.end_date | date:'d MMM yyyy') : '--' }}</td>
+                                <td>{{CURRENCY_SYMBOLS.RUPEE}} {{ row.sale_value || '--'}}</td>
+                                <td>{{row.is_additional_target === true ? 'Yes' : 'No'}}</td>
+                                <td class="!text-center">
+                                    <!-- <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="openModal(row, 'edit')"> </app-icon-button> -->
+                                    <app-icon-button [icon]="'ri-eye-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="goToDetailPage(row._id)"> </app-icon-button>
+                                    <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="delete(row._id, 'target/delete', 'Target List')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                        <ng-container *ngIf="skLoading">
+                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                <td *ngFor="let row of [].constructor(10)">
+                                    <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- //--skeleton--// -->
+                    </spk-reusable-tables>
+                    <ng-container *ngIf="!listing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+            
+            <app-pagination-footer [currentPage]="listPagination.cur_page" [totalPage]="listPagination.total_pages" [pageLimit]="listPagination.limit" [listLength]="listing.length" [preBtn]="!listPagination.prev" [nextBtn]="!listPagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

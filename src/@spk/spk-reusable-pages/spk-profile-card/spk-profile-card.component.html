@@ -1,0 +1,27 @@
+<div class="box shadow-none border border-defaultborder dark:border-defaultborder/10">
+    <div class="box-body">
+        <div class="flex items-center gap-2 flex-wrap">
+            <span class="avatar avatar-xl avatar-rounded flex-shrink-0">
+                <img [src]="avatar" alt="{{name}}">
+            </span>
+            <div class="truncate">
+                <a href="javascript:void(0);" class="mb-0 font-semibold">{{name}}</a>
+                <p class="w-75 truncate text-xs opacity-70 mb-1 text-textmuted dark:text-textmuted/50">{{email}}</p>
+                <span class="badge bg-{{badgeClass}}/10 text-{{badgeClass}}">{{role}}</span>
+            </div>
+            <spk-dropdowns class="ms-auto" [Customclass]="'ms-auto'" [Icon]="true" [IconClass]="'ri-more-2-fill'" 
+            [class]="'ti-btn bg-secondary/10 text-secondary ti-btn-icon ti-btn-sm btn-wave ti-dropdown-toggle hs-dropdown-toggle'" 
+            [Menuclass]="'dropdown-menu'">
+                    <li><a class="ti-dropdown-item" href="javascript:void(0);">Message</a></li> 
+                    <li><a class="ti-dropdown-item" href="javascript:void(0);">Block</a></li> 
+                    <li><a class="ti-dropdown-item" href="javascript:void(0);">Remove</a></li> 
+            </spk-dropdowns>
+        </div>
+    </div>
+    <div class="box-footer text-center p-4">
+        <div class="flex gap-2 flex-wrap justify-center">
+            <button class="ti-btn ti-btn-sm ti-btn-soft-primary btn-wave me-0">View Profile</button>
+            <button class="ti-btn ti-btn-sm bg-light btn-wave me-0">Unfollow</button>
+        </div>
+    </div>
+</div>

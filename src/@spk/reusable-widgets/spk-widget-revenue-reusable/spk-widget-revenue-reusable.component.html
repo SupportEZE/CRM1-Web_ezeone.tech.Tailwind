@@ -1,0 +1,25 @@
+
+
+  <div class="box">
+    <div class="box-body">
+        <div class="flex align-items-end flex-wrap justify-between text-end gap-2">
+            <div>
+                <div id="chart-5">
+                  <spk-apexcharts [chartOptions]="chartOptions"></spk-apexcharts>
+                </div>
+            </div>
+            <div class="text-end ms-auto">
+                <span class="avatar avatar-sm bg-{{bg}} mb-2">
+                    <i class="{{iconClass}}"></i>
+                </span>
+                <div
+                    class="flex-auto text-textmuted dark:text-textmuted/50 mt-2 text-[14px] mb-1">
+                    {{title}}</div>
+                <div class="h4 font-medium mb-0 flex items-center flex-wrap gap-2">{{value}}<span
+                        class="badge bg-{{changeType}}/10 !text-{{changeType}} text-[10px]"><i
+                            class="ri-arrow-left-up-line"></i>{{change}}</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+  

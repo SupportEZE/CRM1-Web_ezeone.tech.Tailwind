@@ -1,0 +1,424 @@
+<!-- Start::Row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            @for(card of cardData;track $index){
+                <div class="xxl:col-span-2 xl:col-span-3 col-span-12">
+                    <spk-sales-cards [card]="card"></spk-sales-cards>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-8 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xxl:col-span-8 xl:col-span-6 col-span-12">
+                <div class="box">
+                    <div class="box-header justify-between">
+                        <div class="box-title">
+                            Sales Overview
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="sales-overview">
+                            <spk-apexcharts [chartOptions]="chartOptions"></spk-apexcharts>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="xxl:col-span-4 xl:col-span-6 col-span-12">
+                <div class="box overflow-hidden">
+                    <div class="box-header pb-0 justify-between">
+                        <div class="box-title">
+                            Order Statistics
+                        </div>
+                    </div>
+                    <div class="box-body py-4 px-3">
+                        <div class="flex gap-4 mb-3">
+                            <div class="avatar avatar-md bg-primary/10 !w-[3rem]">
+                                <i class="ti ti-trending-up text-[1.25rem] text-primary"></i>
+                            </div>
+                            <div class="flex-auto flex items-start justify-between w-full flex-wrap">
+                                <div>
+                                    <span class="text-[11px] mb-1 block font-medium">TOTAL ORDERS</span> 
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="mb-0 flex items-center">3,736<span class="text-success text-xs ms-2 inline-flex items-center"><i class="ti ti-trending-up align-middle me-1"></i>0.57%</span></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="orders" class="my-2">
+                            <spk-apexcharts [chartOptions]="chartOptions1"></spk-apexcharts>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="xl:col-span-4 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xl:col-span12 col-span-12">
+                <div class="box overflow-hidden">
+                    <div class="box-header justify-between pb-1">
+                        <div class="box-title">
+                            Top Selling Categories
+                        </div>
+                    </div>
+                    <div class="box-body p-0">
+                        <div class="p-4 pb-0">
+                            <div class="progress-stacked progress-sm mb-3 flex gap-1">
+                                <div class="progress-bar w-[25%]" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-primarytint1color w-[15%] !rounded-none" role="progressbar" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-primarytint2color !rounded-none w-[15%]" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-primarytint3color !rounded-none w-[20%]" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar !rounded-none !rounded-tr-md !rounded-br-md bg-secondary w-[25%]" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="flex items-center justify-between mb-2">
+                                <div>Overall Sales</div>
+                                <div class="h6 mb-0"><span class="text-success me-2 text-[11px]">2.74%<i class="ti ti-arrow-narrow-up"></i></span>1,25,875</div>
+                            </div>
+                        </div>
+                        <div class="table-responsive top-categories">
+                            <table class="table text-nowrap">
+                                <tbody>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name one">Clothing</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">31,245</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">25% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-success me-1"> 0.45% <i class="ti ti-trending-up ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name two">Electronics</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">29,553</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">16% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-warning me-1"> 0.27% <i class="ti ti-trending-up ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name three">Grocery</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">24,577</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">22% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-secondary me-1"> 0.63% <i class="ti ti-trending-up ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name four">Automobiles</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">19,278</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">18% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-primarytint1color me-1"> 1.14% <i class="ti ti-trending-down ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-b-0">
+                                            <span class="font-medium top-category-name five">others</span>
+                                        </td>
+                                        <td class="border-b-0">
+                                            <span class="font-medium">15,934</span>
+                                        </td>
+                                        <td class="text-center border-b-0">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">15% Gross</span>
+                                        </td>
+                                        <td class="!text-end border-b-0">
+                                            <span class="badge bg-primary me-1"> 3.87% <i class="ti ti-trending-up ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name three">Grocery</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">24,577</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">22% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-secondary me-1"> 0.63% <i class="ti ti-trending-up ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                                        <td>
+                                            <span class="font-medium top-category-name four">Automobiles</span>
+                                        </td>
+                                        <td>
+                                            <span class="font-medium">19,278</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-textmuted dark:text-textmuted/50 text-xs">18% Gross</span>
+                                        </td>
+                                        <td class="!text-end">
+                                            <span class="badge bg-primarytint1color me-1"> 1.14% <i class="ti ti-trending-down ms-1"></i></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End::Row-1 -->
+
+<!-- Start::Row-2 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-5 xl:col-span-5 col-span-12">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                    Sales Statistics
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="flex flex-wrap gap-2 justify-between flex-auto">
+                    <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                        <span>Total Sales</span>
+                        <p class="font-medium text-[14px] mb-0">₹3.478B</p>
+                    </div>
+                    <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                        <span>This Year</span>
+                        <p class="text-success font-medium text-[14px] mb-0">4,25,349</p>
+                    </div>
+                    <div class="py-2 px-4 h60 rounded-sm border border-defaultborder dark:border-defaultborder/10 border-dashed bg-light">
+                        <span>Last Year</span>
+                        <p class="text-danger font-medium text-[14px] mb-0">3,41,622</p>
+                    </div>
+                </div>
+                <div id="sales-statistics">
+                    <spk-apexcharts [chartOptions]="chartOptions2"></spk-apexcharts>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="xxl:col-span-4 xl:col-span-4 col-span-12">
+        <div class="box overflow-hidden">
+            <div class="box-header pb-0 justify-between">
+                <div class="box-title">
+                    Accounts Statistics
+                </div>
+            </div>
+            <div class="box-body">
+                <ul class="ti-list-group activity-feed">
+                    @for(statistic of statistics;track $index){
+                        <li class="ti-list-group-item !m-0">
+                            <div class="flex items-center justify-between">
+                                <div class="leading-none">
+                                    <p class="mb-2 text-[13px] text-textmuted dark:text-textmuted/50">{{statistic.expenses}}</p>
+                                    <h6 class="font-medium mb-0">{{statistic.price}}<span class="text-xs text-{{statistic.bg}} ms-2 font-normal inline-block">{{statistic.change}}<i class="ti ti-trending-{{statistic.arrow}} mx-1"></i></span></h6>
+                                </div>
+                                <div class="text-end">
+                                    <div id="line-graph1">
+                                        <spk-apexcharts [chartOptions]="statistic.chartOptions"></spk-apexcharts>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="xxl:col-span-3 xl:col-span-3 col-span-12">
+        <div class="box">
+            <div class="box-header justify-between pb-0">
+                <div class="box-title">
+                    Sales Growth Rate
+                </div>
+            </div>
+            <div class="box-body pb-1">
+                <div class="flex items-center p-4 bg-light rounded-sm">
+                    <div>
+                        <p class="mb-1 text-[13px]">Comparison: 2025 vs. 2024</p>
+                        <div class="text-textmuted dark:text-textmuted/50 text-xs mb-2">Increased By <span class="text-success"> 2.62%<i class="ti ti-arrow-narrow-up text-[16px]"></i></span></div>
+                        <h5 class="mb-0">20%</h5>
+                    </div>
+                    <div class="ms-auto">
+                        <div class="p-2 bg-primary/10 rounded-full">
+                            <div class="avatar-md avatar bg-primary svg-white avatar-rounded shadow-sm mb-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31l-56,56V200H224A8,8,0,0,1,232,208Z"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="sales-growth" class="mt-1">  <spk-apexcharts [chartOptions]="chartOptions8"></spk-apexcharts></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End::Row-2 -->
+
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-4 xl:col-span-4 col-span-12">
+        <div class="box overflow-hidden">
+            <div class="box-header justify-between">
+                <div class="box-title">Credit Limit V/S Outstanding</div>
+            </div>
+            <div class="box-body p-0">
+                <div id="balanceAnalysis" class="">
+                    <apx-chart [series]="chartOptions9.series" [chart]="chartOptions9.chart"
+                    [legend]="chartOptions9.legend" [xaxis]="chartOptions9.xaxis" [colors]="chartOptions9.colors"
+                    [markers]="chartOptions9.markers" [stroke]="chartOptions9.stroke"
+                    [tooltip]="chartOptions9.tooltip" [fill]="chartOptions9.fill" [labels]="chartOptions9.labels"
+                    [dataLabels]="chartOptions9.dataLabels" [grid]="chartOptions9.grid"
+                    [plotOptions]="chartOptions9.plotOptions" [yaxis]="chartOptions1.yaxis"></apx-chart>
+                </div>
+                <div class="border-t border-dashed p-4 border-defaultborder dark:border-defaultborder/10">
+                    <div class="flex items-center gap-4 mb-3">
+                        <span class="avatar avatar-md bg-primary">
+                            <i class="ri-wallet-3-line text-xl"></i>
+                        </span>
+                        <div>
+                            <div class="font-medium text-textmuted dark:text-textmuted/50 opacity-70">
+                                Credit Limit</div>
+                                <h5 class="mb-0">₹54,784 </h5>
+                            </div>
+                            <div class="ms-auto">
+                                <div class="text-success font-medium"><i
+                                    class="ri-arrow-up-s-fill me-1 align-middle"></i>1.05%</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-center gap-4 pt-1 mb-1">
+                                <span class="avatar avatar-md bg-primarytint1color">
+                                    <i class="ri-arrow-up-down-line text-xl"></i>
+                                </span>
+                                <div>
+                                    <div class="font-medium text-textmuted dark:text-textmuted/50 opacity-70">
+                                        Outstanding</div>
+                                        <h5 class="mb-0">₹23,489 </h5>
+                                    </div>
+                                    <div class="ms-auto">
+                                        <div class="text-danger font-medium"><i
+                                            class="ri-arrow-down-s-fill me-1 align-middle"></i>1.05%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xxl:col-span-4 xl:col-span-4 col-span-12">
+                        <div class="box">
+                            <div class="box-header justify-between">
+                                <div class="box-title">Target/Achievement By Sale</div>
+                            </div>
+                            <div class="box-body">
+                                <ul class="list-none mb-0">
+                                    @for(metric of metrics;track $index){
+                                        <li class="border-0 mb-5 p-0 ti-list-group-item {{metric.liClass}}">
+                                            <div class="flex justify-between items-top">
+                                                <div class="flex">
+                                                    <span class="avatar avatar-rounded avatar-md bg-{{metric.iconColor}}/10 !text-{{metric.iconColor}}"><i
+                                                        [class]="'fa ' + metric.icon + ' text-lg'"></i></span>
+                                                        <div class="flex flex-col ms-2">
+                                                            <p class="font-medium mb-0">{{ metric.title }}</p>
+                                                            <p class="text-xs text-textmuted dark:text-textmuted/50 mb-0">{{ metric.increase }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <h6 class="font-medium mb-0">₹{{ metric.value  }}</h6>
+                                                </div>
+                                                <div class="progress progress-xs mt-2 mb-0" role="progressbar" aria-label="Basic example" 
+                                                [attr.aria-valuenow]="metric.progress" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-{{metric.iconColor}}" [ngStyle]="{ width: metric.progress + '%' }"></div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xxl:col-span-4 xl:col-span-4 col-span-12">
+                        <div class="box overflow-hidden mb-5">
+                            <div class="box-header justify-between">
+                                <div class="box-title"> 
+                                    Secondary Customer Network
+                                </div>
+                            </div>
+                            <div class="box-body p-0">
+                                <div class="grid grid-cols-12 p-4 pt-2">
+                                    <div class="xl:col-span-6 col-span-12 px-0">
+                                        <div id="follow-on-device">
+                                            <spk-apexcharts [chartOptions]="chartOptions10"></spk-apexcharts>
+                                        </div>
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <ul class="ti-list-group list-group-flush border border-t mt-3">
+                                            <li class="ti-list-group-item">
+                                                <div class="flex items-start justify-between">
+                                                    <div class="session-type leading-none mobile">
+                                                        <div class="font-medium mb-0">Active</div>
+                                                    </div>
+                                                    <div class="leading-none text-end">
+                                                        <span class="block text-xs text-textmuted dark:text-textmuted/50 mb-1">Total</span>
+                                                        <span class="block font-semibold mb-0">1,754</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="ti-list-group-item">
+                                                <div class="flex items-start justify-between">
+                                                    <div class="session-type leading-none tablet">
+                                                        <div class="font-medium mb-0">Inactive</div>
+                                                    </div>
+                                                    <div class="leading-none text-end">
+                                                        <span class="block text-xs text-textmuted dark:text-textmuted/50 mb-1">Total</span>
+                                                        <span class="block font-semibold mb-0">1,234</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="ti-list-group-item">
+                                                <div class="flex items-start justify-between">
+                                                    <div class="session-type desktop leading-none">
+                                                        <div class="font-medium mb-0">Lead</div>
+                                                    </div>
+                                                    <div class="leading-none text-end">
+                                                        <span class="block text-xs text-textmuted dark:text-textmuted/50 mb-1">Total</span>
+                                                        <span class="block font-semibold mb-0">878</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <app-spk-widget-budget-card [title]="'Branding Expense'" 
+                            [subtitle]="''"
+                            [mainValue]="'₹78,985'"
+                            [footer]="false"
+                           >
+                        </app-spk-widget-budget-card>
+                    </div>
+                </div>
+            </div>

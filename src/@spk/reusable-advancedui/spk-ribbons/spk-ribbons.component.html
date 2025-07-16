@@ -1,0 +1,21 @@
+<div class="box  {{mainClass}}">
+    <div class="box-body  {{bodyClass}}">
+        <div class="{{ribbonClass}}">
+            <ng-content></ng-content>
+            <!-- <span>{{title}}</span> -->
+        </div>
+        
+        @if(topTitle){
+
+            <div class="card-subtitle font-semibold  {{textAlignment}}">{{topTitle}}</div>
+            <span class="block {{descriptionClass}}" > {{description}}</span>
+        }
+        @if(bottomTitle){
+
+            <span class="block {{descriptionClass}}">{{description}}</span>
+            <div class="card-subtitle font-semibold {{textAlignment}}">{{bottomTitle}}</div>
+        }
+    <!-- <ng-content></ng-content> -->
+    </div>
+  </div>
+  

@@ -1,0 +1,336 @@
+<app-page-header [title]="'IRP'" [title1]="['Stock Return']" [activeitem]="detailData['return-type'] === 'company' ? 'Customer To Company Return Detail' :'Customer To Customer Return Detail'"></app-page-header>
+
+
+<div class="grid grid-cols-12 sm:gap-x-6">
+    <div class="xl:col-span-12 col-span-12" *ngIf="skLoading">
+        <app-showcode-card [titleView]="false" [view]="false">
+            <div class="flex gap-2 mb-1 flex-wrap">
+                <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                    <app-skeleton [class]="'w180'"></app-skeleton>
+                </div>
+            </div>
+        </app-showcode-card>
+    </div>
+    <div class="xl:col-span-12 col-span-12" *ngIf="!skLoading">
+        <div class="grid grid-cols-12 sm:gap-x-6">
+            <div class="xl:col-span-6 col-span-12">
+                <app-showcode-card [title]="'Stock Return Detail'" [class]="'text-primarytint1color'"
+                [boxHeader]="'pt-3'" [classbody]="'pt-0'" [titleView]="true">
+                <ul class="ti-list-group list-group-flush border-0">
+                    <li>
+                        <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium "> 
+                                        {{invoiceDetail.created_at ? (invoiceDetail.created_at | date : 'dd MMM yyyy') : '---'}}</span>
+                                        <span class="text-textmuted dark:text-textmuted/50">Date Created</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center me-2 flex-wrap">
+                                    <div>
+                                        <span class="block font-medium ">
+                                            {{invoiceDetail.created_name ?  (invoiceDetail.created_name | titlecase) : '---'}}
+                                        </span>
+                                        <span class="text-textmuted dark:text-textmuted/50">Created By</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center me-2 flex-wrap">
+                                    <div>
+                                        <span class="block font-medium">
+                                            <ng-container *ngIf="detailData['return-type'] === 'company'">
+                                                {{invoiceDetail.invoice_number ? invoiceDetail.invoice_number : '---'}}
+                                            </ng-container>
+                                            <ng-container *ngIf="detailData['return-type'] === 'customer'">
+                                                {{invoiceDetail.bill_number ? invoiceDetail.bill_number : '---'}}
+                                            </ng-container>
+                                        </span>
+                                        <span class="text-textmuted dark:text-textmuted/50">Bill Number</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center me-2 flex-wrap">
+                                    <div>
+                                        <span class="block font-medium">
+                                            <ng-container *ngIf="detailData['return-type'] === 'company'">
+                                                {{invoiceDetail.billing_date ?  (invoiceDetail.billing_date | date : 'dd MMM yyyy') : '---'}}
+                                            </ng-container>
+                                            <ng-container *ngIf="detailData['return-type'] === 'customer'">
+                                                {{invoiceDetail.bill_date ? (invoiceDetail.bill_date | date : 'dd MMM yyyy') : '---'}}
+                                            </ng-container>
+                                        </span>
+                                        <span class="text-textmuted dark:text-textmuted/50">Bill Date</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center me-2 flex-wrap">
+                                    <div>
+                                        <span class="block font-medium">₹
+                                            <ng-container *ngIf="detailData['return-type'] === 'company'">
+                                                {{invoiceDetail.net_amount_with_tax ? invoiceDetail.net_amount_with_tax :'---'}}
+                                            </ng-container>
+                                            <ng-container *ngIf="detailData['return-type'] === 'customer'">
+                                                {{invoiceDetail.bill_amount ? invoiceDetail.bill_amount :'---'}}
+                                            </ng-container>
+                                        </span>
+                                        <span class="text-textmuted dark:text-textmuted/50">Bill Amount</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center me-2 flex-wrap">
+                                    <div>
+                                        <span class="block font-medium ">
+                                            {{invoiceDetail.total_item_count ? invoiceDetail.total_item_count : '---'}}
+                                        </span>
+                                        <span class="text-textmuted dark:text-textmuted/50">Total Items</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center me-2 flex-wrap">
+                                    <div>
+                                        <span class="block font-medium ">
+                                            {{invoiceDetail.total_item_quantity ? invoiceDetail.total_item_quantity : '---'}}
+                                        </span>
+                                        <span class="text-textmuted dark:text-textmuted/50">Total Qty</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- <div class="flex items-center me-2 gap-3 flex-wrap">
+                                    <div>
+                                        <span class="font-medium"
+                                        [ngClass]="{ 'text-success': invoiceDetail.status === 'Approved', 'text-warning': invoiceDetail.status === 'Pending','text-danger': invoiceDetail.status === 'Reject'}">
+                                        {{invoiceDetail.status ? invoiceDetail.status : '---'}}</span>
+                                        <span class="block text-textmuted dark:text-textmuted/50">Status</span>
+                                    </div>
+                                    
+                                    <app-icon-button [icon]="'ri-pencil-line'"
+                                    [buttonClass]="'btn-wave ti-btn ti-btn-sm ti-btn-soft-primary waves-effect waves-light'"
+                                    matTooltip="Change Status" (click)="openModal()"
+                                    *ngIf="invoiceDetail.status === 'Pending'"></app-icon-button>
+                                    
+                                </div> -->
+                                
+                                <div class="flex items-center me-2 flex-wrap" *ngIf="invoiceDetail.remarks">
+                                    <div>
+                                        <span class="block font-medium">
+                                            {{invoiceDetail.remarks ? invoiceDetail.remarks : '---'}}
+                                        </span>
+                                        <span class="block text-textmuted dark:text-textmuted/50">Reject Reason</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center me-2 flex-wrap">
+                                    <div>
+                                        <span class="text-danger text-[0.9375rem] font-bold">0PT</span>
+                                        <span class="block text-textmuted dark:text-textmuted/50">Point Deduction</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </app-showcode-card>
+            </div>
+            <div class="xl:col-span-6 col-span-12">
+                <app-showcode-card *ngIf="detailData['return-type'] === 'company'" [title]="'Customer Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+                [classbody]="'pt-0'" [titleView]="true">
+                <ul class="ti-list-group list-group-flush border-0">
+                    <li>
+                        <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.customer_name ? invoiceDetail.customer_name : '---'}} 
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Details</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.customer_type_name ? ( '(' +
+                                        invoiceDetail.customer_type_name + ")") : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Type</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.contact_person_name ?  invoiceDetail.contact_person_name : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Contact Person</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">
+                                        {{invoiceDetail.customer_mobile ?invoiceDetail.customer_mobile : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">
+                                        Mobile No.
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.customer_full_address ? invoiceDetail.customer_full_address: '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Address
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul> 
+            </app-showcode-card>
+            
+            
+            <ng-container *ngIf="detailData['return-type'] === 'customer'">
+                <app-showcode-card  [title]="'Sender Customer Detail'"
+                [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'" [titleView]="true">
+                <ul class="ti-list-group list-group-flush border-0">
+                    <li>
+                        <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.sender_customer_type_name ? ( invoiceDetail.sender_customer_type_name) : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">
+                                        Customer Type
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.sender_customer_name ? invoiceDetail.sender_customer_name : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Details</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.sender_contact_person_name ? invoiceDetail.sender_contact_person_name : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Contact Person</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">
+                                        {{invoiceDetail.sender_customer_mobile ?invoiceDetail.sender_customer_mobile : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">
+                                        Mobile No.
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.sender_full_address ? invoiceDetail.sender_full_address: '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Address
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul> 
+            </app-showcode-card>
+            
+            <app-showcode-card [title]="'Receiver Customer Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+            [classbody]="'pt-0'" [titleView]="true">
+            <ul class="ti-list-group list-group-flush border-0">
+                <li>
+                    <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">
+                                    {{invoiceDetail.receiver_customer_type_name ? (
+                                        invoiceDetail.receiver_customer_type_name) : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Type</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.receiver_customer_name ? invoiceDetail.receiver_customer_name : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Details</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.receiver_contact_person_name ? invoiceDetail.receiver_contact_person_name :
+                                            '---'}}
+                                        </span>
+                                        <span class="text-textmuted dark:text-textmuted/50">Contact Person</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center me-2 flex-wrap">
+                                    <div>
+                                        <span class="block font-medium">
+                                            {{invoiceDetail.receiver_customer_mobile ?invoiceDetail.receiver_customer_mobile : '---'}}
+                                        </span>
+                                        <span class="text-textmuted dark:text-textmuted/50">
+                                            Mobile No.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center me-2 flex-wrap">
+                                    <div>
+                                        <span class="block font-medium ">
+                                            {{invoiceDetail.receiver_full_address ? invoiceDetail.receiver_full_address: '---'}}
+                                        </span>
+                                        <span class="text-textmuted dark:text-textmuted/50">Address
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </app-showcode-card>
+            </ng-container>
+        </div>
+    </div>
+    
+    <app-showcode-card [title]="'Product Details'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+    [classbody]="'pt-0'" [titleView]="true">
+    <div class="table-responsive overflow-auto table-bordered-default">
+        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head" [columns]="invoiceColumns"
+        [showCheckbox]="false">
+        <tr *ngFor="let row of invoiceDetail.selected_item; let i = index"
+        class="border-b !border-defaultborder dark:!border-defaultborder/10">
+        
+        <td class="w50">
+            <div class="font-medium">
+                {{i+1}}
+            </div>
+        </td>
+        
+        <td>
+            <div class="font-medium">
+                {{ row.label ? row.label : '---' }}
+            </div>
+        </td>
+        <td class="w130">
+            <div class="text-textmuted dark:text-textmuted/50 ">
+                {{ row.product_code ? row.product_code : '---' }}
+            </div>
+        </td>
+        <td class="product-quantity-container text-center w80">
+            {{row.qty ? row.qty : '---' }}
+        </td>
+        <td class="text-right w130">
+            {{row.point_trasnfer ? row.point_trasnfer : '0'}} PT
+        </td>
+    </tr>
+</spk-reusable-tables>
+</div>
+</app-showcode-card>
+</div>
+</div>

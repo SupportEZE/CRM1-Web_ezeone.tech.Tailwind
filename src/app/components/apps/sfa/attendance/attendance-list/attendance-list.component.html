@@ -1,0 +1,225 @@
+<app-page-header [title]="'Attendance Modules'" [title1]="['Attendance']" [activeitem]="'Attendance List'" [btnShow1]="false" [buttonText1]="'Header Config'" [icon1]="'settings'" [dataHsOverlay]="'#attendance-header-config'" (buttonClick1)="openHeaderSettingModal()"></app-page-header>
+
+<div class="box py-3 px-4">
+    <ng-container *ngIf="skLoading">
+        <div class="flex items-center gap-3">
+            <app-skeleton [class]="'w100 h30 bg-skeleton'" *ngFor="let row of [].constructor(6)"></app-skeleton>
+        </div>
+    </ng-container>
+    
+    <ng-container *ngIf="!skLoading">
+        <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+            <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+                <app-listing-tab *ngFor="let tab of mainTabs"
+                [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon, count: tab.count, subTab: tab.subTab}]"
+                [activeTab]="activeTab"
+                (tabChange)="onTabChange($event.tab, $event.subTab)"></app-listing-tab>
+            </nav>
+        </nav>
+    </ng-container>
+</div>
+
+<!-- Start::row-1 -->
+<div class="row">    
+    <div class="col-xl-12">
+        <div class="box">
+            <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1 py-2 px-4 pb-0" aria-label="Tabs" role="tablist" *ngIf="activeTab === 'Present'">
+                <app-listing-tab *ngFor="let subTab of subTabs"
+                [tabs]="[{ name: subTab.name, label: subTab.label, icon: subTab.icon, subTab: subTab.name}]"
+                [activeTab]="activeSubTab"
+                [countShow]="false"
+                (tabChange)="onSubTabChange($event.subTab)"></app-listing-tab>
+            </nav>
+            
+            <div class="flex items-center justify-between" >
+                <app-page-sub-header
+                [pageTitle]="'Attendance List'"
+                [btnShow]="true"
+                [refreshLabel]="'Refresh'"
+                (onRefresh)="onRefresh()"></app-page-sub-header>
+                
+                <div class="xl:col-span-4 col-span-12 m-3" *ngIf="activeTab === 'Total'">
+                    <input type="month" [(ngModel)]="selectedMonth"  [max]="maxMonth"  name="selectedMonth" (ngModelChange)="getMonthList();">
+                </div>
+            </div>
+            
+            <div *ngIf="activeTab === 'Total'">
+                <div class="box-body relative">
+                    <div class="flex items-center px-4 py-0 mb-5">
+                        <h6 class="text-sm">Note:</h6>
+                        <div class="attendant__info-wrapper">
+                            <div class="attendant__info-icon" *ngFor="let status of attendanceStatuses">
+                                <i class="align-middle {{ status.icon }} {{ status.color }} text-[15px]"></i>
+                                <span class="attachment__info-arrow">
+                                    <i class="ri-arrow-right-line text-textmuted"></i>
+                                </span>
+                                <h6 class="text-sm">{{ status.label }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="table-responsive overflow-auto table-bordered-default">                            
+                            <spk-reusable-tables [tableHeight]="'630px'" [showFilterRow]="false" [showCheckbox]="false" [showS_No]="true" [showAction]="false" [columns]="monthListColumn" tableClass="ti-custom-table text-nowrap ti-custom-table-hover">
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td class="!text-center">
+                                        <div class="table-search-filters">
+                                            <mat-form-field class="table-input">
+                                                <input matInput type="text" [(ngModel)]="filter.user_name" placeholder="Search..." (keyup.enter)="this.getMonthList()">
+                                                @if (filter.user_name) {
+                                                    <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.user_name='';getMonthList()">
+                                                        <mat-icon>close</mat-icon>
+                                                    </button>
+                                                }
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <ng-container *ngIf="!monthSkLoading">
+                                    <tr class="todo-box border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of monthDaysData; let i = index">
+                                        <td class="text-center">{{ i + 1 }}</td>
+                                        <td class="">{{ row.userName }}</td>
+                                        <td class="text-center">{{ row.totalWoringDays || '0' }}</td>
+                                        <td class="text-center">{{ row.totalPresentDays || '0' }}</td>
+                                        <td class="text-center">{{ row.totalAbsentDays || '0' }}</td>
+                                        <td class="text-center">{{ row.totalWeekOffDays || '0' }}</td>
+                                        <td class="text-center">{{ row.totalHolidayDays || '0' }}</td>
+                                        <td class="text-center">{{ row.totalLeaveDays || '0' }}</td>
+                                        
+                                        <ng-container *ngFor="let attendance of row.attendanceData; let j = index">
+                                            <td class="cursor-pointer" (click)="attendance?.punched ? goToDetail(attendance?.attendance_id) : (accessRight?.addRight && (attendance.weekOff || attendance.leave || attendance.absent) ? markPresent(row.userId, attendance.date) : null)" [matTooltip]="!attendance?.punched && accessRight?.addRight && (attendance.weekOff || attendance.holiday || attendance.absent) ? 'Mark Present' : ''">
+
+                                                <span *ngIf="attendance.punched">
+                                                    <i class="align-middle ri-check-double-line text-success text-[15px]"></i>
+                                                </span>
+                                                <span *ngIf="attendance.leave">
+                                                    <i class="align-middle ri-flight-takeoff-fill text-primarytint2color text-[15px]"></i>
+                                                </span>
+                                                <span *ngIf="attendance.weekOff">
+                                                    <i class="align-middle ri-calendar-2-fill text-primarytint1color text-[15px]"></i>
+                                                </span>
+                                                <span *ngIf="attendance.holiday">
+                                                    <i class="align-middle ri-star-fill text-primary text-[15px]"></i>
+                                                </span>
+                                                <span *ngIf="attendance.regionalHoliday">
+                                                    <i class="align-middle ri-star-half-line text-info text-[15px]"></i>
+                                                </span>
+                                                <span *ngIf="attendance.absent">
+                                                    <i class="align-middle ri-close-line text-danger text-[15px]"></i>
+                                                </span>
+                                                <span *ngIf="attendance.halfday">
+                                                    <i class="align-middle ri-star-half-line text-[15px] text-info"></i>
+                                                </span>
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                </ng-container>
+                                
+                                <ng-container *ngIf="monthSkLoading">
+                                    <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                        <td *ngFor="let cell of monthListColumn">
+                                            <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </spk-reusable-tables>
+                            
+                            <ng-container *ngIf="!monthSkLoading && monthDaysData.length === 0">
+                                <app-data-not-found></app-data-not-found>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+                <app-pagination-footer [currentPage]="listPagination.cur_page" [totalPage]="listPagination.total_pages" [pageLimit]="listPagination.limit" [listLength]="monthDaysData.length" [preBtn]="!listPagination.prev" [nextBtn]="!listPagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+            </div>
+            
+            <div *ngIf="activeTab === 'Present' && activeSubTab === 'List View'">
+                <div class="box-body">
+                    <div class="table-responsive overflow-auto table-bordered-default">
+                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [showFilterRow]="true" [columns]="PageHeaders" (sortChanged)="onSortChanged($event)" (selectionChange)="handleSelectionChange($event)" (textSearchChange)="updateSearchFilter($event)" (dateRangeChange)="handleDateRangeChange($event)">
+                            <ng-container *ngIf="listingData[activeTab]?.length">
+                                <tr class="attendance-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listingData[activeTab]; let i = index;">
+                                    <td class="!text-center">{{i+1}}</td>
+                                    <ng-container *ngFor="let header of PageHeaders">
+                                        <td>
+                                            <ng-container *ngIf="!(header.name === 'name' || header.name === 'start_address' || header.name === 'stop_address')">
+                                                <span >{{ row?.[header.name] || row?.form_data?.[header.name] || '--' }}</span>
+                                            </ng-container>
+                                            
+                                            <ng-container *ngIf="header.name === 'name'">
+                                                <a class="text-primary font-semibold underline" (click)="goToDetailPage(row._id)">
+                                                    {{ row?.[header.name] || row?.form_data?.[header.name] || '--' }}
+                                                </a>
+                                            </ng-container>
+                                            
+                                            <ng-container *ngIf="header.name === 'start_address' || header.name === 'stop_address';">
+                                                <span class="ellipsis" matTooltip="{{ row[header.name] || row.form_data?.[header.name] || '--' }}">
+                                                    {{ row[header.name] || row.form_data?.[header.name] || '--' }}
+                                                </span>
+                                            </ng-container>
+                                        </td>
+                                    </ng-container>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                            <ng-container *ngIf="skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                    <td *ngFor="let row of [].constructor(10)">
+                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                        </spk-reusable-tables>
+                        <ng-container *ngIf="!listingData[activeTab]?.length && !skLoading">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 pt-2" *ngIf="activeTab === 'Present' && activeSubTab === 'Map View'">
+                <ng-container *ngIf="liveMapList?.length && !skLoading">
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                </ng-container>
+                
+                <!-- //--skeleton--// -->
+                <ng-container *ngIf="skLoading">
+                    <div class="xl:col-span-12 col-span-12" *ngFor="let card of [].constructor(8)">
+                        <app-skeleton [class]="'wp100 h40 mb-3'"></app-skeleton>
+                    </div>
+                </ng-container>
+                <!-- //--skeleton--// -->
+                
+                <ng-container *ngIf="!skLoading && !liveMapList?.length">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+            
+            <div *ngIf="activeTab !== 'Total' && activeTab !== 'Present'">
+                <div  class="box-body">
+                    <ng-container *ngIf="listingData[activeTab]?.length">
+                        <div class="grid grid-cols-12 gap-x-6">
+                            <div class="xl:col-span-3 lg:col-span-4 md:col-span-6 sm:col-span-6 col-span-12" *ngFor="let member of listingData[activeTab];">
+                                <spk-team-card [name]="member.name" [role]="member.user_code" [class1]="member.class1" [description]="member.description" [image]="'./assets/images/faces/12.jpg'" [badgeColor]="'primary'" [showIcons]="false" [showButtons]="accessRight?.addRight" (presentClicked)="markPresent(member?._id,todayDate)" (leaveClicked)="goToLeaveAdd()">
+                                </spk-team-card>
+                            </div>
+                        </div>
+                    </ng-container>
+                    
+                    <ng-container *ngIf="!listingData[activeTab]?.length">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

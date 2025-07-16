@@ -1,0 +1,89 @@
+<div class="mat-dialoge" *ngIf="modalData.formType === 'add' || modalData.formType === 'edit'">
+    <app-modal-header [title]="(modalData.formType | titlecase) + ' Referral Program'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="referralForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-4 col-span-12 mb-3">
+                    <spk-ng-select
+                    formControlName="bonus_type"
+                    label="Bonus Type"
+                    [fieldReq]="true"
+                    [options]="bonusType"
+                    [multiple]="false"
+                    >
+                </spk-ng-select>
+                
+                <!-- <label class="form-label mb-0">Bonus Type<span class="text-red-500">*</span></label>
+                <mat-form-field  class="mat-custom-field remove-space">
+                    <mat-select placeholder="Select an option" [(ngModel)]="data.bonus_type" name="bonus_type" #bonus_type="ngModel" required [disabled]="modalData?.formType === 'edit'">
+                        <mat-option *ngFor="let row of bonusType" [value]="row.label">{{row.label}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="bonus_type.touched || f.submitted">
+                    <ng-container *ngIf="bonus_type.errors?.['required']">This field is required</ng-container>
+                </div> -->
+            </div>
+            <div class="xl:col-span-4 col-span-12 mb-3">
+                
+                <spk-ng-select
+                formControlName="customer_type_id"
+                label="Customer Category"
+                [fieldReq]="true"
+                [options]="CommonApiService.customerCategorySubType"
+                [multiple]="true"
+                (selectedChange)="findName($event)"
+                >
+            </spk-ng-select>
+            
+            <!-- <label class="form-label mb-0">Customer Category<span class="text-red-500">*</span></label>
+            <mat-form-field class="mat-custom-field remove-space">
+                <mat-select placeholder="Select an option" [(ngModel)]="data.customer_type_id" name="customer_type_id" #customer_type_id="ngModel" (selectionChange)="onCustomerCategoryChange($event.value)"  required>
+                    <mat-option *ngFor="let row of this.CommonApiService.customerCategorySubType" [value]="row.value">{{ row.label }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="customer_type_id.touched || f.submitted">
+                <ng-container *ngIf="customer_type_id.errors?.['required']">This field is required</ng-container>
+            </div> -->
+        </div>
+        
+        <div class="xl:col-span-4 col-span-12 mb-3">
+            <spk-input label="Bonus Point"  formControlName="bonus_point"
+            [fieldReq]="true" class="remove-default-class" type="number"></spk-input>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <div class="flex items-center gap-2">
+        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </div>
+</mat-dialog-actions>
+</form>
+</div>
+
+<div class="mat-dialoge" *ngIf="modalData.formType === 'view'">
+    <app-modal-header [title]="'Beneficiary'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <app-showcode-card [title]="''" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="false"  [actionIcons]="false" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'" [iconName]="'ri-add-line'">
+        <ul class="ti-list-group list-group-flush border-0 scroll-y-300">
+            <li class="border-b-2 pb-2 pt-2" *ngFor="let row of userPoints">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <span class="avatar avatar-sm bg-primarytint1color">
+                            {{nameUtils.getInitials(row.customer_name)}} 
+                        </span>
+                        <div class="ms-2 font-medium">
+                            {{row.customer_name || '--'}}
+                        </div>
+                    </div>
+                    <span class="badge bg-light bg-primary/10 text-primary float-end ms-auto">512</span>
+                </div>
+            </li>
+        </ul>
+    </app-showcode-card>
+    
+</div>
+
+
+

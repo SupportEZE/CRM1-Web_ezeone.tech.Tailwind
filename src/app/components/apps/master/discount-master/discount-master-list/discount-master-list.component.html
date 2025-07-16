@@ -1,0 +1,127 @@
+<app-page-header 
+[title]="'Master Modules'" 
+[title1]="['Discount Master']"
+[activeitem]="'Discount Master'"
+[buttonText1]="'Form Config'"
+[icon1]="'settings'" 
+[btnShow1]="true" 
+[buttonValue1]="''"
+(buttonClick1)="openModal($event)">
+</app-page-header>
+
+
+<div class="box py-3 px-4">
+    <ng-container *ngIf="skLoading">
+        <div class="flex items-center gap-3">
+            <app-skeleton [class]="'w100 h30 bg-skeleton'" *ngFor="let row of [].constructor(6)"></app-skeleton>
+        </div>
+    </ng-container>
+    
+    <ng-container *ngIf="!skLoading">
+        <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+            <app-listing-tab *ngFor="let tab of mainTabs"
+            [tabs]="[{ name: tab.label, label: tab.label, icon: 'ri-group-3-fill', subTab: 'Category' }]"
+            [activeTab]="activeTab"
+            [countShow]="false"
+            (tabChange)="onTabChange($event.tab, $event.subTab)"></app-listing-tab>
+        </nav>
+        
+        <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1 mt-2" aria-label="Tabs" role="tablist">
+            <app-listing-tab *ngFor="let subTab of subTab"
+            [tabs]="[{ name: subTab.label, label: subTab.label, icon: subTab.icon, subTab: subTab.name }]"
+            [activeTab]="activeSubTab"
+            [countShow]="false"
+            (tabChange)="onSubTabChange($event.subTab)"></app-listing-tab>
+        </nav>
+    </ng-container>
+    
+    
+</div>
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Discount Master List'" [listLength]="pagination.total" [class]="'pt-2'" 
+            [refreshLabel]="'Refresh'" [btnShow]="true" (onRefresh)="onRefresh()"></app-page-sub-header>
+            
+            <div class="box-body pt-1">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <ng-container *ngIf="activeTab && activeSubTab === 'Product'">
+                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="true" [showAction]="true" [columns]="tableHeader" (textSearchChange)="updateSearchFilter($event)" [subModule]="subModule" #reusableTable>
+                            <ng-container *ngIf="!skLoading">
+                                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of productListing; let i = index;">
+                                    <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                                    <ng-container *ngFor="let header of tableHeader">
+                                        <td>
+                                            <span>
+                                                {{ row[header.name] || row.form_data?.[header.name] || '0' }}
+                                            </span>
+                                        </td>
+                                    </ng-container>
+                                    <td class="!text-center">
+                                        <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                            <app-icon-button [icon]="'ri-edit-line'" matTooltip="Update Discount" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'"  (clickEvent)="update(row)"> </app-icon-button>
+                                            <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)"> </app-icon-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                            <ng-container *ngIf="skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                    <td *ngFor="let row of [].constructor(11)">
+                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                        </spk-reusable-tables>
+
+                        <ng-container *ngIf="!productListing.length && !skLoading">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </ng-container>
+
+
+                    <ng-container *ngIf="activeTab && activeSubTab === 'Category'">
+                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="false"  [showFilterRow]="true" [showAction]="true" [columns]="tableHeader" (textSearchChange)="updateSearchFilter($event)">
+                            <ng-container *ngIf="!skLoading">
+                                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of categoryListing; let i = index;">
+                                    <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                                    <ng-container *ngFor="let header of tableHeader">
+                                        <td>
+                                            <span>
+                                                {{ row[header.name] || row.form_data?.[header.name] || '0' }}
+                                            </span>
+                                        </td>
+                                    </ng-container>
+                                    <td class="!text-center">
+                                        <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                            <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'"  (clickEvent)="update(row)"> </app-icon-button>
+                                            <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)"> </app-icon-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                            <ng-container *ngIf="skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                    <td *ngFor="let row of [].constructor(11)">
+                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                        </spk-reusable-tables>
+
+                        <ng-container *ngIf="!categoryListing.length && !skLoading">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

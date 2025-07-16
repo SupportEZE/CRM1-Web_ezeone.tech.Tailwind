@@ -1,0 +1,223 @@
+<!-- Banner Add Start -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'Banner'">
+  <app-modal-header [title]="'Add ' +modalData.lastPage" [closeBtn]="true" (close)="closeModal()">
+  </app-modal-header>
+  
+  <form [formGroup]="bannerForm" (ngSubmit)="submitBanner()">
+    <mat-dialog-content class="mat-typography">
+      <div class="grid grid-cols-12 gap-4 mt-0">
+        <div class="xxl:col-span-6 md:col-span-6 col-span-12">
+          <spk-ng-select
+          formControlName="login_type_id"
+          label="User Type"
+          [fieldReq]="true"
+          [options]="CommonApiService.loginType"
+          (selectedChange)="getSubType($event); findName($event, 'login_type')"
+          >
+        </spk-ng-select>
+      </div>
+      
+      <div class="xxl:col-span-6 md:col-span-6 col-span-12">
+        <spk-ng-select
+        formControlName="customer_type_id"
+        label="Sub Type"
+        [fieldReq]="true"
+        [multiple]="true"
+        [options]="userSubTypes"
+        (selectedChange)="findName($event, 'customer_type')"
+        >
+      </spk-ng-select>
+    </div>
+    
+    <div class="xxl:col-span-12 md:col-span-12 col-span-12">
+      <file-pond
+      class="filepond basic-filepond"
+      [options]="pondOptions"
+      [files]="pondFiles"
+      (onremovefile)="onFileRemove($event)"
+      (onprocessfile)="onFileProcessed($event)">
+    </file-pond>
+    <p class="text-[.625rem] font-semibold text-right text-red-500">Image dimensions must be exactly 1600×900 px and file size must not exceed 2 MB.</p>
+  </div>
+</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  
+  <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+  <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</mat-dialog-actions>
+</form>
+
+</div>
+<!-- Banner Add End -->
+
+<!-- Videos Add Start -->
+<div class="mat-dialoge"  *ngIf="modalData.lastPage === 'Videos'">
+  <app-modal-header [title]="'Add ' +modalData.lastPage" [closeBtn]="true" (close)="closeModal()">
+  </app-modal-header>
+  <div class="box" *ngIf="skLoading">
+    <div class="p-4">
+      <div class="grid grid-cols-12 gap-x-6">
+        <div class="xl:col-span-12 col-span-12 mb-4" *ngFor="let card of [].constructor(3)">
+          <app-skeleton></app-skeleton>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <form #f="ngForm" (ngSubmit)="f.valid && submitVideo()" > -->
+    <form [formGroup]="videoForm" (ngSubmit)="submitVideo()" *ngIf="!skLoading">
+      <mat-dialog-content class="mat-typography">
+        <div class="grid grid-cols-12 gap-4 mt-0">
+          <div class="xxl:col-span-6 md:col-span-12 col-span-6">
+            <spk-ng-select
+            formControlName="login_type_id"
+            label="User Type"
+            [fieldReq]="true"
+            [options]="CommonApiService.loginType"
+            (selectedChange)="getSubType($event); findName($event, 'login_type')"
+            >
+          </spk-ng-select>
+        </div>
+        
+        <div class="xxl:col-span-6 md:col-span-12 col-span-6">
+          <spk-ng-select
+          formControlName="customer_type_id"
+          label="Sub Type"
+          [fieldReq]="true"
+          [multiple]="true"
+          [options]="userSubTypes"
+          (selectedChange)="findName($event, 'customer_type')"
+          >
+        </spk-ng-select>
+      </div>
+      
+      <div class="xxl:col-span-6 md:col-span-6 col-span-12">
+        <spk-input label="Title" [fieldReq]="true" formControlName="title" class="remove-default-class" type="text"></spk-input>
+      </div>
+      
+      <div class="xxl:col-span-6 md:col-span-6 col-span-12">
+        <spk-input label="YouTube URL" [fieldReq]="true" formControlName="youtube_url" class="remove-default-class" type="text"></spk-input>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+  </mat-dialog-actions>
+</form>
+</div>
+<!-- Videos Add End -->
+
+<!-- Document Add Start -->
+<div class="mat-dialoge"  *ngIf="modalData.lastPage === 'Document'">
+  <app-modal-header [title]="'Add ' +modalData.lastPage" [closeBtn]="true" (close)="closeModal()">
+  </app-modal-header>
+  <div class="xxl:col-span-8 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+    <form [formGroup]="documentForm" (ngSubmit)="submitDocument()" *ngIf="!skLoading">
+      <mat-dialog-content class="mat-typography">
+        <!-- <div class="grid grid-cols-12 gap-4 mt-0"> -->
+          
+          <div class="grid grid-cols-12 gap-4 mt-0">
+            <div class="xxl:col-span-12 md:col-span-12 col-span-12">
+              <spk-input label="Title" [fieldReq]="true" formControlName="title" class="remove-default-class" type="text"></spk-input>
+            </div>
+            
+            <div class="xxl:col-span-6 md:col-span-6 col-span-12">
+              <spk-ng-select
+              formControlName="login_type_id"
+              label="User Type"
+              [fieldReq]="true"
+              [options]="CommonApiService.loginType"
+              (selectedChange)="getSubType($event); findName($event, 'login_type')"
+              >
+            </spk-ng-select>
+          </div>
+          
+          <div class="xxl:col-span-6 md:col-span-6 col-span-12">
+            <spk-ng-select
+            formControlName="customer_type_id"
+            label="Sub Type"
+            [fieldReq]="true"
+            [multiple]="true"
+            [options]="userSubTypes"
+            (selectedChange)="findName($event, 'customer_type')"
+            >
+          </spk-ng-select>
+        </div>
+        
+        
+        
+        <div class="xxl:col-span-12 md:col-span-12 col-span-12">
+          <file-pond
+          class="filepond basic-filepond"
+          [options]="pondDocumentOptions"
+          [files]="pondFiles"
+          (onremovefile)="onFileRemove($event)"
+           (onprocessfile)="onFileProcessed($event)"
+          >
+          <!-- (onaddfile)="onDocumentFileAdd($event)" -->
+        </file-pond>
+      </div>
+    </div>
+    
+  <!-- </div> -->
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+  <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</mat-dialog-actions>
+</form>
+</div>
+</div>
+<!-- Document Add End -->
+
+
+<!-- Faq Add Start -->
+<div class="mat-dialoge"  *ngIf="modalData.lastPage === 'FAQ\'S'">
+  <app-modal-header [title]="(data._id ? 'Edit ' :'Add ') + modalData.lastPage" [closeBtn]="true" (close)="closeModal()">
+  </app-modal-header>
+  <div class="box" *ngIf="skLoading">
+    <div class="p-4">
+      <div class="grid grid-cols-12 gap-x-6">
+        <div class="xl:col-span-12 col-span-12 mb-4" *ngFor="let card of [].constructor(2)">
+          <app-skeleton></app-skeleton>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form #faqForm="ngForm" (ngSubmit)="faqForm.valid && submitFaqData()" *ngIf="!skLoading">
+    <mat-dialog-content class="mat-typography">
+      <div class="md:col-span-12 col-span-12">
+        <label class="form-label">Question <span class="text-red-500">*</span></label>
+        <textarea type="text" class="form-control" name="question"
+        placeholder="Question" #question="ngModel" [(ngModel)]="data.question"
+        aria-label="Question" required></textarea>
+        <ng-container *ngIf="question.touched || faqForm.submitted">
+          <div *ngIf="question.errors?.['required']"
+          class="mt-1 text-xs text-red-500 text-right">
+          Question is required
+        </div>
+      </ng-container>
+    </div>
+    <div class="md:col-span-12 col-span-12">
+      <label class="form-label">Answer <span class="text-red-500">*</span></label>
+      <div id="product-features" class="ngx-editor-custom">
+        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar">
+        </ngx-editor-menu>
+        <ngx-editor [editor]="editor" name="editorContent"
+        class="overflow-auto" [(ngModel)]="data.answer" required>
+      </ngx-editor>
+    </div>
+  </div>
+  
+</mat-dialog-content>
+<mat-dialog-actions align="end" style="padding-top: 10px;">
+  <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+  <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+</mat-dialog-actions>
+</form>
+
+</div>
+<!-- Faq Add End -->

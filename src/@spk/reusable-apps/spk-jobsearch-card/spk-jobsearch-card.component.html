@@ -1,0 +1,49 @@
+<div class="box featured-jobs shadow-none border dark:border-defaultborder/10 border-defaultborder">
+  <div class="box-body">
+    @if(job.ngbDropdown){
+      <spk-dropdowns [Customclass]="'float-end ms-auto'"  [class]="'ti-btn ti-btn-white ti-btn-icon ti-btn-sm text-textmuted dark:text-textmuted/50 !rounded-full ti-dropdown-toggle hs-dropdown-toggle border border-defaultborder dark:border-defaultborder/10'" [Icon]="true" [IconClass]="'fe fe-more-vertical align-middle'" 
+      [Menuclass]="'dropdown-menu dropdown-menu-end'" >
+              <li><a class="ti-dropdown-item" href="javascript:void(0);">Add To Favourite</a></li>
+              <li><a class="ti-dropdown-item" href="javascript:void(0);">Save</a></li>
+      </spk-dropdowns>
+    }
+      <div class="flex mb-3 flex-wrap gap-2 items-center">
+        @if(job.imgSrc){
+          <span class="avatar avatar-md border dark:border-defaultborder/10 border-defaultborder p-1">
+              <img [src]="job.imgSrc" alt="">
+          </span>
+        }  @else{
+          <span class="avatar avatar-md border dark:border-defaultborder/10 border-defaultborder p-1"> <i
+              class="bi bi-laptop"></i> </span>
+      }
+          <div>
+              <h5 class="font-medium mb-0 flex items-center flex-wrap"><a href="javascript:void(0);">{{ job.jobTitle }}</a></h5>
+              <a href="javascript:void(0);" class="text-textmuted dark:text-textmuted/50">{{ job.companyName }}</a>
+          </div>
+      </div> 
+      @if(job.icons) {
+        <div class="ms-auto d-flex gap-1 flex-xxl-nowrap"> 
+          <a placement="'auto'" class="avatar avatar-sm avatar-rounded bg-primarytint1color-transparent" ><span><i class="bx bx-heart"></i></span></a>
+          <a placement="'auto'" class="avatar avatar-sm avatar-rounded bg-warning-transparent" ><span><i class="bi bi-star-fill"></i></span></a>
+
+          
+                    </div>
+    }
+      <div class="popular-tags mb-3 flex gap-2 flex-wrap">
+          <a href="javascript:void(0);" class="badge rounded-full text-[11px] border {{job.locationClass}}"><i class="ri-map-pin-line me-1"></i> {{ job.location }}</a>
+          @if(job.openings){
+          <a href="javascript:void(0);" class="badge rounded-full text-[11px] border border-primarytint1color/10 text-primarytint1color"><i class="ri-briefcase-line me-1"></i>  {{ job.openings }} Openings</a>
+          <a href="javascript:void(0);" class="badge rounded-full text-[11px] border border-info/10 text-info"><i class="ri-graduation-cap-line me-1"></i> {{ job.education }}</a>
+          <a href="javascript:void(0);" class="badge rounded-full text-[11px] border {{job.experienceClass}}"><i class="ri-time-line me-1"></i> {{ job.experience }}</a>
+          <a href="javascript:void(0);" class="badge rounded-full text-[11px] border border-secondary/10 text-secondary"><i class="ri-sun-line me-1"></i> {{ job.jobType }}</a>
+             }  
+             </div>
+      <div class="flex justify-between items-center flex-wrap">
+          <h6 class="font-medium mb-0">{{ job.salaryRange }}</h6>
+          <a href="javascript:void(0);" class="ti-btn ti-btn-primary ti-btn-sm {{job.buttonClass}}">
+              Apply Now 
+              @if(job.buttonIcon){<i class="fe fe-arrow-right transform-arrow ms-2 lh-base"></i>}
+          </a>
+      </div>
+  </div>
+</div>

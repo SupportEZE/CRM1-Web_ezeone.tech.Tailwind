@@ -1,0 +1,362 @@
+<app-page-header [title]="'IRP'" [title1]="['Stock Transfer']" [activeitem]="'Stock Transfer Detail'"></app-page-header>
+
+
+
+<div class="grid grid-cols-12 sm:gap-x-6">
+    <div class="xl:col-span-12 col-span-12" *ngIf="skLoading">
+        <app-showcode-card  [titleView]="false"  [view]="false">
+            <!-- Loading Start -->
+            <div *ngIf="skLoading">
+                <div class="flex gap-2 mb-1 flex-wrap">
+                    <div class="flex items-center" *ngFor="let card of [].constructor(15)">
+                        <app-skeleton [class]="'w180'"></app-skeleton>
+                    </div>
+                </div>
+            </div>
+            <!-- Loading End -->
+        </app-showcode-card>
+    </div>
+    <div class="xl:col-span-8 col-span-12" *ngIf="!skLoading">
+        
+        <app-showcode-card [title]="'Stock Transfer Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'"  [titleView]="true">
+            <ul class="ti-list-group list-group-flush border-0">
+                <li>
+                    <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">{{invoiceDetail.created_at ? (invoiceDetail.created_at | date : 'dd MMM yyyy') : '---'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Date Created</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primary">Trans00099</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Transfer ID</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">{{invoiceDetail.created_name ? (invoiceDetail.created_name | titlecase) : '---'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Created By</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium">
+                                    {{invoiceDetail.bill_number ? invoiceDetail.bill_number : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Bill Number</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium">{{invoiceDetail.bill_date ? (invoiceDetail.bill_date | date : 'dd MMM yyyy') : '---'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Bill Date</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium">₹  
+                                    {{invoiceDetail.bill_amount ? invoiceDetail.bill_amount : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Bill Amount</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">{{invoiceDetail.total_item_count ? invoiceDetail.total_item_count : '---'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Total Items</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">{{invoiceDetail.total_item_quantity ? invoiceDetail.total_item_quantity : '---'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Total Qty</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center me-2 gap-3 flex-wrap">
+                            <div>
+                                <span class="font-medium" [ngClass]="{ 'text-success': invoiceDetail.status === 'Approved', 'text-warning': invoiceDetail.status === 'Pending','text-danger': invoiceDetail.status === 'Reject'}">
+                                    {{invoiceDetail.status ? invoiceDetail.status : '---'}}</span>
+                                    <span class="block text-textmuted dark:text-textmuted/50">Status</span>
+                                </div>
+                                <!--                                 
+                                <app-icon-button [icon]="'ri-pencil-line'" [buttonClass]="'btn-wave ti-btn ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" matTooltip="Change Status" (click)="openModal()" *ngIf="invoiceDetail.status === 'Pending'"></app-icon-button> -->
+                                
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap" *ngIf="invoiceDetail.remarks">
+                                <div>
+                                    <span class="block font-medium">{{invoiceDetail.remarks ? invoiceDetail.remarks : '---'}}</span>
+                                    <span class="block text-textmuted dark:text-textmuted/50">Reject Reason</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="text-success text-[0.9375rem] font-bold">{{totalPoint}}PT</span>
+                                    <span class="block text-textmuted dark:text-textmuted/50">Point Transfered</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </app-showcode-card>
+            
+            
+            <app-showcode-card [title]="'Sender Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'"  [titleView]="true">
+                <ul class="ti-list-group list-group-flush border-0">
+                    <li>
+                        <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                            
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">{{invoiceDetail.sender_customer_name ? invoiceDetail.sender_customer_name : '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Details</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.sender_customer_type_name ? invoiceDetail.sender_customer_type_name : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Type</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.sender_contact_person_name ? invoiceDetail.sender_contact_person_name : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Contact Person</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">
+                                        {{invoiceDetail.sender_customer_mobile ? invoiceDetail.sender_customer_mobile : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Mobile No.</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">
+                                        {{invoiceDetail.sender_full_address ? invoiceDetail.sender_full_address : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Address</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </app-showcode-card>
+            
+            
+            <app-showcode-card [title]="'Receiver Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'"  [titleView]="true">
+                <ul class="ti-list-group list-group-flush border-0">
+                    <li>
+                        <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                            
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">{{invoiceDetail.receiver_customer_name ? invoiceDetail.receiver_customer_name : '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Details</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">{{invoiceDetail.receiver_customer_type_name ? invoiceDetail.receiver_customer_type_name : '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Type</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium">{{invoiceDetail.receiver_customer_mobile ? invoiceDetail.receiver_customer_mobile : '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Mobile No.</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium ">{{invoiceDetail.receiver_full_address ? invoiceDetail.receiver_full_address : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Address</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </app-showcode-card>
+            
+            
+            
+            
+            
+            <app-showcode-card [title]="'Product Details'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'" [titleView]="true">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables  [columns]="cartColumn" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [showAction]="false">
+                        <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of invoiceDetail.selected_item; let i = index;">
+                            <td class="text-center w50">{{i+1}}</td>
+                            <td class="">
+                                {{row.label ? (row.label | titlecase) : '---'}}
+                                
+                            </td>
+                            <td class="w100">
+                                {{row.product_code ? row.product_code : '---'}}
+                            </td>
+                            <td class="text-center w50">{{row.qty ? row.qty : '0'}}</td>
+                            <td class="text-right w80"><strong>{{row.point_value ? row.point_value : '0'}} PT</strong> </td>
+                        </tr>
+                    </spk-reusable-tables>
+                </div>
+            </app-showcode-card>
+        </div>
+        
+        <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-5 col-span-12" *ngIf="!skLoading">
+            <app-showcode-card [title]="'Status Tracking'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'" [titleView]="true" [btn1]="true" [buttonName]="'Change Status'" (btnClick)="openModal()" [iconName]="'ri-draft-line'">
+                <p class="mb-4">
+                    <span class="font-medium me-2 text-[14px]">Status :</span>
+                    <span class="text-[11px] badge" [ngClass]="{ 'bg-success/10 text-success': invoiceDetail.status === 'Approved', 'bg-warning/10 text-warning': invoiceDetail.status === 'Pending','bg-danger/10 text-danger': invoiceDetail.status === 'Reject'}"
+                    >{{invoiceDetail.status ? invoiceDetail.status : ''}}</span>
+                </p>
+                <div class="order-track mt-1">
+                    <div class="hs-accordion-group" data-hs-accordion-always-open>
+                        <div class="hs-accordion accordion active" id="order-heading-one">
+                            <a href="javascript:void(0);" class="hs-accordion-toggle group items-center gap-x-3 w-full font-semibold text-start transition" aria-controls="order-collapse-one">
+                                <div class="flex mb-2">
+                                    <div class="me-2">
+                                        <span class="avatar avatar-sm avatar-rounded track-order-icon backdrop-blur border border-primary/10 bg-primary/10">
+                                            <i class="ri-send-plane-fill text-primary"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow flex items-center justify-between">
+                                        <p class="font-medium mb-0 text-[0.875rem]">Request Submitted</p>
+                                        <span class="font-normal text-textmuted">{{invoiceDetail.created_at ? (invoiceDetail.created_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <div id="order-collapse-one" class="space-y-3 hs-accordion-content w-full overflow-hidden transition-[height] duration-300" aria-labelledby="order-heading-one">
+                                <div class="accordion-body !pt-0 !ps-[3rem]">
+                                    <div class="">
+                                        <p class="mb-0">
+                                            <span class="font-semibold text-primarytint1color">
+                                                {{invoiceDetail.created_name ? (invoiceDetail.created_name | titlecase) : '---'}}
+                                            </span>
+                                            has submitted a stock transfer request. Transfer ID: Tar110023.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hs-accordion accordion active" id="order-heading-two" *ngIf="invoiceDetail.status === 'Pending'">
+                                <a href="javascript:void(0);" class="hs-accordion-toggle group items-center gap-x-3 w-full font-semibold text-start transition" aria-controls="order-collapse-two">
+                                    <div class="flex mb-2">
+                                        <div class="me-2">
+                                            <span class="avatar avatar-sm avatar-rounded track-order-icon backdrop-blur border border-warning/10 bg-warning/10">
+                                                <i class="ri-time-fill text-warning"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow flex items-center justify-between">
+                                            <p class="font-medium mb-0 text-[0.875rem]">{{invoiceDetail.status}}</p>
+                                            <span class="font-normal text-textmuted">{{invoiceDetail.updated_at ? (invoiceDetail.updated_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div id="order-collapse-two" class="space-y-3 hs-accordion-content w-full overflow-hidden transition-[height] duration-300" aria-labelledby="order-heading-two">
+                                    <div class="accordion-body !pt-0 !ps-[3rem]">
+                                        <div class="">
+                                            <p class="mb-0">Stock transfer status changed to <span class="text-warning font-semibold">{{invoiceDetail.status}}</span></p>
+                                        </div>
+                                    </div>            
+                                </div>
+                            </div>
+                            <div class="hs-accordion accordion active" id="order-heading-three" *ngIf="invoiceDetail.status === 'Approved'">
+                                <a href="javascript:void(0);" class="hs-accordion-toggle group items-center gap-x-3 w-full font-semibold text-start transition" aria-controls="order-collapse-three">
+                                    <div class="flex mb-2">
+                                        <div class="me-2">
+                                            <span class="avatar avatar-sm avatar-rounded track-order-icon backdrop-blur border border-success/10 bg-success/10">
+                                                <i class="ri-checkbox-circle-fill text-success"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow flex items-center justify-between">
+                                            <p class="font-medium mb-0 text-[0.875rem]">{{invoiceDetail.status ? invoiceDetail.status : '---'}}</p>
+                                            <span class="font-normal text-textmuted">{{invoiceDetail.updated_at ? (invoiceDetail.updated_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div id="order-collapse-three" class="space-y-3 hs-accordion-content w-full overflow-hidden transition-[height] duration-300" aria-labelledby="order-heading-three">
+                                    <div class="accordion-body !pt-0 !ps-[3rem]">
+                                        <p class="mb-0">Stock transfer status changed to <span class="text-success font-semibold">{{invoiceDetail.status}}</span> and done by {{invoiceDetail.updated_name ? (invoiceDetail.updated_name | titlecase) : '---'}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="hs-accordion accordion active" id="order-heading-four" *ngIf="invoiceDetail.status === 'Reject'">
+                                <a href="javascript:void(0);" class="hs-accordion-toggle group items-center gap-x-3 w-full font-semibold text-start transition" aria-controls="order-collapse-four">
+                                    <div class="flex mb-2">
+                                        <div class="me-2">
+                                            <span class="avatar avatar-sm avatar-rounded track-order-icon backdrop-blur border border-danger/10 bg-danger/10">
+                                                <i class="ri-close-circle-fill text-danger"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow flex items-center justify-between">
+                                            <p class="font-medium mb-0 text-[0.875rem]">{{invoiceDetail.status ? invoiceDetail.status : '---'}}</p>
+                                            <span class="font-normal text-textmuted">{{invoiceDetail.updated_at ? (invoiceDetail.updated_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div id="order-collapse-four" class="space-y-3 hs-accordion-content w-full overflow-hidden transition-[height] duration-300" aria-labelledby="order-heading-four">
+                                    <div class="accordion-body !pt-0 !ps-[3rem]">
+                                        <p class="mb-0">Stock transfer status changed to <span class="text-danger font-semibold">{{invoiceDetail.status}}</span> and done by {{invoiceDetail.updated_name ? (invoiceDetail.updated_name | titlecase) : '---'}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="hs-accordion accordion active" id="order-heading-five">
+                                <a href="javascript:void(0);" class="group inline-flex items-center gap-x-3 w-full font-semibold text-start transition"  aria-controls="order-collapse-five">
+                                    <div class="flex mb-0 flex-grow">
+                                        <div class="me-2">
+                                            <span class="avatar avatar-sm avatar-rounded track-order-icon backdrop-blur border border-info/10 bg-info/10">
+                                                <i class="ri-wallet-3-fill text-info"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow flex items-center justify-between">
+                                            <p class="font-semibold mb-0 text-[0.875rem]">Point Transfered</p>
+                                            <span class="font-normal text-textmuted">{{invoiceDetail.updated_at ? (invoiceDetail.updated_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div id="order-collapse-five" class="space-y-3 hs-accordion-content w-full overflow-hidden transition-[height] duration-300" aria-labelledby="order-heading-five">
+                                    <div class="accordion-body !pt-0 !ps-[3rem]">
+                                        <div class="">
+                                            <p class="mb-0"><span class="text-success font-semibold">{{totalPoint}}</span> points have been transferred successfully. </p>
+                                        </div>
+                                    </div>            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+                
+                
+                <app-showcode-card [title]="'Uploaded Bills'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"
+                [titleView]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'"
+                [classbody]="'pt-0'" [iconName]="'ri-add-line'">
+                <div class="grid grid-cols-12 gap-x-4" *ngIf="invoiceDetail.files.length > 0">
+                    <ng-container>
+                        <div class="xxl:col-span-2 lg:col-span-4 xl:col-span-4 sm:col-span-6 col-span-12"
+                        *ngFor="let image of invoiceDetail.files">
+                        <spk-product-card [apiPath]="'stock-transfer/get-doc'" [imageData]="image" [editBtn]="false"
+                        [delBtn]="false" [heading]="false" [subHeading]="false">
+                    </spk-product-card>
+                </div>
+            </ng-container>
+        </div>
+        
+        <ng-container *ngIf="invoiceDetail.files.length === 0">
+            <app-data-not-found></app-data-not-found>
+        </ng-container>
+    </app-showcode-card>
+</div>
+</div>

@@ -1,0 +1,243 @@
+<app-page-header [title]="'WMS'" [title1]="['Dispatch']" [activeitem]="removeSpace.formatText(pageType)"
+[btnShow]="printStatus" [btnDisabled]="btnFlag" (buttonClick)="printLabel()" [buttonText]="btnFlag ? 'Please Wait' :'Print Gatepass'" [icon]="'print'"></app-page-header>
+
+
+
+<div class="grid grid-cols-12 sm:gap-x-4">
+    <ng-container *ngIf="skLoading">
+        <div class="xl:col-span-6 col-span-6" >
+            <app-showcode-card [titleView]="false" [view]="false">
+                <div >
+                    <div class="flex gap-2 mb-1 flex-wrap">
+                        <div class="flex items-center" *ngFor="let card of [].constructor(9)">
+                            <app-skeleton [class]="'w180'"></app-skeleton>
+                        </div>
+                    </div>
+                </div>
+            </app-showcode-card>
+        </div>
+        <div class="xl:col-span-6 col-span-6">
+            <app-showcode-card [titleView]="false" [view]="false">
+                <div >
+                    <div class="flex gap-2 mb-1 flex-wrap">
+                        <div class="flex items-center" *ngFor="let card of [].constructor(9)">
+                            <app-skeleton [class]="'w180'"></app-skeleton>
+                        </div>
+                    </div>
+                </div>
+            </app-showcode-card>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!skLoading">
+        <div class="xl:col-span-6 col-span-12">
+            <app-showcode-card [title]="'Gatepass Details'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+            [classbody]="'pt-0'" [titleView]="true">
+            <ul class="ti-list-group list-group-flush border-0">
+                <li>
+                    <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">
+                                    {{dispatchDetail.created_at ? (dispatchDetail.created_at | date : 'dd MMM yyyy hh:mm a') : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Date Created</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium">
+                                    {{dispatchDetail.invoice_number ? (dispatchDetail.invoice_number) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Invoice Number</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium">
+                                    {{dispatchDetail.gatepass_number ? (dispatchDetail.gatepass_number) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Gatepass Number</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap" *ngIf="dispatchDetail.e_way_number">
+                            <div>
+                                <span class="block font-medium">
+                                    {{dispatchDetail.e_way_number ? (dispatchDetail.e_way_number) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">E-Way Number</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium">
+                                    {{dispatchDetail.driver_name ? (dispatchDetail.driver_name | titlecase) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Driver Name</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">
+                                    {{dispatchDetail.mobile ? dispatchDetail.mobile : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Mobile No.</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">
+                                    {{dispatchDetail.vehicle_number ? dispatchDetail.vehicle_number : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Vehicle No.</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium ">
+                                    {{dispatchDetail.transportation_mode ? dispatchDetail.transportation_mode : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50">Transportation Mode</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul></app-showcode-card>
+            <app-showcode-card  [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+            [classbody]="'pt-0'" [titleView]="false" *ngIf="!printStatus">
+            <ul class="ti-list-group list-group-flush border-0">
+                <li>
+                    <form [formGroup]="dispatchForm">
+                        <div class="flex items-center gap-3 text-[12px]">
+                            <div class="flex items-center flex-wrap wp50 mt-4">
+                                <spk-input  #couponInput formControlName="qr_code"  label="Master Box No." [fieldReq]="true" type="text" [class]="'focus-input'" [maxlength]="16" [minlength]="16" class="remove-default-class wp100"></spk-input>
+                            </div>
+                        </div>
+                    </form>
+                </li>
+            </ul></app-showcode-card>
+        </div>
+        <div class="xl:col-span-6 col-span-12" >
+            <app-showcode-card [title]="'Master Box Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+            [classbody]="'pt-0'" [titleView]="true" [actionIcons]="false"
+            [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-success waves-effect waves-light'"
+            [iconName]="'ri-printer-line'"  >
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables [columns]="getColumns('master_qr')"
+                tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary"
+                [showAction]="false">
+                <ng-container *ngIf="!masterQrLoading">
+                    <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"
+                    *ngFor="let row of masterQrList; let i = index;"
+                    [ngClass]="row.customer_id ? 'bg-green-500' : 'bg-red-500'">
+                    <td class="text-center w50">{{i+1}}</td>
+                    <td>{{row.qr_master_box_code ? row.qr_master_box_code : '---'}}</td>
+                    <td class="text-center w80">
+                        <ng-container *ngIf="!printStatus">
+                            {{row.customer_id ? 'Scanned' : 'Not Scanned'}}
+                        </ng-container>
+                        <ng-container *ngIf="printStatus">
+                            <a class="underline" (click)="goToDetail(row.dispatch_id)">{{row.customer_id ? 'Scanned' : 'Not Scanned'}}</a>
+                        </ng-container>
+                    </td>
+                </tr>
+            </ng-container>
+            
+            <!-- //--skeleton--// -->
+            <ng-container *ngIf="masterQrLoading && masterQrList.length === 0">
+                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(5)">
+                    <td *ngFor="let row of [].constructor(3)">
+                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                    </td>
+                </tr>
+                <!-- //--skeleton--// -->
+            </ng-container>
+            
+        </spk-reusable-tables>
+        <ng-container *ngIf="masterQrList.length === 0">
+            <app-data-not-found></app-data-not-found>
+        </ng-container>
+    </div></app-showcode-card>
+    
+    <app-showcode-card [title]="'Order Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'"
+    [classbody]="'pt-0'" [titleView]="true" [actionIcons]="false"
+    [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-success waves-effect waves-light'"
+    [iconName]="'ri-printer-line'">
+    <div class="table-responsive overflow-auto table-bordered-default">
+        <spk-reusable-tables [columns]="getColumns('order')"
+        tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary"
+        [showAction]="false">
+        <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10"
+        *ngFor="let row of linkedOrders; let i = index;">
+        <td class="text-center w50">{{i+1}}</td>
+        <td class="w115">{{row.order_date ? (row.order_date | date : 'dd MMM yyyy') : 'N/A'}}</td>
+        <td>{{row.customer_name ? (row.customer_name | titlecase) : '---'}}</td>
+        <td class="w120">{{row.order_no ? (row.order_no) : '---'}}</td>
+        <td class="text-center w90">{{row.totalScannedQuantity ? row.totalScannedQuantity: '---'}}</td>
+    </tr>
+</spk-reusable-tables>
+</div>
+</app-showcode-card>
+</div>
+
+</ng-container>
+</div>
+
+
+<div id="QR_CODE_LABEL" #qrCodeLabel>
+    <div hidden>
+        <h2 style="font-size: 20px;  text-align: center; margin: 16px 0px;">
+            {{dispatchDetail.billing_company ? (dispatchDetail.billing_company) : 'N/A'}}
+        </h2>
+        <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+            <strong style="font-size: 13px;">Invoice No.</strong> :
+            {{dispatchDetail.invoice_number ? (dispatchDetail.invoice_number) : 'N/A'}}
+        </p>
+        <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+            <strong style="font-size: 13px;">Generate Date</strong> :
+            {{dispatchDetail.created_at ? (dispatchDetail.created_at | date : 'dd MMM yyyy hh:mm a') : 'N/A'}}
+        </p>
+        <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+            <strong style="font-size: 13px;">Gatepass Number</strong> :
+            {{dispatchDetail.gatepass_number ? (dispatchDetail.gatepass_number) : 'N/A'}}
+        </p>
+        <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+            <strong style="font-size: 13px;">Delivery Person</strong> :
+            {{dispatchDetail.driver_name ? (dispatchDetail.driver_name | titlecase) : 'N/A'}}
+        </p>
+        <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+            <strong style="font-size: 13px;">Mobile No.</strong> :
+            {{dispatchDetail.mobile ? dispatchDetail.mobile : 'N/A'}}
+        </p>
+        <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+            <strong style="font-size: 13px;">Vehicle Number</strong> :
+            {{dispatchDetail.vehicle_number ? dispatchDetail.vehicle_number : 'N/A'}}
+        </p>
+        <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+            <strong style="font-size: 13px;">Transportation Mode</strong> :
+            {{dispatchDetail.transportation_mode ? dispatchDetail.transportation_mode : 'N/A'}}
+        </p>
+        
+        <table style=" width: 100%; table-layout: fixed; border-collapse: collapse;">
+            <tr>
+                <td style="font-size: 13px; padding:8px; text-align:right; font-weight: 600; border-bottom: 1px solid #000; width: 100px;">
+                    Date Created
+                </td>
+                <td style="font-size: 13px; padding:8px; font-weight: 600; border-bottom: 1px solid #000;">
+                    Company Name
+                </td>
+                <td  style="font-size: 13px; padding:8px; font-weight: 600; border-bottom: 1px solid #000; width: 140px;">
+                    Order Number
+                </td>
+                <td  style="font-size: 13px; padding:8px; font-weight: 600; border-bottom: 1px solid #000; width: 120px; text-align:center">
+                    Total QTY.
+                </td>
+            </tr>
+            <tr *ngFor="let row of linkedOrders; let i = index;">
+                <td style="padding:8px; text-align:right;">{{row.order_date ? (row.order_date | date : 'dd MMM yyyy') : 'N/A'}}</td>
+                <td style="padding:8px;">{{row.customer_name ? (row.customer_name | titlecase) : '---'}}</td>
+                <td style="padding:8px;">{{row.order_no ? (row.order_no) : '---'}}</td>
+                <td style="padding:8px; text-align:center">{{row.totalScannedQuantity ? row.totalScannedQuantity: '---'}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

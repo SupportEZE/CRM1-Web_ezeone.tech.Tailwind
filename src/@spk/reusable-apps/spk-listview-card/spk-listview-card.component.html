@@ -1,0 +1,30 @@
+
+<div class="box {{card.cardClass}} ">
+    <div class="box-body">
+        <div class="flex {{card.customClass}}">
+            <div class="{{card.customClass1}}">
+                @if(card.titleClass){
+                    <span class="text-textmuted {{card.titleClass}}">{{card.title}}</span>
+                }
+                <h4 class="font-medium mb-0">{{card.value}}</h4>
+            </div>
+            @if(showIcon){
+                <div class="leading-none">
+                    @if(card.icon){
+                        <span class="avatar avatar-md avatar-rounded bg-{{card.bg}}">
+                            <i class="{{card.icon}} text-xl"></i>
+                        </span>
+                    }@else{
+                        <span class="{{card.svgClass}}">
+                            <div [innerHTML]="sanitizeIcon(card.svg)"></div>
+                        </span>
+                    }
+                </div>
+            }
+        </div>
+        @if(showIncORDecBy){
+            <div class="text-textmuted dark:text-textmuted/50 text-[13px]">{{card.graph}} By <span class="text-{{card.color}}">{{card.percentage}}<i [class]="card.percentageIcon"></i></span></div>
+        }
+    </div>
+</div>
+

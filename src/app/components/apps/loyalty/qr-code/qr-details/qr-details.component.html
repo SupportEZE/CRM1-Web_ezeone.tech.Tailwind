@@ -1,0 +1,814 @@
+<app-page-header 
+[title]="'Loyalty'" 
+[title1]="['Qr Code']"
+[activeitem]="'QR Code Details'" 
+[buttonText]="'Print QR'"
+[icon]="'qr_code'" 
+[btnShow]="true" 
+[buttonValue]="'Print QR'"
+[btnShow1]="false" 
+(buttonClick)="printLabel()"
+[showSelectOption]="orgData?.org?.wms"
+[optionArray]="productMrp"
+[filterForm]="filterForm"
+(onSingleSelectChange)="onSingleSelectChange($event)"
+></app-page-header>
+
+<div class="grid grid-cols-12 gap-x-3">
+    <div class="xl:col-span-12 col-span-12">
+        <!-- SkLoading Start -->
+        <app-showcode-card *ngIf="skLoading">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xl:col-span-3 col-span-12 mb-4"  *ngFor="let card of [].constructor(10)">
+                    <app-skeleton></app-skeleton>
+                </div>
+            </div>
+        </app-showcode-card>
+        <!-- SkLoading End  -->
+        
+        
+        <app-showcode-card *ngIf="!skLoading" [title]="'Basic Detail'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true">
+            <ul class="ti-list-group list-group-flush border-0">
+                <li>
+                    <div class="flex items-center gap-5 flex-wrap">
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay" >
+                                    {{couponDetail.created_at ? (couponDetail.created_at | date : 'd MMM yyyy, hh:mm a') : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Date Created</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay" >
+                                    {{couponDetail.created_name ? (couponDetail.created_name |  titlecase) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Created By</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay" >
+                                    {{couponDetail.qrcode_type ? (couponDetail.qrcode_type.replaceAll('_',' ') | titlecase) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50 font-medium">QR Type</span>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="flex items-center me-2 flex-wrap" *ngIf="couponDetail.qrcode_type === 'point_category'">
+                            <div>
+                                <span class="block font-medium text-primay" >
+                                    {{couponDetail.product_data ? (couponDetail.product_data.point_category_name) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Point Category</span>
+                            </div>
+                        </div>
+                        
+                        
+                        
+                        <ng-container *ngIf="couponDetail.qrcode_type !== 'point_category'">
+                            
+                            <div class="flex items-center me-2 flex-wrap" >
+                                <div>
+                                    <span class="block font-medium text-primay" >
+                                        {{couponDetail.product_data ? (couponDetail.product_data.category_name) : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50 font-medium">Category</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap" >
+                                <div>
+                                    <span class="block font-medium text-primay" >
+                                        {{couponDetail.product_data ? (couponDetail.product_data.product_name) : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50 font-medium">Product Name</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center me-2 flex-wrap" >
+                                <div>
+                                    <span class="block font-medium text-primay" >
+                                        {{couponDetail.product_data ? (couponDetail.product_data.product_code) : '---'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50 font-medium">Product Code</span>
+                                </div>
+                            </div>
+                        </ng-container>
+                        
+                        
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay" >
+                                    {{couponDetail.qrcode_qty ? (couponDetail.qrcode_qty) : '0'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Total No. Qr Code</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center me-2 flex-wrap" *ngIf="couponDetail.batch_no">
+                            <div>
+                                <span class="block font-medium text-primay">
+                                    {{couponDetail.batch_no ? (couponDetail.batch_no) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Batch No.</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center me-2 flex-wrap" *ngIf="couponDetail.paper_size">
+                            <div>
+                                <span class="block font-medium text-primay">
+                                    {{couponDetail.paper_size ? ((couponDetail.paper_size+ 'mm')) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Paper Size</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center me-2 flex-wrap" *ngIf="couponDetail.remark">
+                            <div>
+                                <span class="block font-medium text-primay" >
+                                    {{couponDetail.remark ? (couponDetail.remark) : '---'}}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Remark</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 items-center me-2 flex-wrap">
+                            <div>
+                                <div class="flex gap-2">
+                                    <span [ngClass]="couponDetail.is_printed ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'" 
+                                    class=" text-[11px] badge">{{couponDetail.is_printed ? 'Print' : 'Not Print'}}</span>
+                                    <app-toggle [class]="'ti-switch-custom'" [checked]="couponDetail.is_printed" 
+                                    (checkedChange)="printStatus($event, id)"></app-toggle>
+                                </div>
+                                <span class="block text-textmuted dark:text-textmuted/50 font-medium">Print Status</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 items-center me-2 flex-wrap">
+                            <div>
+                                <div class="flex gap-2">
+                                    <span [ngClass]="couponDetail.status === 'Active' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'" 
+                                    class=" text-[11px] badge">{{couponDetail.status}}</span>
+                                    <app-toggle [class]="'ti-switch-custom'" [checked]="couponDetail.status === 'Active' ? true: false" 
+                                    (checkedChange)="onToggleChange($event, id, couponDetail.status)"></app-toggle>
+                                </div>
+                                <span class="block text-textmuted dark:text-textmuted/50 font-medium">Scanning Status</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </app-showcode-card>
+        
+        
+        
+        <ng-container *ngIf="couponDetail.qrcode_type !== 'box'">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xl:col-span-4 col-span-12" *ngFor="let row of coupon; let i = index">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex-auto qr-code-block">
+                                    <div>
+                                        <p *ngIf="couponDetail.qrcode_type === 'point_category'" class="text-[.6875rem] font-medium">
+                                            {{couponDetail.product_data ? (couponDetail.product_data.point_category_name) : '---'}}
+                                        </p>
+                                        <ng-container *ngIf="couponDetail.qrcode_type !== 'point_category'">
+                                            <p class="text-[.6875rem] font-medium">{{couponDetail.product_data ? (couponDetail.product_data.category_name) : '---'}}</p>
+                                            <p class="text-[.6875rem] font-medium">{{couponDetail.product_data ? (couponDetail.product_data.product_name) : '---'}}</p>
+                                            <p class="text-[.6875rem] font-medium">{{couponDetail.product_data ? (couponDetail.product_data.product_code) : '---'}}</p>
+                                        </ng-container>
+                                    </div>
+                                    <div>
+                                        <p class="block font-medium text-primay">{{row.qr_item_code ? row.qr_item_code : '---'}}</p>
+                                        <span class="text-textmuted dark:text-textmuted/50 font-medium">QR Number</span>  
+                                    </div>
+                                </div> 
+                                <div>
+                                    <qrcode
+                                    [qrdata]="row.qr_item_code"
+                                    [allowEmptyString]="true"
+                                    [ariaLabel]="'QR Code image with the following content...'"
+                                    [cssClass]="'center'"
+                                    [colorDark]="'#000000ff'"
+                                    [colorLight]="'#ffffffff'"
+                                    [elementType]="'canvas'"
+                                    [errorCorrectionLevel]="'M'"
+                                    [imageHeight]="25"
+                                    [imageWidth]="25"
+                                    [margin]="4"
+                                    [scale]="1"
+                                    [title]="'QR Number ' + row.qr_item_code"
+                                    [width]="115"
+                                    ></qrcode>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        
+        
+        <ng-container *ngIf="couponDetail.qrcode_type === 'box'">
+            <div class="grid grid-cols-12 gap-x-6" *ngFor="let row of coupon; let boxIndex = index">
+                <div class="xl:col-span-4 col-span-12" >
+                    <div class="box border-4 border-black/50">
+                        <div class="box-body">
+                            <div class="flex items-center  justify-between gap-3">
+                                <div class="flex-auto qr-code-block">
+                                    <div>
+                                        <p class="text-[.6875rem] font-medium">{{couponDetail.product_data ? (couponDetail.product_data.category_name) : '---'}}</p>
+                                        <p class="text-[.6875rem] font-medium">{{couponDetail.product_data ? (couponDetail.product_data.product_name) : '---'}}</p>
+                                        <p class="text-[.6875rem] font-medium">{{couponDetail.product_data ? (couponDetail.product_data.product_code) : '---'}}</p>
+                                    </div>
+                                    <div>
+                                        <p class="block font-medium text-primay">{{row.qr_box_code ? row.qr_box_code : '---'}}</p>
+                                        <span class="text-textmuted dark:text-textmuted/50 font-medium">QR Number</span>  
+                                    </div>
+                                </div> 
+                                <div>
+                                    <qrcode
+                                    [qrdata]="row.qr_box_code"
+                                    [allowEmptyString]="true"
+                                    [ariaLabel]="'QR Code image with the following content...'"
+                                    [cssClass]="'center'"
+                                    [colorDark]="'#000000ff'"
+                                    [colorLight]="'#ffffffff'"
+                                    [elementType]="'canvas'"
+                                    [errorCorrectionLevel]="'M'"
+                                    [imageHeight]="25"
+                                    [imageWidth]="25"
+                                    [margin]="4"
+                                    [scale]="1"
+                                    [title]="'QR Number ' + row.qr_box_code"
+                                    [width]="115"
+                                    ></qrcode>
+                                    <p class="dark:text-textmuted/50 font-bold text-[.6875rem] text-center text-textmuted">BOX-{{ getExcelColumnName(boxIndex) }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12" *ngFor="let subRow of row.items; let itemIndex = index">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="flex items-center  justify-between gap-3">
+                                <div class="flex-auto qr-code-block">
+                                    <div>
+                                        <p class="text-[.6875rem] font-medium">{{couponDetail.product_data ? (couponDetail.product_data.category_name) : '---'}}</p>
+                                        <p class="text-[.6875rem] font-medium">{{couponDetail.product_data ? (couponDetail.product_data.product_name) : '---'}}</p>
+                                        <p class="text-[.6875rem] font-medium">{{couponDetail.product_data ? (couponDetail.product_data.product_code) : '---'}}</p>
+                                    </div>
+                                    <div>
+                                        <p class="block font-medium text-primay">{{subRow.qr_item_code ? subRow.qr_item_code : '---'}}</p>
+                                        <span class="text-textmuted dark:text-textmuted/50 font-medium">QR Number</span>  
+                                    </div>
+                                </div> 
+                                <div>
+                                    <qrcode
+                                    [qrdata]="subRow.qr_item_code"
+                                    [allowEmptyString]="true"
+                                    [ariaLabel]="'QR Code image with the following content...'"
+                                    [cssClass]="'center'"
+                                    [colorDark]="'#000000ff'"
+                                    [colorLight]="'#ffffffff'"
+                                    [elementType]="'canvas'"
+                                    [errorCorrectionLevel]="'M'"
+                                    [imageHeight]="25"
+                                    [imageWidth]="25"
+                                    [margin]="4"
+                                    [scale]="1"
+                                    [title]="'QR Number ' + subRow.qr_item_code"
+                                    [width]="115"
+                                    ></qrcode>
+                                    <p class="dark:text-textmuted/50 font-bold text-[.6875rem] text-center text-textmuted">BOX-{{ getExcelColumnName(boxIndex) }} (ITEM-{{ getExcelColumnName(itemIndex) }})</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
+
+
+<!-- 85*43mm -->
+
+<div  id="QR_CODE_LABEL" #qrCodeLabel>
+    <div hidden>
+        <!-- 86*43mm start -->
+        
+        <ng-container *ngIf="couponDetail.qrcode_type === 'box' && couponDetail.paper_size === '85*43'">
+            <ng-container *ngFor="let row of coupon; let boxIndex = index">
+                <div  style="width: 321.25984252px; height:162.51968504px; position: relative;">
+                    <div style="width:284.259843px; float:left;">
+                        <div style="display: flex;justify-content: space-between;">
+                            <div style="width: 100%;">
+                                <div style="width: 100%;display: flex;">
+                                    <div style="width:85px; min-width:85px"></div>
+                                    <div style="width: 100%;text-align: center;">
+                                        <h2 style="margin: 6px 0px 0px 0px; font-size:16px; line-height:20px; font-weight: 700; text-transform: uppercase;">{{ couponDetail?.product_data?.sub_category | truncateChars:10 }}</h2>
+                                        <p style="margin: 0px; font-size:9px; line-height:12px; font-weight: 600;">{{ couponDetail?.product_data?.form_data?.small_product_code || '---' }}</p>
+                                    </div>
+                                </div>
+                                <div style="border: 1px solid #000; text-align: center; font-size: 16px;font-weight: 600; width: calc(100% - 15px); margin: 3px auto 3px 8px; text-transform: uppercase; position: relative; z-index: 2;">
+                                    {{ couponDetail?.product_data?.product_name | truncateChars:18 }}
+                                </div>
+                            </div>
+                            <div>
+                                <qrcode [qrdata]="row.qr_box_code" 
+                                [allowEmptyString]="true"  
+                                [cssClass]="'center'" 
+                                [colorDark]="'#000000ff'" 
+                                [colorLight]="'#ffffffff'" 
+                                [elementType]="'img'" 
+                                [errorCorrectionLevel]="'M'" 
+                                [imageHeight]="25" 
+                                [imageWidth]="25" 
+                                [margin]="4" 
+                                [scale]="1"
+                                [width]="65"></qrcode>
+                                <p style="font-size: 6.5px;font-weight: 800 !important; text-align: center; margin:-4px 0px 0px;">{{row.qr_box_code ? row.qr_box_code : ''}}</p>
+                            </div>
+                        </div>
+                        <div style="margin-top:0px; padding-left:8px; position: relative; z-index: 1;">
+                            <table style="width: 100%;table-layout: fixed;box-sizing: border-box; border-collapse: collapse;">
+                                <tr>
+                                    <td style="width: 45px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center; font-weight:500;"> MFG.Dt</td>
+                                    <td  style="width: 65px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:500;">
+                                        Batch No.
+                                    </td>
+                                    <td style="width: 35px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:500;">QTY IN <br> PC(s)</td>
+                                    <td
+                                    style="width: 50px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; font-weight: 600;">SIZE</td>
+                                    <td style=" line-height:10px; border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:500;">MRP PER UNIT <span style="font-size: 6px; text-align:center; display:block">Inclusive of all Taxes</span></td>
+                                </tr>
+                                <tr>
+                                    <td  style="width: 70px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900; font-size: 11px;">{{couponDetail.created_at ? (couponDetail.created_at | date: 'MMM yy') :'---'}}</span>
+                                    </td>
+                                    <td style="width: 50px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900;  font-size: 10px;">{{couponDetail.batch_no}}</span>
+                                    </td>
+                                    <td style="width: 50px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900;  font-size: 11px;">1</span>U
+                                    </td>
+                                    <td style="width: 60px; line-height:10px;  border: 1px solid #000; font-size: 12px; text-align:center; font-weight: 600; padding: 3px 0px;">
+                                        <span style="font-weight:900;  font-size: 11px; white-space: nowrap;">
+                                            {{couponDetail?.product_data?.form_data?.size | truncateChars:7}}
+                                        </span>
+                                    </td>
+                                    <td style=" line-height:10px; border: 1px solid #000; font-weight: 900; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900; font-size: 11px;">Rs. {{mrp}}/.</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="width: 36.99999952px;float: left;display: flex;padding-top: 10px; position: relative;left: -10px;">
+                        <div style="writing-mode: vertical-rl; margin: 0px; position: relative;font-size: 9px;line-height: 14px;font-weight: 700;">
+                            SCAN QR
+                        </div>
+                        <h2 style="writing-mode: vertical-rl; margin: 0px; font-size: 10px;font-weight: 900 !important;">
+                            BOX-{{ getExcelColumnName(boxIndex) }}
+                        </h2>
+                    </div>
+                </div>
+                
+                <div  style="width: 321.25984252px; height:162.51968504px; position: relative;" *ngFor="let subRow of row.items; let itemIndex = index">
+                    <div style="width:284.259843px; float:left;">
+                        <div style="display: flex;justify-content: space-between;">
+                            <div style="width: 100%;">
+                                <div style="width: 100%;display: flex;">
+                                    <div style="width:85px; min-width:85px"></div>
+                                    <div style="width: 100%;text-align: center;">
+                                        <h2 style="margin: 6px 0px 0px 0px; font-size:16px; line-height:20px; font-weight: 700; text-transform: uppercase;">{{ couponDetail?.product_data?.sub_category | truncateChars:10 }}</h2>
+                                        <p style="margin: 0px; font-size:9px; line-height:12px; font-weight: 600;">{{ couponDetail?.product_data?.form_data?.small_product_code || '---' }}</p>
+                                    </div>
+                                </div>
+                                <div style="border: 1px solid #000; text-align: center; font-size: 16px;font-weight: 600; width: calc(100% - 15px); margin: 3px auto 3px 8px; text-transform: uppercase; position: relative; z-index: 2;">
+                                    {{ couponDetail?.product_data?.product_name | truncateChars:18 }}
+                                </div>
+                            </div>
+                            <div>
+                                <qrcode [qrdata]="subRow.qr_item_code" 
+                                [allowEmptyString]="true"  
+                                [cssClass]="'center'" 
+                                [colorDark]="'#000000ff'" 
+                                [colorLight]="'#ffffffff'" 
+                                [elementType]="'img'" 
+                                [errorCorrectionLevel]="'M'" 
+                                [imageHeight]="25" 
+                                [imageWidth]="25" 
+                                [margin]="4" 
+                                [scale]="1"
+                                [width]="65"></qrcode>
+                                <p style="font-size: 6.5px;font-weight: 800 !important; text-align: center; margin:-4px 0px 0px;">{{subRow.qr_item_code ? subRow.qr_item_code : ''}}</p>
+                            </div>
+                        </div>
+                        <div style="margin-top:0px; padding-left:8px; position: relative; z-index: 1;">
+                            <table style="width: 100%;table-layout: fixed;box-sizing: border-box; border-collapse: collapse;">
+                                <tr>
+                                    <td style="width: 45px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center; font-weight:500;"> MFG.Dt</td>
+                                    <td  style="width: 65px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:500;">
+                                        Batch No.
+                                    </td>
+                                    <td style="width: 35px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:500;">QTY IN <br> PC(s)</td>
+                                    <td
+                                    style="width: 50px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; font-weight: 600;">SIZE</td>
+                                    <td style=" line-height:10px; border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:500;">MRP PER UNIT <span style="font-size: 6px; text-align:center; display:block">Inclusive of all Taxes</span></td>
+                                </tr>
+                                <tr>
+                                    <td  style="width: 70px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900; font-size: 11px;">{{couponDetail.created_at ? (couponDetail.created_at | date: 'MMM yy') :'---'}}</span>
+                                    </td>
+                                    <td style="width: 50px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900;  font-size: 10px;">{{couponDetail.batch_no}}</span>
+                                    </td>
+                                    <td style="width: 50px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900;  font-size: 11px;">1</span>U
+                                    </td>
+                                    <td style="width: 60px; line-height:10px;  border: 1px solid #000; font-size: 12px; text-align:center; font-weight: 600; padding: 3px 0px;">
+                                        <span style="font-weight:900;  font-size: 11px; white-space: nowrap;">
+                                            {{couponDetail?.product_data?.form_data?.size | truncateChars:7}}
+                                        </span>
+                                    </td>
+                                    <td style=" line-height:10px; border: 1px solid #000; font-weight: 900; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900; font-size: 11px;">Rs. {{mrp}}/.</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="width: 36.99999952px;float: left;display: flex;padding-top: 10px; position: relative;left: -10px;">
+                        <div style="writing-mode: vertical-rl; margin: 0px; position: relative;font-size: 9px;line-height: 14px;font-weight: 700;">
+                            SCAN QR
+                        </div>
+                        <h2 style="writing-mode: vertical-rl; margin: 0px; font-size: 10px;font-weight: 900 !important;">
+                            BOX-{{ getExcelColumnName(boxIndex) }} (ITEM-{{ getExcelColumnName(itemIndex) }})
+                        </h2>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+        
+        <ng-container *ngIf="couponDetail.qrcode_type === 'item' && couponDetail.paper_size === '85*43'">
+            <ng-container *ngFor="let row of coupon; let boxIndex = index">
+                <div  style="width: 321.25984252px; height:162.51968504px; position: relative;">
+                    <div style="width:284.259843px; float:left;">
+                        <div style="display: flex;justify-content: space-between;">
+                            <div style="width: 100%;">
+                                <div style="width: 100%;display: flex;">
+                                    <div style="width:85px; min-width:85px"></div>
+                                    <div style="width: 100%;text-align: center;">
+                                        <h2 style="margin: 6px 0px 0px 0px; font-size:16px; line-height:20px; font-weight: 700; text-transform: uppercase;">{{ couponDetail?.product_data?.sub_category | truncateChars:10 }}</h2>
+                                        <p style="margin: 0px; font-size:9px; line-height:12px; font-weight: 600;">{{ couponDetail?.product_data?.form_data?.small_product_code || '---' }}</p>
+                                    </div>
+                                </div>
+                                <div style="border: 1px solid #000; text-align: center; font-size: 16px;font-weight: 600; width: calc(100% - 15px); margin: 3px auto 3px 8px; text-transform: uppercase; position: relative; z-index: 2;">
+                                    {{ couponDetail?.product_data?.product_name | truncateChars:18 }}
+                                </div>
+                            </div>
+                            <div>
+                                <qrcode [qrdata]="row.qr_item_code" 
+                                [allowEmptyString]="true"  
+                                [cssClass]="'center'" 
+                                [colorDark]="'#000000ff'" 
+                                [colorLight]="'#ffffffff'" 
+                                [elementType]="'img'" 
+                                [errorCorrectionLevel]="'M'" 
+                                [imageHeight]="25" 
+                                [imageWidth]="25" 
+                                [margin]="4" 
+                                [scale]="1"
+                                [width]="65"></qrcode>
+                                <p style="font-size: 6.5px;font-weight: 800 !important; text-align: center; margin:-4px 0px 0px;">{{row.qr_item_code ? row.qr_item_code : ''}}</p>
+                            </div>
+                        </div>
+                        <div style="margin-top:0px; padding-left:8px; position: relative; z-index: 1;">
+                            <table style="width: 100%;table-layout: fixed;box-sizing: border-box; border-collapse: collapse;">
+                                <tr>
+                                    <td style="width: 45px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center; font-weight:500;"> MFG.Dt</td>
+                                    <td  style="width: 65px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:500;">
+                                        Batch No.
+                                    </td>
+                                    <td style="width: 35px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:500;">QTY IN <br> PC(s)</td>
+                                    <td
+                                    style="width: 50px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; font-weight: 600;">SIZE</td>
+                                    <td style=" line-height:10px; border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:500;">MRP PER UNIT <span style="font-size: 6px; text-align:center; display:block">Inclusive of all Taxes</span></td>
+                                </tr>
+                                <tr>
+                                    <td  style="width: 70px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900; font-size: 11px;">{{couponDetail.created_at ? (couponDetail.created_at | date: 'MMM yy') :'---'}}</span>
+                                    </td>
+                                    <td style="width: 50px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900;  font-size: 10px;">{{couponDetail.batch_no}}</span>
+                                    </td>
+                                    <td style="width: 50px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900;  font-size: 11px;">1</span>U
+                                    </td>
+                                    <td style="width: 60px; line-height:10px;  border: 1px solid #000; font-size: 12px; text-align:center; font-weight: 600; padding: 3px 0px;">
+                                        <span style="font-weight:900;  font-size: 11px; white-space: nowrap;">
+                                            {{couponDetail?.product_data?.form_data?.size | truncateChars:7}}
+                                        </span>
+                                    </td>
+                                    <td style=" line-height:10px; border: 1px solid #000; font-weight: 900; text-align:center; padding: 3px 0px;">
+                                        <span style="font-weight:900; font-size: 11px;">Rs. {{mrp}}/.</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="width: 36.99999952px;float: left;display: flex;padding-top: 10px; position: relative;left: -10px;">
+                        <div style="writing-mode: vertical-rl; margin: 0px; position: relative;font-size: 9px;line-height: 14px;font-weight: 700;">
+                            SCAN QR
+                        </div>
+                    </div>
+                </div>
+                
+            </ng-container>
+        </ng-container>
+        <!-- 86*43mm start -->
+        
+        
+        <!-- 43*125mm start -->
+        
+        <div  style="width:86mm; display: grid; grid-template-columns: 1fr 1fr;" *ngIf="couponDetail.qrcode_type === 'box' && couponDetail.paper_size === '43*125'">
+            <ng-container *ngFor="let row of coupon; let boxIndex = index">
+                <div style="width: 43mm; min-width: 43mm; height: 125mm;" >
+                    <div style="width:43mm; height: 39mm; display: flex; align-items: center; justify-content: space-evenly;">
+                        <img src="https://gravitybath.basiq360.com/api/uploads/product_image/637e0b5a25ff4.jpg" style="height: 130px; transform: rotate(90deg);">
+                        <h2 style="writing-mode: vertical-rl; font-size: 10px; font-weight:900 !important;">BOX-{{ getExcelColumnName(boxIndex) }}</h2>
+                    </div>
+                    <div style="writing-mode: vertical-rl; position: relative; right:-42px; height: 74mm;">
+                        <div style="display: flex; height:100%;">
+                            <div style="width: 70px;height: 59mm;">
+                                <div style="width: 100%;display: flex;">
+                                    <div style="width:20px; min-width:20px; height:90px">
+                                    </div>
+                                    <div style="width: 40px;text-align: center;">
+                                        <h2 style="margin:0px; font-size:19px; line-height:18px; font-weight: 700; text-transform: uppercase; white-space: nowrap">
+                                            {{ couponDetail?.product_data?.sub_category | truncateChars:10 }}
+                                        </h2>
+                                        <p style="margin: 0px; font-size:10px; line-height:10px; font-weight: 700;">{{ couponDetail?.product_data?.form_data?.small_product_code || '---' }}</p>
+                                    </div>
+                                </div>
+                                <div style="border: 1px solid #000;text-align: center;text-transform: uppercase;white-space: nowrap;font-size: 15px;font-weight: 600;height: 55mm;margin: 0px;position: relative;right: -30px; padding: 0px 2px;">
+                                    {{ couponDetail?.product_data?.product_name | truncateChars:21 }}
+                                </div>
+                            </div>
+                            <div style="margin-top: -10px; position: relative;">
+                                <qrcode [qrdata]="row.qr_box_code" 
+                                [allowEmptyString]="true"  
+                                [cssClass]="'center'" 
+                                [colorDark]="'#000000ff'" 
+                                [colorLight]="'#ffffffff'" 
+                                [elementType]="'img'" 
+                                [errorCorrectionLevel]="'M'" 
+                                [imageHeight]="25" 
+                                [imageWidth]="25" 
+                                [margin]="4" 
+                                [scale]="1"
+                                [width]="55"></qrcode>
+                                <p style="writing-mode: vertical-rl;font-size: 5.5px;font-weight: 600 !important;margin-right: -5px; margin-bottom: -10px;">{{row.qr_box_code ? row.qr_box_code : ''}}</p>
+                                <div style="writing-mode: horizontal-tb;margin: 0px;font-size: 9px;line-height: 14px;font-weight: 700; right: 6px; top: 48px; position: absolute;">
+                                    SCAN QR
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div style="position: relative;z-index: 1;height: 72mm;">
+                            <table style="height: 100%;table-layout: fixed;box-sizing: border-box;border-collapse: collapse; position: relative; right: -2px;">
+                                <tbody>
+                                    <tr>
+                                        <td style="height: 45px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center; font-weight:600;"> MFG.Dt</td>
+                                        <td
+                                        style="height: 60px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:600;"> Batch No.</td>
+                                        <td style="height: 35px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:600;">
+                                            QTY IN <br> PC(s)
+                                        </td>
+                                        <td style="height: 40px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; font-weight: 700;">SIZE</td>
+                                        <td style="line-height:10px; border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:600;">MRP PER UNIT 
+                                            <span style="font-size: 7px; line-height: 6px; text-align:center; display:block">Inclusive of all Taxes
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 70px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 4px; white-space: nowrap;">
+                                            <span style="font-weight:900; font-size: 11px;">
+                                                {{couponDetail.created_at ? (couponDetail.created_at | date : 'MMM yy') :'---'}}
+                                            </span>
+                                        </td>
+                                        <td style="height: 50px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 4px;">
+                                            <span style="font-weight:900;  font-size: 10px;">{{couponDetail.batch_no}}</span>
+                                        </td>
+                                        <td style="height: 50px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 4px;">
+                                            <span style="font-weight:900;  font-size: 11px;">1</span>U
+                                        </td>
+                                        <td style="height: 60px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 11px; text-align:center; font-weight: 600; padding: 3px 4px; white-space: nowrap;">
+                                            <span style="font-weight:900;  font-size: 11px;">
+                                                {{couponDetail?.product_data?.form_data?.size | truncateChars:5}}
+                                            </span>
+                                        </td>
+                                        <td style="width:15px; line-height:10px; border: 1px solid #000; font-weight: 900; text-align:center; padding: 3px 4px;">
+                                            <span style="font-weight:900; font-size: 12px;">Rs. {{mrp}}/.</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="width: 43mm; height: 12mm;"></div>
+                </div>  
+                
+                <div style="width: 43mm; min-width: 43mm; height: 125mm;" *ngFor="let subRow of row.items; let itemIndex = index">
+                    <div style="width:43mm; height: 39mm; display: flex; align-items: center; justify-content: space-evenly;">
+                        <img src="https://gravitybath.basiq360.com/api/uploads/product_image/637e0b5a25ff4.jpg" style="height: 130px; transform: rotate(90deg);">
+                        <h2 style="writing-mode: vertical-rl; font-size: 10px; font-weight:900 !important;">BOX-{{ getExcelColumnName(boxIndex) }} (ITEM-{{ getExcelColumnName(itemIndex) }})</h2>
+                    </div>
+                    <div style="writing-mode: vertical-rl; position: relative; right:-42px; height: 74mm;">
+                        <div style="display: flex; height:100%;">
+                            <div style="width: 70px;height: 59mm;">
+                                <div style="width: 100%;display: flex;">
+                                    <div style="width:20px; min-width:20px; height:90px">
+                                    </div>
+                                    <div style="width: 40px;text-align: center;">
+                                        <h2 style="margin:0px; font-size:19px; line-height:18px; font-weight: 700; text-transform: uppercase; white-space: nowrap">
+                                            {{ couponDetail?.product_data?.sub_category | truncateChars:10 }}
+                                        </h2>
+                                        <p style="margin: 0px; font-size:10px; line-height:10px; font-weight: 700;">{{ couponDetail?.product_data?.form_data?.small_product_code || '---' }}</p>
+                                    </div>
+                                </div>
+                                <div style="border: 1px solid #000;text-align: center;text-transform: uppercase;white-space: nowrap;font-size: 15px;font-weight: 600;height: 55mm;margin: 0px;position: relative;right: -30px; padding: 0px 2px;">
+                                    {{ couponDetail?.product_data?.product_name | truncateChars:21 }}
+                                </div>
+                            </div>
+                            <div  style="margin-top: -10px; position: relative;">
+                                <qrcode [qrdata]="subRow.qr_item_code ? subRow.qr_item_code : ''" 
+                                [allowEmptyString]="true"  
+                                [cssClass]="'center'" 
+                                [colorDark]="'#000000ff'" 
+                                [colorLight]="'#ffffffff'" 
+                                [elementType]="'img'" 
+                                [errorCorrectionLevel]="'M'" 
+                                [imageHeight]="25" 
+                                [imageWidth]="25" 
+                                [margin]="4" 
+                                [scale]="1"
+                                [width]="55"></qrcode>
+                                <p style="writing-mode: vertical-rl;font-size: 5.5px;font-weight: 600 !important;margin-right: -5px; margin-bottom: -10px;">{{subRow.qr_item_code ? subRow.qr_item_code : ''}}</p>
+                                <div style="writing-mode: horizontal-tb;margin: 0px;font-size: 9px;line-height: 14px;font-weight: 700; right: 6px; top: 48px; position: absolute;">
+                                    SCAN QR
+                                </div>
+                            </div>
+                        </div>
+                        <div style="position: relative;z-index: 1;height: 72mm;">
+                            <table style="height: 100%;table-layout: fixed;box-sizing: border-box;border-collapse: collapse; position: relative; right: -2px;">
+                                <tbody>
+                                    <tr>
+                                        <td style="height: 45px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center; font-weight:600;"> MFG.Dt</td>
+                                        <td
+                                        style="height: 60px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:600;"> Batch No.</td>
+                                        <td style="height: 35px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:600;">
+                                            QTY IN <br> PC(s)
+                                        </td>
+                                        <td style="height: 40px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; font-weight: 700;">SIZE</td>
+                                        <td style="line-height:10px; border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:600;">MRP PER UNIT 
+                                            <span style="font-size: 7px; line-height: 6px; text-align:center; display:block">Inclusive of all Taxes
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 70px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 4px; white-space: nowrap;">
+                                            <span style="font-weight:900; font-size: 11px;">
+                                                {{couponDetail.created_at ? (couponDetail.created_at | date : 'MMM yy') :'---'}}
+                                            </span>
+                                        </td>
+                                        <td style="height: 50px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 4px;">
+                                            <span style="font-weight:900;  font-size: 10px;">{{couponDetail.batch_no}}</span>
+                                        </td>
+                                        <td style="height: 50px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 4px;">
+                                            <span style="font-weight:900;  font-size: 11px;">1</span>U
+                                        </td>
+                                        <td style="height: 60px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 11px; text-align:center; font-weight: 600; padding: 3px 4px; white-space: nowrap;">
+                                            <span style="font-weight:900;  font-size: 11px;">
+                                                {{couponDetail?.product_data?.form_data?.size | truncateChars:5}}
+                                            </span>
+                                        </td>
+                                        <td style="width:15px; line-height:10px; border: 1px solid #000; font-weight: 900; text-align:center; padding: 3px 4px;">
+                                            <span style="font-weight:900; font-size: 12px;">Rs. {{mrp}}/.</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+                    <div style="width: 43mm; height: 12mm;"></div>
+                </div>
+            </ng-container>
+            
+        </div>
+        
+        <div  style="width:86mm; display: grid; grid-template-columns: 1fr 1fr;" *ngIf="couponDetail.qrcode_type === 'item' && couponDetail.paper_size === '43*125'">
+            <ng-container *ngFor="let row of coupon; let boxIndex = index">
+                <div style="width: 43mm; min-width: 43mm; height: 125mm;" >
+                    <div style="width:43mm; height: 39mm; display: flex; align-items: center; justify-content: space-evenly;">
+                        <img src="https://gravitybath.basiq360.com/api/uploads/product_image/637e0b5a25ff4.jpg" style="height: 130px; transform: rotate(90deg);">
+                    </div>
+                    <div style="writing-mode: vertical-rl; position: relative; right:-42px; height: 74mm;">
+                        <div style="display: flex; height:100%;">
+                            <div style="width: 70px;height: 59mm;">
+                                <div style="width: 100%;display: flex;">
+                                    <div style="width:20px; min-width:20px; height:90px">
+                                    </div>
+                                    <div style="width: 40px;text-align: center;">
+                                        <h2 style="margin:0px; font-size:19px; line-height:18px; font-weight: 700; text-transform: uppercase; white-space: nowrap">
+                                            {{ couponDetail?.product_data?.product_name | truncateChars:10 }}
+                                        </h2>
+                                        <p style="margin: 0px; font-size:10px; line-height:10px; font-weight: 700;">{{ couponDetail?.product_data?.form_data?.small_product_code || '---' }}</p>
+                                    </div>
+                                </div>
+                                <div style="border: 1px solid #000;text-align: center;text-transform: uppercase;white-space: nowrap;font-size: 15px;font-weight: 600;height: 55mm;margin: 0px;position: relative;right: -30px; padding: 0px 2px;">
+                                    {{ couponDetail?.product_data?.product_name | truncateChars:21 }}
+                                </div>
+                            </div>
+                            <div style="margin-top: -10px; position: relative;">
+                                <qrcode [qrdata]="row.qr_item_code ? row.qr_item_code : ''" 
+                                [allowEmptyString]="true"  
+                                [cssClass]="'center'" 
+                                [colorDark]="'#000000ff'" 
+                                [colorLight]="'#ffffffff'" 
+                                [elementType]="'img'" 
+                                [errorCorrectionLevel]="'M'" 
+                                [imageHeight]="25" 
+                                [imageWidth]="25" 
+                                [margin]="4" 
+                                [scale]="1"
+                                [width]="55"></qrcode>
+                                <p style="writing-mode: vertical-rl;font-size: 5.5px;font-weight: 600 !important;margin-right: -5px; margin-bottom: -10px;">{{row.qr_item_code ? row.qr_item_code : ''}}</p>
+
+                                <div style="writing-mode: horizontal-tb;margin: 0px;font-size: 9px;line-height: 14px;font-weight: 700; right: 6px; top: 48px; position: absolute;">
+                                    SCAN QR
+                                </div>
+                            </div>
+                        </div>
+                        <div style="position: relative;z-index: 1;height: 72mm;">
+                            <table style="height: 100%;table-layout: fixed;box-sizing: border-box;border-collapse: collapse; position: relative; right: -2px;">
+                                <tbody>
+                                    <tr>
+                                        <td
+                                        style="height: 45px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center; font-weight:600;">
+                                        MFG.Dt</td>
+                                        <td
+                                        style="height: 60px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:600;">
+                                        Batch No.</td>
+                                        <td
+                                        style="height: 35px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:600;">
+                                        QTY IN <br> PC(s)</td>
+                                        <td
+                                        style="height: 40px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; font-weight: 700;">
+                                        SIZE</td>
+                                        <td style="line-height:10px; border: 1px solid #000; font-size: 8px; text-align:center;  font-weight:600;"> MRP PER UNIT <span style="font-size: 7px; line-height: 6px; text-align:center; display:block">Inclusive of all Taxes</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 70px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 4px; white-space: nowrap;">
+                                            <span style="font-weight:900; font-size: 11px;">{{couponDetail.created_at ? (couponDetail.created_at |
+                                                date : 'MMM yy') :'---'}}</span>
+                                            </td>
+                                            <td style="height: 50px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 4px;">
+                                                <span style="font-weight:900;  font-size: 10px;">{{couponDetail.batch_no}}</span>
+                                            </td>
+                                            <td style="height: 50px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 10px; text-align:center; padding: 3px 4px;">
+                                                <span style="font-weight:900;  font-size: 11px;">1</span>U
+                                            </td>
+                                            <td style="height: 60px; width:10px; line-height:10px;  border: 1px solid #000; font-size: 11px; text-align:center; font-weight: 600; padding: 3px 4px; white-space: nowrap;">
+                                                <span style="font-weight:900;  font-size: 11px;">
+                                                    {{couponDetail?.product_data?.form_data?.size | truncateChars:5}}
+                                                </span>
+                                            </td>
+                                            <td
+                                            style="width:15px; line-height:10px; border: 1px solid #000; font-weight: 900; text-align:center; padding: 3px 4px;">
+                                            <span style="font-weight:900; font-size: 12px;">Rs. {{mrp}}/.</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="width: 43mm; height: 12mm;"></div>
+                </div>  
+            </ng-container>
+        </div>
+        <!-- 43*125mm end -->
+    </div>
+</div>
+<!-- 85*43mm -->

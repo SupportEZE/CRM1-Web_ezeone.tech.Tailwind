@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "spk-blog-category-card.component.scss"
+    ],
+    "names": [],
+    "file": "spk-blog-category-card.component.css"
+}

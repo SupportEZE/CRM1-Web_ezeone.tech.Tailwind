@@ -1,0 +1,31 @@
+<div class="mat-dialoge">
+    
+    <app-modal-header [title]="'Update ' + modalData.activeTab + ' (' + (modalData.activeTab === 'Product' ? modalData.formData.product_name : modalData.formData.category_name) + ')'" [closeBtn]="true" (close)="close()"></app-modal-header>
+    
+    <div class="box" *ngIf="skLoading">
+        <div class="p-4">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xl:col-span-3 col-span-12 mb-4" *ngFor="let card of [].constructor(4)">
+                    <app-skeleton></app-skeleton>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <ng-container *ngIf="!skLoading">
+        <form [formGroup]="addForm" (ngSubmit)="update()">
+            <mat-dialog-content class="mat-typography">
+                <div class="grid grid-cols-12 gap-x-6">
+                    <div class="xxl:col-span-4 xl:col-span-6 lg:col-span-6 md:col-span-12 col-span-12" *ngFor="let key of objectKeys(formDataFields)">
+                        <spk-input [label]="getLabel(key)" [formControlName]="key" class="remove-default-class" type="number"></spk-input>
+                    </div>
+                </div>
+            </mat-dialog-content>
+            
+            <mat-dialog-actions align="end">
+                <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+                <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="pageType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+            </mat-dialog-actions>
+        </form>
+    </ng-container>
+</div>

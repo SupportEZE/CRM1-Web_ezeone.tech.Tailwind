@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "switcher.component.scss"
+    ],
+    "names": [],
+    "file": "switcher.component.css"
+}

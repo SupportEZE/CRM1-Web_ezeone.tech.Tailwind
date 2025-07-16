@@ -1,0 +1,720 @@
+<app-page-header [title]="'Customer'" [title1]="['Customer Detail']" [activeitem]="'Customer Detail'" [buttonText]="'Filter'"  [icon]="'filter_list'"  [btnShow]="false" [buttonValue]="''"  [buttonText1]="activeTab === 'Basic Detail' ? 'Edit Customer' : activeTab === 'Wallet History' ? 'Point Transfer' : '' "  [icon1]="activeTab === 'Basic Detail' ? 'edit' : 'swap_horiz'"  [btnShow1]="(activeTab === 'Basic Detail' || activeTab === 'Wallet History') && accessRight?.modifyRight"  [buttonValue1]="''" (buttonClick1)="editPage($event)"></app-page-header>
+
+<!-- Start:: row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="profile-banner-img">
+            <nav class="nav nav-tabs tab-style-6 mb-3 p-2 flex bg-white dark:bg-bodybg" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                <app-listing-tab
+                [tabs]="tabs"
+                [activeTab]="activeTab"
+                [countShow]="false"
+                (tabChange)="onTabChange($event.tab)">
+            </app-listing-tab>
+        </nav>
+        <!-- <img src="./assets/images/media/media-3.jpg" class="card-img-top" alt="..."> -->
+    </div>
+    <ng-container *ngIf="activeTab === 'Basic Detail'">
+        <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="!skLoading">
+            <div class="xl:col-span-3 col-span-12">
+                <app-showcode-card>
+                    <div class="box-body pb-0 border-dashed border-defaultborder dark:border-defaultborder/10">
+                        <div class="ribbon ribbon-top-left" [ngClass]="{ 'ribbon-success': basicDetail.profile_status === 'Approved', 'ribbon-warning': basicDetail.profile_status === 'Pending','ribbon-danger': basicDetail.profile_status === 'Reject', 'ribbon-primary': basicDetail.profile_status === 'Reject' }" *ngIf="customerLoginType === 'Influencer'">
+                            <span>{{basicDetail.profile_status ?  (basicDetail.profile_status): ''}}</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="relative size-30" matTooltip="{{'Profile completed ' + profileNumber + '%'}}">
+                                <svg class="size-full" width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" >
+                                    <!-- Background Circle -->
+                                    <circle cx="18" cy="18" r="16" fill="none"
+                                    class="stroke-current text-gray-200 dark:text-white/10"
+                                    stroke-width="2.5"></circle>
+                                    <!-- Progress Circle inside a group with rotation -->
+                                    <g class="origin-center -rotate-90 transform">
+                                        <circle cx="18" cy="18" r="16" fill="none"
+                                        class="stroke-current"
+                                        [ngClass]="profileNumber <= 50 ? 'text-danger' : (profileNumber > 50 && profileNumber <= 75) ? 'text-warning':  profileNumber > 75 ? 'text-success': ''"
+                                        stroke-width="2.5"
+                                        stroke-dasharray="100" stroke-dashoffset="100" [attr.stroke-dashoffset]="100 - profileNumber"></circle>
+                                    </g>
+                                </svg>
+                                
+                                <span class="avatar avatar-xxl avatar-rounded  mb-3" >
+                                    <img 
+                                    [src]="profilePic?.signed_url" 
+                                    alt="Profile Image" 
+                                    (error)="onError($event)" 
+                                    [class.object-contain]="isFallback"
+                                    (click)="profilePic?.signed_url && comanFuncation.zoom(profilePic?._id, 'customer/get-doc')">
+                                </span>
+                            </div>
+                            <h5 class="font-semibold mt-1">{{basicDetail.customer_name ? basicDetail.customer_name : ''}}</h5>
+                            <span class="block font-medium text-textmuted dark:text-textmuted/50 mb-2">{{basicDetail.customer_type_name ? basicDetail.customer_type_name : ''}}</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <ng-container *ngIf="showForLoginTypes([LOGIN_TYPES.SALES_VENDOR], { exclude: true })">
+                        <div class="block box-title font-medium text-[15px] text-primarytint1color">Socail Engagement</div>
+                        <div class="flex mb-0 flex-wrap gap-4  border-b border-dashed border-defaultborder dark:border-defaultborder/10 pt-2 pb-2"> 
+                            <div class="flex wp100 items-center gap-4 flex-wrap" *ngFor="let row of socialLinks">
+                                <div>
+                                    <span class="avatar avatar-sm bg-{{comanFuncation.getSocialStyles(row.title).bg }}/10 !text-{{comanFuncation.getSocialStyles(row.title).bg }}">
+                                        <i class="ri-{{comanFuncation.getSocialStyles(row.title).icon }}-fill text-[1rem] text-{{comanFuncation.getSocialStyles(row.title).textcolor }}"></i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="block font-medium text-primay">{{row.title}}</span>
+                                </div>
+                                
+                                <div class="left-auto">
+                                    <span><i class="ri-verified-badge-fill text-success text-[1rem]"></i></span>
+                                </div>
+                            </div>
+                            
+                            <div  *ngIf="socialLinks.length === 0 && !skLoading">
+                                <p>No Data Available</p>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="flex mb-0 flex-wrap gap-4  pt-2 pb-2 border-b border-dashed border-defaultborder dark:border-defaultborder/10" *ngIf="showForLoginTypes([LOGIN_TYPES.INFLUENCER, LOGIN_TYPES.SALES_VENDOR], { exclude: true })">
+                        <div class="flex items-center gap-4 me-2 flex-wrap" *ngFor="let row of statsCounts">
+                            <div>
+                                <span class="avatar avatar-md {{row.class}}"><i class="{{row.icon}} text-[1rem]"></i></span>
+                            </div>
+                            <div>
+                                <span class="block font-medium text-primay">{{row.value}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50 font-medium">{{row.label}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+                
+                <ng-container *ngIf="customerLoginType === 'Influencer'">
+                    <app-showcode-card [title]="'Kyc Status'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('kyc', kyc)" [classbody]="'pt-0'" [iconName]="'ri-pencil-line'">
+                        <ul class="ti-list-group list-group-flush border-0">
+                            <li>
+                                <div class="gap-5">
+                                    <div class="items-center border-b-2 mb-2">
+                                        <div>
+                                            
+                                            <span class="block" [ngClass]="{ 'text-success': kyc.kyc_status === 'Verified', 'text-warning': kyc.kyc_status === 'Pending','text-danger': kyc.kyc_status === 'Reject', 'text-primary': kyc.kyc_status === 'Suspect' }">
+                                                {{kyc.kyc_status ?  (kyc.kyc_status): ''}}
+                                            </span>
+                                            <span class="text-textmuted dark:text-textmuted/50 font-medium">Status</span>
+                                        </div>
+                                    </div>
+                                    <div class="items-center border-b-2 mb-2" *ngIf="kyc.kyc_status == 'Reject' ||  kyc.kyc_status == 'Suspect'">
+                                        <div>
+                                            <span  class="block font-medium text-primay" >
+                                                {{kyc.status_remark ?  (kyc.status_remark): ''}}
+                                            </span>
+                                            <span class="text-textmuted dark:text-textmuted/50 font-medium">Reason</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="items-center border-b-2 mb-2">
+                                        <div>
+                                            <span class="block font-medium text-primay" >{{kyc.created_name ? (kyc.created_name):'---'}}</span>
+                                            <span class="text-textmuted dark:text-textmuted/50 font-medium">Last status changed by</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="items-center border-b-2">
+                                        <div>
+                                            <span class="block font-medium text-primay">{{kyc.updated_at ? (kyc.updated_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</span>
+                                            <span class="text-textmuted dark:text-textmuted/50 font-medium" >Last status changed On</span>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div  *ngIf="socialLinks.length === 0 && !skLoading">
+                                    <p>No Data Available</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </app-showcode-card>
+                </ng-container>
+            </div>
+            
+            <div class="xl:col-span-9 col-span-12">
+                
+                <div class="grid grid-cols-12 sm:gap-x-6">
+                    <div class="xl:col-span-12 col-span-12">
+                        <app-showcode-card [title]="'Basic Detail'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true">
+                            <ul class="ti-list-group list-group-flush border-0">
+                                <li>
+                                    <div class="flex items-center gap-5 flex-wrap">
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Date Created</span>
+                                                <span class="block font-medium text-primay" >{{basicDetail.created_at ? (basicDetail.created_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</span>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Customer Type</span>
+                                                <span  class="block font-medium text-primay">{{basicDetail.customer_type_name ? basicDetail.customer_type_name : '---'}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span  class="text-textmuted dark:text-textmuted/50 font-medium">Name</span>
+                                                <span class="block font-medium text-primay">{{basicDetail.customer_name ? basicDetail.customer_name : '---'}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap" *ngIf="basicDetail?.customer_code">
+                                            <div>
+                                                <span  class="text-textmuted dark:text-textmuted/50 font-medium">Customer Code</span>
+                                                <span class="block font-medium text-primay">{{basicDetail.customer_code ? basicDetail.customer_code : '---'}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Mobile No.</span>
+                                                <span class="block font-medium text-primay">{{basicDetail.mobile ? basicDetail.mobile : '---'}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Alternative Mobile No.</span>
+                                                <span  class="block font-medium text-primay">{{basicDetail.alt_mobile_no ? basicDetail.alt_mobile_no : '---'}}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Address</span>
+                                                <span class="block font-medium text-primay" >{{basicDetail.address ? (basicDetail.address + ',') : ''}} {{basicDetail.city ? (basicDetail.city + ',') : ''}} {{basicDetail.district ? (basicDetail.district + ',') : ''}} {{basicDetail.state ? (basicDetail.state + ',') : ''}} {{basicDetail.pincode ? (basicDetail.pincode + '') : ''}} {{basicDetail.country ? (basicDetail.country + '') : ''}}</span>
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center gap-2">
+                                            <div>
+                                                <span class="text-xs text-textmuted dark:text-textmuted/50">First App Login</span>
+                                                <span class="block font-medium text-primay">{{basicDetail?.first_app_login ? (basicDetail?.first_app_login | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div>
+                                                <span class="text-xs text-textmuted dark:text-textmuted/50">Last App Login</span>
+                                                <span class="block font-medium text-primay">{{basicDetail?.latest_app_login ? (basicDetail?.latest_app_login | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex gap-2 items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block text-textmuted dark:text-textmuted/50 font-medium">App Login Status</span>
+                                                <div class="flex gap-2">
+                                                    <span [ngClass]="basicDetail?.status === 'Active' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'" 
+                                                    class=" text-[11px] badge">{{basicDetail?.status}}</span>
+                                                    <app-toggle [class]="'ti-switch-custom'" [checked]="basicDetail?.status === 'Active' ? true: false" 
+                                                    (checkedChange)="onToggleChange($event, basicDetail?._id, basicDetail?.status)" *ngIf="accessRight?.approveRight"></app-toggle>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center me-2 gap-3 flex-wrap">
+                                            <div>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Status</span>
+                                                <span class="block font-medium" [ngClass]="{ 'text-success': (basicDetail.profile_status === 'Approved' || basicDetail.profile_status === 'Active'), 'text-warning': basicDetail.profile_status === 'Pending','text-danger': (basicDetail.profile_status === 'Reject' || basicDetail.profile_status === 'Inactive'), 'text-primary': basicDetail.profile_status === 'Suspect' }">
+                                                    {{basicDetail.profile_status ?  (basicDetail.profile_status): ''}}
+                                                </span>
+                                            </div>
+                                            
+                                            <app-icon-button [icon]="'ri-pencil-line'" [buttonClass]="'btn-wave ti-btn ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" matTooltip="Change Status" (click)="openModal('profile_status')" *ngIf="customerLoginType == 'Influencer' && accessRight?.approveRight"></app-icon-button>
+                                        </div>
+                                        
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="text-textmuted dark:text-textmuted/50">Device Information</span>
+                                                <span class="block font-medium text-primay">{{basicDetail?.device_info?.brand ? (basicDetail?.device_info?.brand + ',') : ''}} {{basicDetail?.device_info?.model ? (basicDetail?.device_info?.model + ',') : ''}} {{basicDetail?.device_info?.system_name ? (basicDetail?.device_info?.system_name + ',') : ''}} {{basicDetail?.device_info?.system_version ? (basicDetail?.device_info?.system_version + ',') : ''}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="text-textmuted dark:text-textmuted/50">Updated At</span>
+                                                <span class="block font-medium text-primay">{{basicDetail?.updated_at ? (basicDetail?.updated_at | date:'d MMM yyyy') : '--'}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="text-textmuted dark:text-textmuted/50">Updated By</span>
+                                                <span class="block font-medium text-primay">{{basicDetail?.updated_name || '--'}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="dropdown-divider mb-3 mt-3"></div>
+                                    
+                                    <div class="flex gap-6 mb-1 flex-wrap">
+                                        <div class="flex items-center gap-2" *ngFor="let key of formattedKeysFormData | keyvalue">
+                                            <div>
+                                                <span class="text-xs text-textmuted dark:text-textmuted/50">{{ key.key }}</span>
+                                                <span class="block font-medium">
+                                                    <ng-container *ngIf="key.key.toLowerCase().includes('date') || key.key.toLowerCase().endsWith('_at'); else normalValue">
+                                                        {{ key.value | date: 'd MMM yyyy' }}
+                                                    </ng-container>
+                                                    <ng-template #normalValue>
+                                                        {{ key.value || '--' }}
+                                                    </ng-template>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li class="border-b-2 pb-2 pt-2" *ngIf="assignUsers.length === 0">
+                                    <p>No Data Available</p>
+                                </li>
+                            </ul>
+                        </app-showcode-card>
+                    </div>
+                    
+                    <div class="xl:col-span-6 col-span-12" >
+                        <app-showcode-card [title]="'Assigned Sales User'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true" [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('assign_user')" [classbody]="'pt-0'" [iconName]="assignUsers.length > 0 ?'ri-pencil-line' : 'ri-add-line'" *ngIf="showForLoginTypes([LOGIN_TYPES.INFLUENCER, LOGIN_TYPES.PRIMARY, LOGIN_TYPES.SUB_PRIMARY, LOGIN_TYPES.SECONDARY])">
+                            <ul class="ti-list-group list-group-flush border-0">
+                                <li class="border-b-2 pb-2 pt-2" *ngFor="let row of assignUsers">
+                                    <div class="flex items-center">
+                                        <span class="avatar avatar-sm bg-primarytint1color">
+                                            {{nameUtils.getInitials(row.user_name)}} 
+                                        </span>
+                                        <div class="ms-2 font-semibold">
+                                            {{row.user_name ? (row.user_name | titlecase) : '---'}} {{row.user_code ? ( '('+row.user_code+')') : ''}}
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li class="border-b-2 pb-2 pt-2" *ngIf="assignUsers.length === 0">
+                                    <p>No Data Available</p>
+                                </li>
+                            </ul>
+                        </app-showcode-card>
+                        
+                        <app-showcode-card [title]="'Other Information'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('other_information')" [classbody]="'pt-0'" [iconName]=" !otherDetail ? 'ri-add-line' : 'ri-pencil-line'" *ngIf="showForLoginTypes([LOGIN_TYPES.INFLUENCER, LOGIN_TYPES.SALES_VENDOR], { exclude: true })">
+                            <ul class="ti-list-group list-group-flush border-0">
+                                <li>
+                                    <div class="flex items-center gap-5 flex-wrap">
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span  class="block font-medium text-primay">
+                                                    {{otherDetail.gst_number ? otherDetail.gst_number : '---'}}
+                                                </span>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium">
+                                                    GST Number
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span  class="block font-medium text-primay">
+                                                    {{otherDetail.credit_limit ? ( '₹' + otherDetail.credit_limit) : '---'}}
+                                                </span>
+                                                <span  class="text-textmuted dark:text-textmuted/50 font-medium">
+                                                    Credit Limit
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span  class="block font-medium text-primay">
+                                                    {{otherDetail.credit_days ? otherDetail.credit_days : '---'}}
+                                                </span>
+                                                <span  class="text-textmuted dark:text-textmuted/50 font-medium">
+                                                    Credit Day's
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span  class="block font-medium text-primay">
+                                                    {{otherDetail.beat_code ? otherDetail.beat_code : '---'}}
+                                                </span>
+                                                <span  class="text-textmuted dark:text-textmuted/50 font-medium">
+                                                    Beat Code
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span  class="block font-medium text-primay">
+                                                    {{otherDetail.beat_code_desc ? otherDetail.beat_code_desc : '---'}}
+                                                </span>
+                                                <span  class="text-textmuted dark:text-textmuted/50 font-medium">
+                                                    Beat Code Description
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </li>
+                            </ul>
+                            
+                            <div  *ngIf="!otherDetail">
+                                <p>No Data Available</p>
+                            </div>
+                        </app-showcode-card>
+                        
+                        
+                        <app-showcode-card [title]="'Shipping Address'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('shipping_address')" [classbody]="'pt-0'" [iconName]="shippingAddress.length > 0 ?'ri-pencil-line' : 'ri-add-line'"  *ngIf="showForLoginTypes([LOGIN_TYPES.INFLUENCER, LOGIN_TYPES.SALES_VENDOR], { exclude: true })">
+                            <div class="flex justify-between items-center gap-5  border-b-2 mb-2 pb-1" *ngFor="let row of shippingAddress; let i = index">
+                                <div class="items-center" >
+                                    <div>
+                                        <span class="block font-medium text-primay">Address {{i+1}}</span>
+                                        <span  class="text-textmuted dark:text-textmuted/50 font-medium">
+                                            {{row.shipping_address ? (row.shipping_address + ',') : ''}} {{row.shipping_city ? (row.shipping_city + ',') : ''}} {{row.shipping_district ? (row.shipping_district + ',') : ''}} {{row.shipping_state ? (row.shipping_state + ',') : ''}} {{row.shipping_pincode ? (row.shipping_pincode + '') : ''}}
+                                        </span>
+                                        
+                                        
+                                    </div>
+                                </div>
+                                <div class="w80 mw80"> 
+                                    <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="openModal('shipping_address', row)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+                                    <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="delete(row._id, 'customer/delete-shipping-address', 'Shipping Address')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                                </div>
+                            </div>
+                            
+                            <div  *ngIf="shippingAddress.length ===0">
+                                <p>No Data Available</p>
+                            </div>
+                        </app-showcode-card>
+                        
+                        <app-showcode-card [title]="'Assigned Distributor'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('assign_distibutor')" [classbody]="'pt-0'"  [iconName]="assignDistributor.length > 0 ?'ri-pencil-line' : 'ri-add-line'" *ngIf="showForLoginTypes([LOGIN_TYPES.SECONDARY])">
+                            <ul class="ti-list-group list-group-flush border-0">
+                                <li class="border-b-2 pb-2 pt-2" *ngFor="let row of assignDistributor">
+                                    <div class="flex items-center">
+                                        <span class="avatar avatar-sm bg-primarytint1color">
+                                            {{nameUtils.getInitials(row.parent_customer_name)}} 
+                                        </span>
+                                        <div class="ms-2 font-semibold">
+                                            {{row.parent_customer_name ? (row.parent_customer_name | titlecase) : '---'}} {{row.user_code ? ( '('+row.user_code+')') : ''}}
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li class="border-b-2 pb-2 pt-2" *ngIf="assignDistributor.length === 0">
+                                    <p>No Data Available</p>
+                                </li>
+                            </ul>
+                        </app-showcode-card>
+                        
+                        <app-showcode-card [title]="'Contact Person'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('contact_person')" [classbody]="'pt-0'" [iconName]="'ri-add-line'" *ngIf="showForLoginTypes([LOGIN_TYPES.INFLUENCER], { exclude: true })">
+                            <ul class="ti-list-group list-group-flush !border-0">
+                                <li *ngFor="let row of contactPerson;">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <div class="flex-auto">
+                                            <div>
+                                                <span class="font-medium"> {{row.contact_person_name ? (row.contact_person_name | titlecase) : '---'}}  ({{row.designation ? (row.designation | titlecase) : '---'}})</span>
+                                                <p class="text-textmuted dark:text-textmuted/50 font-medium"> {{row.contact_person_mobile ? (row.contact_person_mobile) : '---'}}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="w80 mw80"> 
+                                            <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="openModal('contact_person', row)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+                                            <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="delete(row._id, 'customer/delete-contact-person-info', 'Contact Person')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li *ngIf="contactPerson.length === 0">
+                                    <p>No Data Available</p>
+                                </li>
+                            </ul>
+                        </app-showcode-card>
+                        
+                        
+                        <app-showcode-card [title]="'Marka'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true" [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('marka')" [classbody]="'pt-0'" [iconName]="'ri-add-line'" *ngIf="showForLoginTypes([LOGIN_TYPES.PRIMARY, LOGIN_TYPES.SUB_PRIMARY])">
+                            <ul class="ti-list-group list-group-flush !border-0">
+                                <li *ngFor="let row of marka;">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <div class="flex-auto">
+                                            <div>
+                                                <span class="font-medium"> {{row.marka ? (row.marka ) :
+                                                    '---'}}</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="w80 mw80">
+                                                <app-icon-button [icon]="'ri-edit-line'"
+                                                [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'"
+                                                (clickEvent)="openModal('marka', row)" *ngIf="accessRight?.modifyRight">
+                                            </app-icon-button>
+                                            <app-icon-button [icon]="'ri-delete-bin-line'"
+                                            [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-danger waves-effect waves-light'"
+                                            (clickEvent)="delete(row._id, 'customer/delete-marka', 'Marka')"
+                                            *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li *ngIf="marka.length === 0">
+                                    <p>No Data Available</p>
+                                </li>
+                            </ul>
+                        </app-showcode-card>
+                        
+                        <app-showcode-card [title]="'Bank Details'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('bank')" [classbody]="'pt-0'" [iconName]="'ri-add-line'" [iconName]="!bankDetail ?'ri-add-line' : 'ri-pencil-line'" *ngIf="showForLoginTypes([LOGIN_TYPES.INFLUENCER])">
+                            <ul class="ti-list-group list-group-flush border-0">
+                                <li>
+                                    <div class="flex items-center gap-5 flex-wrap">
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{bankDetail.beneficiary_name ? (bankDetail.beneficiary_name | titlecase) : '---'}}</span>
+                                                
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium" >Beneficiary Name</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay" >{{bankDetail.bank_name ? (bankDetail.bank_name | titlecase) : '---'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Bank Name</span>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span  class="block font-medium text-primay">{{bankDetail.account_no ? bankDetail.account_no : '---'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium">Account Number</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{bankDetail.ifsc_code ? bankDetail.ifsc_code : '---'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium" >IFSC Code</span>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{bankDetail.branch_name ? bankDetail.branch_name : '---'}}</span>
+                                                <span  class="text-textmuted dark:text-textmuted/50 font-medium">Branch Name</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center me-2 flex-wrap">
+                                            <div>
+                                                <span class="block font-medium text-primay">{{bankDetail.upi_id ? bankDetail.upi_id : '---'}}</span>
+                                                <span class="text-textmuted dark:text-textmuted/50 font-medium" >UPI ID</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </app-showcode-card>
+                        
+                        <app-showcode-card [title]="'Document Detail'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="document.length=== 0 ?  true : false" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('document')" [classbody]="'pt-0'" [iconName]="'ri-add-line'" *ngIf="showForLoginTypes([LOGIN_TYPES.INFLUENCER])">
+                            <div class="grid grid-cols-12 sm:gap-x-3 gap-3">
+                                <div class="xl:col-span-2 lg:col-span-4 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of document">
+                                    <spk-product-card [apiPath]="'customer/get-doc'" [imageData]="image" [delBtn]="false" [editBtn]="accessRight?.modifyRight" [heading]="true" [subHeading]="true" (edit)="openModal('document_image', image)" (editNumber)="openModal('document_number', image)" (delete)="delete(image._id, 'customer/-file', 'delete')">
+                                    </spk-product-card>
+                                </div>
+                            </div>
+                            <ul class="ti-list-group list-group-flush border-0" *ngIf="document.length === 0">
+                                <li>
+                                    <p>No Data Available</p>
+                                </li>
+                            </ul>
+                            <!-- <ul class="ti-list-group list-group-flush border-0">
+                                <li>
+                                    <div class="grid-three items-center gap-5 flex-wrap">
+                                        <div class="img-thubmnail" *ngFor="let row of document">
+                                            <img src="{{row.srcUrl}}">
+                                            <div class="flex items-center justify-between thubmnail-footer">
+                                                <div>
+                                                    <span class="block font-medium text-primay mt-1">{{row.doc_label}}</span>
+                                                    <span class="text-textmuted dark:text-textmuted/50 font-medium">{{row.doc_number}}</span>
+                                                </div>
+                                                <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="openModal('document_update', row)" *ngIf="accessRight?.modifyRight"> </app-icon-button>
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                    
+                                    <app-data-not-found *ngIf="document.length === 0"></app-data-not-found>
+                                </li>
+                            </ul> -->
+                        </app-showcode-card>
+                    </div>
+                    
+                    <div class="xl:col-span-6 col-span-12">
+                        
+                        <div>
+                            <app-logs [logList]="logList" [closeBtn]="false"></app-logs>
+                        </div>
+                        
+                        
+                        <app-showcode-card [title]="'Point Location'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'" [iconName]="'ri-add-line'" (action)="openModal('point_location')" *ngIf="showForLoginTypes([LOGIN_TYPES.INFLUENCER, LOGIN_TYPES.SALES_VENDOR], { exclude: true })">
+                            <ul class="ti-list-group list-group-flush border-0">
+                                <li class="border-b-2 pb-2 pt-2">
+                                    <app-spk-maps [data]="otherDetail"></app-spk-maps>
+                                    <!-- <google-map id="google-map" height="300px" width="100%" [center]="center" [zoom]="zoom" /> -->
+                                    
+                                    <!-- (mapClick)="moveMap($event)" (mapMousemove)="move($event)" -->
+                                </li>
+                            </ul>
+                        </app-showcode-card>
+                        
+                        <app-showcode-card [title]="'Shop Gallery'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="accessRight?.modifyRight" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="openModal('shop_gallery')" [classbody]="'pt-0'" [iconName]="'ri-add-line'" *ngIf="showForLoginTypes([LOGIN_TYPES.INFLUENCER, LOGIN_TYPES.SALES_VENDOR], { exclude: true })">
+                            
+                            <div class="grid grid-cols-12 gap-x-4 gap-4" *ngIf="shopGallery.length > 0">
+                                <div class="xxl:col-span-4 lg:col-span-4 xl:col-span-4 sm:col-span-6 col-span-6" *ngFor="let image of shopGallery">
+                                    <spk-product-card [apiPath]="'customer/get-doc'" [imageData]="image" [editBtn]="false" [heading]="false" [subHeading]="false" (delete)="delete(image._id, 'customer/delete-file', 'delete')">
+                                    </spk-product-card>
+                                </div>
+                            </div>
+                            <app-data-not-found *ngIf="shopGallery.length === 0"></app-data-not-found>
+                        </app-showcode-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sk Loading Start -->
+        <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+            <div class="xl:col-span-3 col-span-12">
+                <app-showcode-card>
+                    <div class="box-body border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                        <div class="text-center">
+                            <span class="avatar avatar-xxl avatar-rounded  mb-3">
+                                <app-skeleton [class]="'w90 h90 radius'"></app-skeleton>
+                            </span>
+                            <h5 class="font-semibold mb-1">
+                                <app-skeleton [class]="'wp100 h10 mt15'"></app-skeleton>
+                            </h5>
+                            <span class="block font-medium text-textmuted dark:text-textmuted/50 mb-2">
+                                <app-skeleton [class]="'wp70 h10 mt10'"></app-skeleton>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex mb-0 flex-wrap gap-4 p-4 border-b border-dashed border-defaultborder dark:border-defaultborder/10"> 
+                        <div class="flex items-center gap-4 me-2 flex-wrap" *ngFor="let row of [].constructor(3)">
+                            <div>
+                                <span class="avatar avatar-md">
+                                    <app-skeleton [class]="'w50 h50'"></app-skeleton>
+                                </span>
+                            </div>
+                            <div>
+                                <div>                                
+                                    <app-skeleton [class]="'w150 h10'"></app-skeleton>
+                                </div>
+                                <div>
+                                    <app-skeleton [class]="'w100 h10 mt5'"></app-skeleton>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+            <div class="xl:col-span-9 col-span-12">
+                
+                <div class="grid grid-cols-12 sm:gap-x-6">
+                    <div class="xl:col-span-12 col-span-12">
+                        <app-showcode-card [titleView]="false"  [view]="false">
+                            <div >
+                                <!-- *ngIf="skLoading" -->
+                                <div class="flex gap-2 mb-1 flex-wrap">
+                                    <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                        <app-skeleton [class]="'w180'"></app-skeleton>
+                                    </div>
+                                </div>
+                            </div>
+                        </app-showcode-card>
+                        
+                    </div>
+                    <div class="xl:col-span-6 col-span-12">
+                        <app-showcode-card [titleView]="false"  [view]="false">
+                            <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                        </app-showcode-card>
+                    </div>
+                    
+                    <div class="xl:col-span-6 col-span-12">
+                        <app-showcode-card [titleView]="false"  [view]="false">
+                            <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                        </app-showcode-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Sk Loading End -->
+    </ng-container>
+    
+    <ng-container *ngIf="activeTab === 'Wallet History'">
+        <app-wallet-history  [basicDetail]="basicDetail"></app-wallet-history>
+    </ng-container>
+    
+    
+    <ng-container *ngIf="activeTab === 'Dashboard'">
+        <app-primary-dashboard></app-primary-dashboard>
+    </ng-container>
+    
+    <ng-container *ngIf="activeTab === 'Influencer Dashboard'">
+        <app-influencer-dashboard></app-influencer-dashboard>
+    </ng-container>
+    
+    
+    <ng-container *ngIf="activeTab === 'Discount'">
+        <app-customer-discount-list [basicDetail]="basicDetail"></app-customer-discount-list>
+    </ng-container>
+    
+    
+    <ng-container *ngIf="activeTab === 'Orders'">
+        <nav class="nav nav-tabs tab-style-6 mb-3 p-0 flex bg-white dark:bg-bodybg" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+            <button type="button" class="nav-link text-start rounded-md active" [ngClass]="{'active': subActiveTab ==='Primary Orders'}" (click)="subActiveTab = 'Primary Orders';"  *ngIf="(LOGIN_TYPES.PRIMARY === customerLoginTypeId) || (customerLoginTypeId === LOGIN_TYPES.SUB_PRIMARY)">
+                Primary Orders
+            </button>
+            
+            <button type="button" class="nav-link text-start rounded-md active" [ngClass]="{'active': subActiveTab ==='Secondary Orders'}" (click)="subActiveTab = 'Secondary Orders';" *ngIf="(LOGIN_TYPES.SECONDARY === customerLoginTypeId || LOGIN_TYPES.PRIMARY === 5)">
+                Secondary Orders
+            </button>
+        </nav>
+        <!-- Primary Order Start -->
+        <app-primary-order-list [pageHeader]="false" [_id]="basicDetail._id" *ngIf="subActiveTab ==='Primary Orders'">
+        </app-primary-order-list>
+        
+        
+        <p *ngIf="subActiveTab ==='Secondary Orders'">
+            Coming Soon
+        </p>
+        <!-- Primary Order End -->
+        
+    </ng-container> 
+    
+    
+    <ng-container *ngIf="activeTab === 'Account'">
+        <nav class="nav nav-tabs tab-style-6 mb-3 p-0 flex bg-white dark:bg-bodybg" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+            <button type="button" class="nav-link text-start rounded-md active" [ngClass]="{'active': subActiveTab ==='Invoice'}"(click)="subActiveTab = 'Invoice';">
+                Invoice
+            </button>
+            <button type="button" class="nav-link text-start rounded-md active" [ngClass]="{'active': subActiveTab ==='Payment'}" (click)="subActiveTab = 'Payment';">
+                Payment/CN
+            </button>
+            
+        </nav>
+        <!-- Payment Start -->
+        <app-payment-list [pageHeader]="false" [_id]="basicDetail._id" *ngIf="subActiveTab ==='Payment'">
+        </app-payment-list>
+        <!-- Payment End -->
+        
+        <!-- Invoice Start -->
+        <app-invoice-list [pageHeader]="false" [_id]="basicDetail._id" *ngIf="subActiveTab ==='Invoice'">
+        </app-invoice-list>
+        <!-- Invoice End -->
+    </ng-container>
+    
+    
+    <ng-container *ngIf="activeTab === 'Checkin'">
+        <app-service-checkin-list [pageHeader]="false" [_id]="basicDetail._id"></app-service-checkin-list>
+    </ng-container>
+    
+    <ng-container *ngIf="activeTab === 'Stock'">
+        <app-stock [basicDetail]="basicDetail"></app-stock>
+    </ng-container>    
+</div>
+</div>
+<!-- End:: row-1 -->

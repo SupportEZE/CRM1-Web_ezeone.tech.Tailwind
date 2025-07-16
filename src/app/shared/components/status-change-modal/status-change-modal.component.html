@@ -1,0 +1,554 @@
+<!-- // -----Status Start----- // -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'enquiry' || modalData.lastPage === 'site'">
+    <app-modal-header [title]="'Change Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form #f="ngForm" (ngSubmit)="f.valid && statusChange()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="">
+                <label class="form-label mb-0">Status {{data.status}}<span class="text-red-500">*</span></label>
+                <mat-form-field  class="mat-custom-field remove-space">
+                    <mat-select placeholder="Select an option" [(ngModel)]="data.status" name="status" #status="ngModel" required>
+                        <mat-option *ngFor="let row of this.modalData.options" [value]="row.name">{{row.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="status.touched || f.submitted">
+                    <ng-container *ngIf="status.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+            
+            <div class="mt-2" *ngIf="data.status == 'Close' || data.status == 'Lost' || data.status == 'Drop' || data.status == 'Junk & Close'">
+                <label class="form-label mb-0">Reason<span class="text-red-500">*</span></label>
+                <mat-form-field class="mat-custom-field remove-space text-area-height">
+                    <textarea matInput placeholder="Type Here ..." [(ngModel)]="data.reason" name="reason" #reason="ngModel" required></textarea>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="reason.touched || f.submitted">
+                    <ng-container *ngIf="reason.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- // -----Status Start----- // -->
+
+
+<!-- Area Bonus Basic Modal Start -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'bonus-basic-detail'">
+    <app-modal-header [title]="'Update Details'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>    
+    <div *ngIf="skLoading">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xl:col-span-6 col-span-12 mb-3" *ngFor="let card of [].constructor(4)">
+                    <app-skeleton></app-skeleton>
+                </div>
+            </div>
+        </mat-dialog-content>
+    </div>
+    
+    <form #f="ngForm" (ngSubmit)="f.valid && updateBonusDetail()">
+        <mat-dialog-content class="mat-typography py-1" *ngIf="!skLoading" >
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-6 col-span-12 mb-3">
+                    <label class="form-label">Title<span class="text-red-500">*</span></label>
+                    <mat-form-field class="mat-custom-field">
+                        <input matInput [(ngModel)]="data.title" name="title" type="text" placeholder="Enter Title" required #title="ngModel">
+                        <mat-error *ngIf="title.errors?.['required'] && (title.touched || f.submitted)">
+                            Title is required.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                
+                <div class="xl:col-span-6 col-span-12 mb-3">
+                    <label class="form-label">Start Date<span class="text-red-500">*</span></label>
+                    <mat-form-field class="mat-custom-field">
+                        <input matInput [matDatepicker]="picker" [min]="today" placeholder="Start Date" [(ngModel)]="data.start_date" name="start_date" required #start_date="ngModel">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                        <mat-hint align="end" *ngIf="start_date.errors?.['required'] && (start_date.touched || f.submitted)" class="error">
+                            This field is required.
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                
+                <div class="xl:col-span-6 col-span-12 mb-3">
+                    <label class="form-label">End Date<span class="text-red-500">*</span></label>
+                    <mat-form-field class="mat-custom-field">
+                        <input matInput [matDatepicker]="picker1" [min]="today" placeholder="End Date" [(ngModel)]="data.end_date" name="end_date" required #end_date="ngModel">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                        <mat-datepicker #picker1></mat-datepicker>
+                        <mat-hint align="end" *ngIf="end_date.errors?.['required'] && (end_date.touched || f.submitted)" class="error">
+                            This field is required.
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions align="end">
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- Area Bonus Basic Modal End -->
+
+<!-- Category Bonus Points -->
+<div *ngIf="modalData.lastPage === 'bonus-point-category'">
+    <app-modal-header [title]="'Update Point Category Bonus Points'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <div *ngIf="skLoading">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xl:col-span-6 col-span-12 mb-3"
+                *ngFor="let card of [].constructor(4)">
+                <app-skeleton></app-skeleton>
+            </div>
+        </div>
+    </mat-dialog-content>
+</div>
+<table class="ti-custom-table w-full border border-gray-300 rounded-lg overflow-hidden" *ngIf="!skLoading">
+    <thead>
+        <tr class="bg-purple-100 text-black">
+            <th class="w50">S.No</th>
+            <th>Point Category</th>
+            <th class="w120">Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let row of areaBonusDetail?.product_point; let i = index" class="border-b border-gray-200">
+            <td class="w50">{{ i + 1 }}</td>
+            <td>{{ row.point_category_name }}</td>
+            <td class="w120">
+                <input type="number" 
+                class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-blue-500"
+                placeholder="Enter points"
+                [(ngModel)]="row.point_category_value" 
+                name="point_{{i}}">
+            </td>                                      
+        </tr>
+    </tbody>
+</table>
+<!-- </app-showcode-card> -->
+<mat-dialog-actions class="gap-2" align="end">
+    <app-button 
+    [buttonType]="'button'" 
+    [buttonClass]="'ti-btn ti-btn-primary m-0'" 
+    [disabled]="api.disabled" 
+    [iconClass]="'ri-save-line'" 
+    [loadingIconClass]="'ri-loader-2-fill'" 
+    (click)="saveUpdatedPoints()">
+    Save
+</app-button>
+</mat-dialog-actions>
+</div>
+<!-- Category Bonus Points-->
+
+<!-- Leave-Modal Start -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'leave-detail'">
+    <app-modal-header [title]="'Update Leave Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form #f="ngForm" (ngSubmit)="f.valid && leaveStatusChange()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="">
+                <label class="form-label mb-0">Status<span class="text-red-500">*</span></label>
+                <mat-form-field  class="mat-custom-field remove-space">
+                    <mat-select placeholder="Select an option" [(ngModel)]="data.status" name="status" #status="ngModel" required>
+                        <mat-option *ngFor="let row of leaveStatusOptions" [value]="row.name">{{row.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="status.touched || f.submitted">
+                    <ng-container *ngIf="status.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+            
+            <div class="mt-2" *ngIf="data.status == 'Rejected'">
+                <label class="form-label mb-0">Reason<span class="text-red-500">*</span></label>
+                <mat-form-field class="mat-custom-field remove-space text-area-height">
+                    <textarea matInput placeholder="Type Here ..." [(ngModel)]="data.reject_reason" name="reject_reason" #reject_reason="ngModel" required></textarea>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="reject_reason.touched || f.submitted">
+                    <ng-container *ngIf="reject_reason.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- Leave-Modal End -->
+
+
+
+<!-- // -----Quotation Status Start----- // -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'quotation-detail'">
+    <app-modal-header [title]="'Change Quotation Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form #f="ngForm" (ngSubmit)="f.valid && quotationStatusChange()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="">
+                <label class="form-label mb-0">Status {{data.status}}<span class="text-red-500">*</span></label>
+                <mat-form-field  class="mat-custom-field remove-space">
+                    <mat-select placeholder="Select an option" [(ngModel)]="data.status" name="status" #status="ngModel" required>
+                        <mat-option *ngFor="let row of quotationStatusOptions" [value]="row.name">{{row.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="status.touched || f.submitted">
+                    <ng-container *ngIf="status.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+            
+            <div class="mt-2" *ngIf="data.status == 'Reject'">
+                <label class="form-label mb-0">Reason<span class="text-red-500">*</span></label>
+                <mat-form-field class="mat-custom-field remove-space text-area-height">
+                    <textarea matInput class="form-control h60" placeholder="Type Here ..." [(ngModel)]="data.reason" name="reason" #reason="ngModel" required></textarea>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="reason.touched || f.submitted">
+                    <ng-container *ngIf="reason.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- // -----Quotation Status Start----- // -->
+
+<!-- // -----Event Status Start----- // -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'event-plan'">
+    <app-modal-header [title]="'Change Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form #f="ngForm" (ngSubmit)="f.valid && eventStatusChange()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="">
+                <label class="form-label mb-0">Status {{data.status}}<span class="text-red-500">*</span></label>
+                <mat-form-field  class="mat-custom-field remove-space">
+                    <mat-select placeholder="Select an option" [(ngModel)]="data.status" name="status" #status="ngModel" required>
+                        <mat-option *ngFor="let row of this.modalData.options" [value]="row.name">{{row.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="status.touched || f.submitted">
+                    <ng-container *ngIf="status.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+            
+            <div class="mt-2" *ngIf="data.status == 'Reject'">
+                <label class="form-label mb-0">Reason<span class="text-red-500">*</span></label>
+                <mat-form-field class="mat-custom-field remove-space text-area-height">
+                    <textarea matInput placeholder="Type Here ..." [(ngModel)]="data.reason" name="reason" #reason="ngModel" required></textarea>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="reason.touched || f.submitted">
+                    <ng-container *ngIf="reason.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- // -----Event Status End----- // -->
+
+<!-- Event Add Expense Start -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'event-expense-modal'">
+    <app-modal-header [title]="'Add Expense'" [closeBtn]="true" (close)="closeModal()"></app-modal-header>
+    <div class="box" *ngIf="skLoading">
+        <div class="p-4">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xl:col-span-3 col-span-12 mb-4" *ngFor="let card of [].constructor(10)">
+                    <app-skeleton></app-skeleton>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <form [formGroup]="eventExpenseForm" (ngSubmit)="onSubmitEventExpense()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="!skLoading">
+                
+                <div class="xl:col-span-4 col-span-12 mb-3">
+                    <spk-flatpickr 
+                    placeholder="Expense Date"
+                    label="Expense Date"
+                    [fieldReq]="true" 
+                    [min]="modalData.eventDetail.event_date"
+                    class="form-control custom-datepickr"
+                    formControlName="expense_date"></spk-flatpickr>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-ng-select formControlName="expense_type" label="Expense Type" [fieldReq]="true" [options]="expensePolicyType" (selectedChange)="onSingleSelectChange($event)"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12" *ngIf="eventExpenseForm.value.expense_type === 'Car' || eventExpenseForm.value.expense_type === 'Bike'">
+                    <spk-input formControlName="km" [label]="'KM'" [fieldReq]="true" [type]="'number'" class="remove-default-class" (valueChange)="onAmountCalculate($event);"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-input formControlName="expense_amount" [label]="'Expense Amount'" [fieldReq]="true" [type]="'number'" class="remove-default-class" (valueChange)="onValueChange($event);"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-input formControlName="description" [label]="'Description'" [fieldReq]="true" [type]="'textarea'" class="remove-default-class"></spk-input>
+                </div>
+                
+                <div class="flex justify-end mt-6">
+                    <button type="button" aria-label="button" class="ti-btn ti-btn-icon ti-btn-primary btn-wave" (click)="eventExpenseaddToList()">
+                        <i class="ri-add-line"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="xl:col-span-12 col-span-12">
+                <label class="form-label mb-0">Upload Bills/Attachment<span class="text-red-500">*</span></label>
+                <file-pond class="filepond basic-filepond" 
+                [options]="pondOptions" 
+                [files]="pondFiles" 
+                (onremovefile)="onFileRemove($event, 'image')"
+                (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+            </div>
+            
+            <div class="xl:col-span-6 col-span-12" *ngIf="expenseList.length > 0">
+                <div class="table-responsive mt-4 table-bordered-default">
+                    <spk-reusable-tables [columns]="headerColumn" tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [showCheckbox]="false">
+                        <tr *ngFor="let row of expenseList; let i = index;">
+                            <td class="w60 text-center">{{i+1}}</td>
+                            <td>{{ row.expense_date ? (row.expense_date | date:'d MMM yyyy') : '--' }}</td>
+                            <td>{{row.expense_type}}</td>
+                            <td>{{CURRENCY_SYMBOLS.RUPEE}} {{row.expense_amount}}</td>
+                            <td>{{row.description}}</td>
+                            <td class="w60 relative">
+                                <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                    <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="deleteExpense(i)">
+                                    </app-icon-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </spk-reusable-tables>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.pageType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+            <!-- <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'" [loadingIconClass]="'ri-loader-2-fill'"></app-button> -->
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- Event Add Expense End -->
+
+<!-- Add Participants Modal Start  -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'event-participants-modal'">
+    <app-modal-header [title]="'Add Participants'" [closeBtn]="true" (close)="closeModal()"></app-modal-header>
+    <form [formGroup]="expenseParticipantsForm" (ngSubmit)="onSubmitParticipantsData()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Conatct Person Name"  formControlName="name" [fieldReq]="true" class="remove-default-class" type="text"></spk-input>
+                </div>
+                <div class="xxl:col-span-12 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    <spk-input label="Mobile No." formControlName="mobile" [fieldReq]="true" class="remove-default-class"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">  
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="pageType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- Add Participants End  -->
+
+<!--Add Event Gallery Image Upload -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'event-gallery-modal'">
+    <app-modal-header [title]="'Add Event Gallery'" [closeBtn]="true" (close)="closeModal()"></app-modal-header>
+    <form [formGroup]="eventGalleryForm" (ngSubmit)="submitEventGallery()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-4 mt-0">
+                <div class="xxl:col-span-12 md:col-span-12 col-span-12">
+                    <file-pond
+                    class="filepond basic-filepond"
+                    [options]="pondOptions"
+                    [files]="pondFiles"
+                    (onremovefile)="onFileRemove($event, 'image')"
+                    (onprocessfile)="onFileProcessed($event, 'image')">
+                </file-pond>
+                <p class="text-[.625rem] font-semibold text-right text-red-500">Image dimensions must be exactly 1600×900 px and file size must not exceed 2 MB.</p>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">  
+        <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </mat-dialog-actions>
+</form>
+</div>
+<!--Add Event Gallery Image Upload -->
+
+
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'branding-gallery-modal'">
+    <app-modal-header [title]="'Add Location Images'" [closeBtn]="true" (close)="closeModal()"></app-modal-header>
+    <form [formGroup]="brandingGalleryForm" (ngSubmit)="submitBrandingRequestGallery()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-4 mt-0">
+                <div class="xxl:col-span-12 md:col-span-12 col-span-12">
+                    <label class="form-label mb-0">Attachment<span class="text-red-500">*</span></label>
+                    <file-pond
+                    class="filepond basic-filepond"
+                    [options]="pondOptions"
+                    [files]="pondFiles"
+                    (onremovefile)="onFileRemove($event, 'image')"
+                    (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">  
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+
+<!--Add Audit Gallery Image Upload -->
+<div class="mat-dialoge" *ngIf="modalData.type === 'audit-gallery-modal'">
+    <app-modal-header [title]="'Add Audit Gallery'" [closeBtn]="true" (close)="closeModal()"></app-modal-header>
+    <form [formGroup]="auditGalleryForm" (ngSubmit)="submitAuditGallery()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-4 mt-0">
+                <div class="xxl:col-span-12 md:col-span-12 col-span-12">
+                    <label class="form-label mb-0">Company Image<span class="text-red-500">*</span></label>
+                    <file-pond
+                    class="filepond basic-filepond"
+                    [options]="pondOptions"
+                    [files]="pondFiles"
+                    (onremovefile)="onFileRemove($event, 'image')"
+                    (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">  
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!--Add Audit Gallery Image Upload -->
+
+<!--Add Audit Competitor Gallery Image Upload -->
+<div class="mat-dialoge" *ngIf="modalData.type === 'audit-Competitor-gallery-modal'">
+    <app-modal-header [title]="'Add Audit Competitor Gallery'" [closeBtn]="true" (close)="closeModal()"></app-modal-header>
+    <form [formGroup]="auditGalleryForm" (ngSubmit)="submitAuditCompetitorGallery()">
+        <mat-dialog-content class="mat-typography">
+            <div class="xxl:col-span-12 md:col-span-12 col-span-12">
+                <label class="form-label mb-0">Competitor Image<span class="text-red-500">*</span></label>
+                <file-pond
+                class="filepond basic-filepond"
+                [options]="pondOptions"
+                [files]="pondFiles"
+                (onremovefile)="onFileRemove($event, 'image')"
+                (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">  
+            <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!--Add Audit Competitor Gallery Image Upload -->
+
+<!--Scheme Order Add -->
+<div class="xl:col-span-4 col-span-12" *ngIf="modalData.lastPage === 'order-add'">
+    <div class="box" *ngIf="skLoading">
+        <div class="p-4">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xl:col-span-3 col-span-12 mb-4" *ngFor="let card of [].constructor(10)">
+                    <app-skeleton></app-skeleton>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-container *ngIf="!skLoading">
+    <app-showcode-card [title]="'Offer Detail'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true">
+        <ul class="ti-list-group list-group-flush border-0 120">
+            <li>
+                <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">{{schemeDetail.created_at ? (schemeDetail.created_at | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                            <span class="text-textmuted dark:text-textmuted/50">Created At</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">{{schemeDetail.created_name || '--'}}</span>
+                            <span class="text-textmuted dark:text-textmuted/50">Created By</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">{{schemeDetail.title ? schemeDetail.title : '---'}}</span>
+                            <span class="text-textmuted dark:text-textmuted/50">Title</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">{{schemeDetail.date_from ?  date.formatToDDMMYYYY(schemeDetail.date_from) : '---'}}</span>
+                            <span class="text-textmuted dark:text-textmuted/50">Start Date</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">{{schemeDetail.date_to ?  date.formatToDDMMYYYY(schemeDetail.date_to) : '---'}}</span>
+                            <span class="text-textmuted dark:text-textmuted/50">End Date</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center me-2 flex-wrap">
+                        <div>
+                            <span class="block font-medium text-primay">{{schemeDetail.status || '--'}}</span>
+                            <span class="text-textmuted dark:text-textmuted/50">Status</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </app-showcode-card>
+    </ng-container>
+</div>
+<!--Scheme Order Add -->
+
+
+<!-- // ----- Order Status Start----- // -->
+<div class="mat-dialoge" *ngIf="modalData.type=== 'update-order-status'">
+    <app-modal-header [title]="'Change Order Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="orderStatusForm"  (ngSubmit)="orderStatusChange()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-12 col-span-12 mb-2">
+                    <spk-ng-select formControlName="status" label="Status" [fieldReq]="true"
+                    [options]="orderStatusOptions"  (selectedChange)="orderStatusForm.get('status')?.value === 'Approved' ? getCompany(): ''"></spk-ng-select>
+                </div>
+                <div class="xl:col-span-12 col-span-12 mb-2" *ngIf="orderStatusForm.get('status')?.value === 'Approved'">
+                    <spk-ng-select formControlName="billing_company" label="Billing Company" [fieldReq]="true"
+                    [options]="billingCompany"></spk-ng-select>
+                </div>
+                <div class="xl:col-span-12 col-span-12 mb-2" *ngIf="orderStatusForm.get('status')?.value === 'Reject' || orderStatusForm.get('status')?.value === 'Hold'">
+                    <spk-input label="Reason" [fieldReq]="true" formControlName="reason" class="remove-default-class"
+                    type="textarea"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- // ----- Order Status Start----- // -->

@@ -1,0 +1,135 @@
+<div  [ngStyle]="{'max-height': tableHeight}">
+    <table class="  {{tableClass}}">
+        <thead class="{{tableHead}} table-header">
+            @if(showHeaderRow){
+                
+                <tr  class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                    @if(showCheckbox){
+                        <th class="{{checkboxClass}}">
+                            <input class="form-check-input"
+                            (change)="onToggleSelectAll($event)" type="checkbox"
+                            aria-label="...">
+                        </th>
+                    }
+                    @if(showS_No){
+                        <th class="!text-center">S.No</th>
+                    }
+                    @for(column of columns;track $index){
+                        <th class="{{column.tableHeadColumn}} {{column.table_class}} {{ showSorting ? 'pr-28 relative' : '' }}">{{column.label}}
+                            @if(showSorting){
+                                <div class="table_pagination">
+                                    <a (click)="sendSortRequest(column.name, 'asc')">
+                                        <i class="ri-arrow-drop-up-line"></i>
+                                    </a>
+                                    <a (click)="sendSortRequest(column.name, 'desc')">
+                                        <i class="ri-arrow-drop-down-line"></i>
+                                    </a>
+                                </div>
+                            }
+                        </th>
+                    }
+                    @if(showAction){
+                        <th class="!text-center">Action</th>
+                    }
+                </tr>
+            }
+            
+            @if(showFilterRow){
+                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                    @if(showS_No){
+                        <th>&nbsp;</th>
+                    }
+                    @for(column of columns;track $index){
+                        <th class="{{column.tableHeadColumn}}">
+                            <ng-container *ngIf="column.type == 'MULTI_SELECT' && column.filter_checked">
+                                <mat-form-field class="table_filter">
+                                    <mat-select [formControl]="multiSelectControls[column.name]" placeholder="Select an option" (selectionChange)="handleSelectChange($event , column)" multiple>
+                                        <mat-option
+                                        *ngFor="let topping of column.options"
+                                        [value]="topping">{{ topping }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </ng-container>
+                            
+                            <ng-container *ngIf="column.type == 'SINGLE_SELECT' && column.filter_checked">
+                                <mat-form-field class="table_filter_single">
+                                    <mat-select [formControl]="singleSelectControls[column.name]" placeholder="Select an option" (selectionChange)="handleSingleSelectChange($event , column)">
+                                        <mat-option
+                                        *ngFor="let topping of column.options"
+                                        [value]="topping.value">{{ topping.label }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </ng-container>
+                            
+                            <ng-container *ngIf="(column.type == 'SHORT_TEXT' || column.type == 'NUMBER' || column.type == 'TEXT_AREA') && column.filter_checked">
+                                <input type="text" class="form-control mw100" id="input-text"
+                                placeholder="Search..."
+                                [(ngModel)]="searchTexts[column.name]"
+                                (keydown.enter)="handleTextChange(column.name)">
+                            </ng-container>
+                            
+                            <ng-container *ngIf="(column.type == 'DATE_RANGE') && column.filter_checked">
+                                <mat-form-field class="table-date-range">
+                                    <mat-date-range-input [formGroup]="dateRangeGroups[column.name]" [rangePicker]="picker">
+                                        <input matStartDate formControlName="start"
+                                        placeholder="Start date"
+                                        (dateChange)="onDateChange(column.name)">
+                                        <input matEndDate formControlName="end"
+                                        placeholder="End date"
+                                        (dateChange)="onDateChange(column.name)">
+                                    </mat-date-range-input>
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle><mat-date-range-picker
+                                    #picker></mat-date-range-picker>
+                                </mat-form-field>
+                            </ng-container>
+                            
+                            <ng-container *ngIf="(column.type == 'DATE') && column.filter_checked">                        
+                                <mat-form-field class="table-input">
+                                    <input matInput [matDatepicker]="picker" [formControl]="dateControls[column.name]" placeholder="Choose a date"
+                                    (dateChange)="onSingleDateChange(column.name, $event)">
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>
+                            </ng-container>
+                        </th>
+                    }
+                    @if(showAction){
+                        <th class="w60">&nbsp;</th>
+                    }
+                </tr>
+                
+            }
+        </thead>
+        <tbody class="{{tableBody}}">
+            @for(row of data;track $index){
+                <tr>
+                    @if(showCheckbox){
+                        <td>
+                            <input
+                            class="form-check-input"
+                            type="checkbox"
+                            [checked]="allTasksChecked" [(ngModel)]="row.checked">
+                        </td>
+                        @for(column of columns;track $index){
+                            
+                            <td class="{{column.table_class}}">
+                                {{ row[column.field] }}
+                            </td>
+                        }
+                    }
+                    
+                </tr>
+            }
+            <ng-content></ng-content>
+        </tbody>
+        @if(showFooter==true){
+            <tfoot class="{{tableFooter}}">
+                
+                <th scope="row"> {{tableFoot}} </th>
+                <td> United States </td>
+                <td> 558 </td>
+                <td><span class="badge bg-primary text-white">56%</span></td>
+            </tfoot>
+        }
+    </table>
+</div>

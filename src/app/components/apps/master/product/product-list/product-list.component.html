@@ -1,0 +1,91 @@
+<app-page-header [title]="'Master Modules'" [title1]="['Products']" [activeitem]="'Products List'" [btnShow1]="accessRight?.modifyRight" [buttonText1]="'Header Config'" [icon1]="'settings'" [dataHsOverlay]="'#product-header-config'" (buttonClick1)="openHeaderSettingModal()"></app-page-header>
+
+<!-- Start::row-1 -->
+<div class="grid grid-cols-12 gap-x-2">
+    <!-- // skeleton section -->
+    <ng-container *ngIf="skLoading; else cardList">
+        <div class="xxl:col-span-2 xl:col-span-2 col-span-12 skeleton skeleton-multiple-box" *ngFor="let card of cardData">
+            <div class="skeleton-left">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <div class="skeleton-right">
+                <div class="square"></div>
+            </div>
+        </div>
+    </ng-container>
+    <!-- // skeleton section -->
+    
+    <ng-template #cardList>
+        @for(card of cardData;track $index){
+            <div class="xxl:col-span-2 xl:col-span-2 col-span-12">
+                <spk-listview-card [card]="card"></spk-listview-card>
+            </div>
+        }
+    </ng-template>
+</div>
+<!--End::row-1 -->
+
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="box">
+            <app-page-sub-header [pageTitle]="'Products List'"  [listLength]="pagination.total" [refreshLabel]="'Refresh'" [btnShow]="true" [btnShow1]="true" [btnShow2]="accessRight?.addRight" [btnShow3]="true" [addBtnLabel]="'Add Product'" [logsLabel]="'Logs'" [importLabel]="'Import'" (logBtn)="openMainLogModal('')" (importBtn)="importModal()" (onRefresh)="onRefresh()"  (button1)="goToPage()"></app-page-sub-header>
+            
+            <div class="box-body">
+                <div class="table-responsive overflow-auto table-bordered-default">
+                    <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showSorting]="true"  [showFilterRow]="true" [showAction]="true" [columns]="visibleHeaders " (sortChanged)="onSortChanged($event)" (selectionChange)="handleSelectionChange($event)" (textSearchChange)="updateSearchFilter($event)" (dateRangeChange)="handleDateRangeChange($event)" [subModule]="subModule" #reusableTable>
+                        <ng-container *ngIf="!skLoading">
+                            <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;"   [class.bg-gray-400]="isHighlighted(row._id)">
+                                <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                                <ng-container *ngFor="let header of visibleHeaders">
+                                    <td>
+                                        
+                                        <span *ngIf="header.name.includes('date') || header.name.endsWith('_at'); elseNonDate">
+                                            {{ (row?.[header.name] || row?.form_data?.[header.name]) | date: 'd MMM yyyy, hh:mm a' }}
+                                        </span>
+                                        
+                                        <span *ngIf="header.name !== 'status' && header.name !== 'product_name'  &&  (!(header.name.includes('date') || header.name.includes('_at')))">
+                                            {{ row[header?.name] || row?.form_data?.[header?.name] || '--' }}
+                                        </span>
+                                        <span class="font-semibold" *ngIf="header.name == 'product_name'">
+                                            <a class="text-primary underline" [routerLink]="['/apps/master/products-list/product-details', row._id]" (click)="setHighLight(row._id)"> {{row[header.name] ? row[header.name] : '--'}}</a>                                            
+                                        </span>
+                                        
+                                        <span *ngIf="header.name == 'status'" class="badge" >
+                                            <app-toggle [checked]="row.isChecked"  (checkedChange)="onToggleChange($event, row._id, row.status)"></app-toggle>
+                                        </span>
+                                        <!-- <span *ngIf="header.name == 'status'" class="badge" [ngClass]="{'bg-success/10 text-success': row[header.name] === 'Active', 'bg-danger/10 text-danger': row[header.name] === 'Inactive'}">{{row[header.name] ? row[header.name] : '--'}}</span> -->
+                                    </td>
+                                </ng-container>
+                                <td class="!text-center">
+                                    <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                        <a aria-label="anchor" (click)="onDeleteProduct(row._id)" class="ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light" *ngIf="accessRight?.deleteRight"><i class="ri-delete-bin-line"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </spk-reusable-tables>
+                    
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(16)">
+                            <td class="w120" *ngFor="let row of [].constructor(11)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                    <ng-container *ngIf="!listing.length && !skLoading">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </div>
+            </div>
+            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

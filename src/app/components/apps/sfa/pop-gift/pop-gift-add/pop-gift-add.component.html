@@ -1,0 +1,89 @@
+<div class="mat-dialoge" *ngIf="modalData.formType === 'add' || modalData.formType === 'edit'">
+    <app-modal-header [title]="(pageType | titlecase) + ' Pop & Gift'" [closeBtn]="true"  (close)="close()"></app-modal-header>
+    <form [formGroup]="addForm" (ngSubmit)="onSubmitPopGift()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-12 col-span-12">
+                    <spk-input formControlName="product_name" [label]="'Product Name'" [fieldReq]="true" class="remove-default-class"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-12 col-span-12">
+                    <spk-input formControlName="description" [label]="'Description'" [fieldReq]="true" class="remove-default-class" type="textarea"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-12 col-span-12" *ngIf="modalData.formType === 'add'">
+                    <label class="form-label mb-0">Product Images<span class="text-red-500">*</span></label>
+                    <file-pond class="filepond basic-filepond" 
+                    [options]="pondOptions" 
+                    [files]="pondFiles" 
+                    (onremovefile)="onFileRemove($event, 'image')"
+                    (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+
+
+
+
+<div class="mat-dialoge" *ngIf="modalData.formType === 'manage-transaction'">
+    <app-modal-header [title]="'Manage Transaction'" [closeBtn]="true"  (close)="close()"></app-modal-header>
+    <form [formGroup]="stockForm" (ngSubmit)="onSubmitManageStock()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6">
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-ng-select formControlName="transaction_type" label="Transaction Type" [fieldReq]="true" [options]="transaction_type" (selectedChange)="getAssignToTypeOptions();"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12" *ngIf="stockForm.value.transaction_type">
+                    <spk-ng-select formControlName="assign_to_type" label="User Type" [fieldReq]="true" [options]="assign_to_type" (selectedChange)="findName($event, 'assign_to_type');"></spk-ng-select>
+                </div>
+                
+                
+                <div class="xl:col-span-4 col-span-12" *ngIf="stockForm.value.assign_to_type && stockForm.value.assign_to_type !== 'Vendor'">
+                    <spk-ng-select 
+                    formControlName="assigned_to_id" 
+                    [label]="stockForm.value.assign_to_type" 
+                    [fieldReq]="true"  
+                    [options]="stockForm.value.assign_to_type === 'Team' ? CommonApiService.userData : CommonApiService.customerData" 
+                    [search]="true" 
+                    (searchChanged)="onSearch($event , stockForm.value.assign_to_type)" 
+                    (selectedChange)="findName($event, 'customer_name');"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12" *ngIf="stockForm.value.assign_to_type === 'Vendor'">
+                    <spk-input formControlName="assigned_to_name" [label]="'Vendor'" [fieldReq]="true" class="remove-default-class"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12 mb-3">
+                    <label class="form-label mb-0">Product<span class="text-red-500">*</span></label>
+                    <mat-form-field  class="mat-custom-field">
+                        <mat-select placeholder="Select an option" formControlName="product_id" (ngModelChange)="findName($event, 'product_name');">
+                            <mat-option *ngFor="let row of listing" [value]="row._id">{{row.product_name}} ({{row.product_code}})</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div *ngIf="stockForm.get('product_id')?.invalid && stockForm.get('product_id')?.touched" class="error">
+                        Product is required.
+                    </div>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-input formControlName="transaction_qty" [label]="'Qty'" [fieldReq]="true" [type]="'number'" class="remove-default-class"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-input formControlName="delivery_note" [label]="'Description'" [fieldReq]="true" class="remove-default-class" type="textarea"></spk-input>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>

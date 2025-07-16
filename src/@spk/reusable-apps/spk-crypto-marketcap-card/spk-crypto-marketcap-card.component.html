@@ -1,0 +1,51 @@
+<div class="box">
+    <div class="box-body">
+        <div class="flex justify-between {{crypto.customClass}}">
+            <div class="sm:flex items-center">
+                <div>
+                    <div class="sm:flex items-center mb-3">
+                        <div class="me-2">
+                            <span class="avatar avatar-md avatar-rounded">
+                                <img [src]="crypto.imageUrl" alt="">
+                            </span>
+                        </div>
+                        <div>
+                            <h6 class="{{crypto.titleClass}}">
+                                {{ crypto.name }}
+                            </h6>
+                            <span class="text-textmuted dark:text-textmuted/50 "> {{ crypto.symbol }} {{ crypto.rank }}</span>
+                        </div>
+                    </div>
+                    @if(crypto.volumeChange){
+                    <div>
+                        <div class="mb-1">
+                            <span class="text-xl font-medium leading-none text-primary mb-1">{{crypto.price1}}</span> 
+                            <span class="mb-0 text-textmuted dark:text-textmuted/50 ms-2 me-1"><span class="text-textmuted dark:text-textmuted/50">Vol:</span><span class="text-success font-medium"> {{crypto.volumeChange}}</span></span>
+                        </div>
+                        <p class="font-medium mb-0">{{ crypto.price }} <span class="mb-1 font-normal text-[13px] text-textmuted dark:text-textmuted/50">({{ crypto.symbol }} / USD)</span></p>
+                    </div>
+                }@else {
+                    <div class="text-2xl flex items-center font-medium"> {{crypto.change}}
+                        <span class="text-xs text-primarytint1color opacity-70 font-normal ms-1">{{crypto.primaryText}} <i class="ti ti-arrow-big-{{crypto.arrow}}-line ms-1 d-inline-flex"></i></span>
+                        <span class="badge bg-{{crypto.bg1}} text-[10px] ms-2">24H</span>
+                    </div>
+                }
+                </div>
+            </div>
+            <div class="sm:ms-auto sm:text-end">
+                <div class="mb-4">
+                    <p class="tx-14 mb-1 font-semibold text-dark">{{crypto.text}}</p>
+                    <p class="mb-0 text-[14px]">{{ crypto.marketCap }}<span class="text-success mb-0 font-weight-normal tx-13">
+                        {{crypto.marketCapChange}}<span class="text-{{crypto.bg}} numberfont">{{crypto.percent}}</span>
+                        </span>
+                    </p>
+                </div>
+                <div>
+                    <div id="bitcoin-chart">
+                        <spk-apexcharts [chartOptions]="crypto.chartOptions"></spk-apexcharts>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,68 @@
+<div class="mat-dialoge">
+     <app-modal-header [title]="' Add New Holiday'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form [formGroup]="holidayForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="col-span-12 md:col-span-12 xxl:!col-span-12">
+                    <mat-label>Holiday Type</mat-label>
+                    <mat-radio-group formControlName="holiday_type" aria-label="Select Holiday Type">
+                        <mat-radio-button value="National">National</mat-radio-button>
+                        <mat-radio-button value="Regional">Regional</mat-radio-button>
+                    </mat-radio-group>
+                    <div   *ngIf="holidayForm.get('holiday_type')?.invalid && holidayForm.get('holiday_type')?.touched" class="error">
+                        Holiday type is required.
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-x-12 mt-4">
+                <div class="col-span-12 md:col-span-6 xxl:!col-span-6">
+                    <label class="form-label mb-0">Holiday Date<span class="text-red-500">*</span></label>
+                    <mat-form-field appearance="outline" class="mat-custom-field">
+                        <input matInput [matDatepicker]="picker" formControlName="holiday_date">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                        <mat-hint align="end" *ngIf="holidayForm.get('holiday_date')?.invalid && holidayForm.get('holiday_date')?.touched" class="error">
+                            Holiday date is required.
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="col-span-12 md:col-span-6 xxl:!col-span-6">
+                    <label class="form-label mb-0">Title<span class="text-red-500">*</span></label>
+                    <mat-form-field appearance="outline" class="mat-custom-field">
+                        <input matInput formControlName="holiday_name" placeholder="Enter holiday title" />
+                        <mat-hint align="end" *ngIf="holidayForm.get('holiday_name')?.invalid && holidayForm.get('holiday_name')?.touched">
+                            Holiday title is required.
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="col-span-12 md:col-span-6 xxl:!col-span-6" *ngIf="holidayForm.value.holiday_type === 'Regional'">
+                    <label class="form-label mb-0">State<span class="text-red-500">*</span></label>
+                    <mat-form-field appearance="outline" class="mat-custom-field">
+                        <mat-select formControlName="regional_state" multiple>
+                            <mat-option *ngFor="let row of this.CommonApiService.statList" [value]="row.label">{{row.label}}</mat-option>
+                        </mat-select>
+                        <mat-hint align="end" *ngIf="holidayForm.get('regional_state')?.invalid && holidayForm.get('regional_state')?.touched" class="error">
+                            State is required for regional holidays.
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            
+            <button type="button" class="ti-btn ti-btn-outline-danger m-2" (click)="close()">
+                <span>Cancel</span>
+            </button>
+            <button type="submit" class="ti-btn ti-btn-primary m-2" [ngClass]="{'ti-btn-loader ti-btn-disabled': api.disabled}" [disabled]="api.disabled === true" >
+                <span class="me-2">{{api.disabled === true ? 'Saving' : 'Save'}}  <i class="ri-save-line ms-2 text-[16px] inline-block" *ngIf="!api.disabled"></i></span>
+                <span class="loading" *ngIf="api.disabled === true"><i  class="ri-loader-2-fill text-[1rem] animate-spin"></i></span>
+            </button>
+
+            <!-- <button type="submit" class="ti-btn ti-btn-primary m-2" [ngClass]="{'ti-btn-loader ti-btn-disabled': api.disabled}" [disabled]="api.disabled === true" *ngIf="selectedTabIndex==1">
+                <span class="me-2">{{api.disabled === true ? 'Saving' : 'Save'}}  <i class="ri-save-line ms-2 text-[16px] inline-block" *ngIf="!api.disabled"></i></span>
+                <span class="loading" *ngIf="api.disabled === true"><i  class="ri-loader-2-fill text-[1rem] animate-spin"></i></span>
+            </button> -->
+        </mat-dialog-actions>
+    </form>
+</div>

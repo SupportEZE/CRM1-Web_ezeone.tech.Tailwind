@@ -1,0 +1,28 @@
+<!-- ***** Profile Status Start ***** -->
+<div class="mat-dialoge" *ngIf="modalData.pageType === 'item_list'">
+    <app-modal-header [title]="'Box QR No. :- ' + modalData.data.qr_box_code + (' ('+modalData.data.box_items_count+')')" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <mat-dialog-content class="mat-typography">
+          <table class="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap">
+            <thead>
+                <tr class="border-b border-defaultborder dark:border-defaultborder/10">
+                    <th class="text-start w50">S.No</th>
+                    <th class="w150">Item QR No.</th>
+                    <th>Product Name</th>
+                    <th class="w100">Product Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of modalData?.data.box_items; let i = index"
+                class="border-b border-defaultborder dark:border-defaultborder/10">
+                <td class="text-start">{{ i + 1 }}</td>
+                <td class="w150">{{row.qr_item_code ? row.qr_item_code : ''}}</td>
+                <td class="text-start">{{modalData.data.product_data.product_name}}</td>
+                <td class="w120">{{modalData.data.product_data.product_code}}</td>
+            </tr>
+        </tbody>
+    </table>
+    </mat-dialog-content>
+    
+</div>
+<!-- ***** Profile Status End ***** -->

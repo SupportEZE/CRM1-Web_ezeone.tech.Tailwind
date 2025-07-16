@@ -1,0 +1,241 @@
+<app-page-header [title]="'SFA'" [title1]="['Followup']" [activeitem]="'Followup List'"></app-page-header>
+
+
+<!-- Start::row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-3 col-span-12">
+        <div class="box">
+            <div class="box-header gap-2 items-center pb-3 border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                <span class="avatar avatar-md bg-primary avatar-rounded"><i class="ri-file-list-3-line text-[1rem]"></i></span>
+                <div class="box-title">
+                    To Do List
+                    <span class="text-textmuted dark:text-textmuted/50 block text-xs">Create Followup</span>
+                </div>
+                <button class="ti-btn ti-btn-sm ti-btn-soft-primary1 ms-auto !rounded-full" (click)="openModal('')">
+                    <i class="ri-add-line"></i>Add New
+                </button>
+            </div>
+            <div class="box-body p-0">
+                <div class="p-4 task-navigation border-b border-dashed border-defaultborder dark:border-defaultborder/10">
+                    <ul class="list-none task-main-nav mb-0">
+                        <li class="px-0 pt-0">
+                            <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">General</span>
+                        </li>
+                        
+                        <li *ngFor="let tab of tabs"  [ngClass]="{'active': activeTab === tab.value}" (click)="setActiveTab(tab.label)">
+                            <a>
+                                <div class="flex items-center">
+                                    <span class="me-2 leading-none">
+                                        <i [class]="tab.icon + ' align-middle text-[14px] text-primary'"></i>
+                                    </span>
+                                    <span class="flex-auto text-nowrap">
+                                        {{ tab.label }}
+                                    </span>
+                                    <span *ngIf="tab.count !== null" class="badge bg-{{tab.countClass}}/10 text-{{tab.countClass}} rounded-full">
+                                        {{ tab.count }}
+                                    </span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="list-none task-main-nav mb-0">
+                        <li class="px-0 pt-2 flex justify-between gap-2 items-center">
+                            <span class="text-[11px] text-textmuted dark:text-textmuted/50 opacity-70 font-medium">Team</span>
+                        </li>
+                        
+                        <ul class="scroll-y-250 mb-0">
+                            <li *ngFor="let row of listingData.userViceCounts">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <a class="flex" (click)="updateFilter(row.assigned_to_user_name)">
+                                        <div>
+                                            <span class="me-2 leading-none">
+                                                <i class="ri-account-circle-fill text-primarytint1color align-middle text-[14px]"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-auto text-nowrap">
+                                            <span class="font-medium">{{row.assigned_to_user_name}}</span>
+                                        </div>
+                                    </a>
+                                    <span class="badge bg-primarytint1color/10 text-primarytint1color rounded-full">{{row.assigned_count}}</span>
+                                </div>
+                            </li>
+                            <div *ngIf="!listingData.userViceCounts?.length">
+                                <label class="form-check-label !ps-0 text11px font-normal">
+                                    No data available!
+                                </label>
+                            </div>
+                        </ul>
+                    </ul>
+                </div>
+                <div class="flex items-center justify-between m-4 p-4 bg-primary/10 rounded-md border border-defaultborder dark:border-defaultborder/10 overflow-hidden todo-list-card">
+                    <div>
+                        <div class="text-[15px] font-medium !text-primary">Today Completed</div>
+                        <div class="mb-4 text-[15px] font-medium !text-primary">Followups</div>
+                        <h4 class="mb-0">{{listingData.completedFollowups?.today}}/{{listingData.completedFollowups?.total}} Followups</h4>
+                    </div>
+                    <div class="">
+                        <img src="./assets/images/media/media-66.png" alt="" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="xl:col-span-9 col-span-12">
+        <app-showcode-card [title]="'Followup List'" [classbody]="'pt-0'" [titleView]="true" [view]="false" [refresBtnShow]="true" [logBtnShow]="true" [overallCountShow]="true" [overallCount]="listing.length" (refresh)="onRefresh()" (logBtn)="openMainLogModal('')">
+            <div class="custom-form-group mb-3">
+                <input type="text" class="form-control form-control-md" placeholder="Search by Party Details" aria-label="Party Details" [(ngModel)]="filter.customer_name" name="customer_name" #customer_name="ngModel" (keyup.enter)="getList()">
+                <button class="ti-btn bg-primary text-white ti-btn-sm border-0 custom-form-btn" type="button" (click)="filter.customer_name ? getList() : ''">Search</button>
+            </div>
+            
+            
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables [tableHeight]="'630px'" [showCheckbox]="false" [showS_No]="true" [showAction]="true" [columns]="headers" tableClass="ti-custom-table text-nowrap">
+                    <ng-container *ngIf="!skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                            <td>&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="onDateChange('created_at', $event)">
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>  
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.created_name" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.created_name) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.created_name='';getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.category_type" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.category_type) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.category_type='';getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.followup_type" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.followup_type) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.followup_type='';getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput  [matDatepicker]="picker1" [(ngModel)]="filter.followup_date" name="createdAt" placeholder="Followup Date" (ngModelChange)="onDateChange('followup_date', $event)">
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker1></mat-datepicker>
+                                    </mat-form-field>  
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.status" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.status) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.status='';getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>
+                                <div class="table-search-filters">
+                                    <mat-form-field class="table-input">
+                                        <input matInput type="text" [(ngModel)]="filter.remark" placeholder="Search..." (keyup.enter)="getList()">
+                                        @if (filter.remark) {
+                                            <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.remark='';getList()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        }
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr class="todo-box border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing;let i = index;">
+                            <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                            <td>{{row.created_at | date:'d MMM yyyy, hh:mm a' : '--'}}</td>
+                            <td>{{row.created_name || '--'}}</td>
+                            <td>{{row.category_type || '--'}}</td>
+                            <td>
+                                <div class="flex items-center gap-2">
+                                    <div class="">
+                                        <span class="block font-medium">{{row?.category_detail?.name || '--'}}</span>
+                                        <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">Mobile: </span>{{row?.category_detail?.mobile || '--'}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <i class="ri-{{ row.followup_type === 'Call' ? 'phone-fill text-primarytint3color' : 'walk-fill text-info' }} text-[14px]"></i>
+                                <span [ngClass]="row.followup_type === 'Call' ? 'text-primarytint3color' : 'text-info'">
+                                    {{ row.followup_type || '--' }}
+                                </span>
+                            </td>
+                            <td>{{row.followup_date | date:'d MMM yyyy' : '--'}} {{row.followup_time}}</td>
+                            <td>
+                                <span class="badge p-0" [ngClass]="{'text-success': row.status === 'Complete','text-warning': row.status === 'Pending', 'text-info': row.status === 'Inactive'}">{{row.status || '--'}}</span>
+                            </td>
+                            <td>
+                                <div class="flex items-center gap-2">
+                                    <span class="avatar avatar-sm avatar-rounded">
+                                        <img src="./assets/images/faces/12.jpg" alt="">
+                                    </span>
+                                    <div class="">
+                                        <span class="block font-medium">{{row?.assigned_user_detail?.name || '--'}}</span>
+                                        <span class="block"><span class="text-textmuted dark:text-textmuted/50 text-[11px]">Mobile: </span>{{row?.assigned_user_detail?.mobile || '--'}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="ellipsis" matTooltip="{{row.remark}}">{{row.remark || '--'}}</span></td>
+                            <td class="text-end">
+                                <div class="flex gap-2">
+                                    <app-icon-button *ngIf="(activeTab === 'Pending' || activeTab === 'Upcoming') && accessRight?.modifyRight" [icon]="'ri-edit-line'" matTooltip="Edit" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="openModal(row)"> </app-icon-button>
+                                    <app-icon-button *ngIf="activeTab === 'Pending' && accessRight?.modifyRight" [icon]="'ri-checkbox-circle-line'" matTooltip="Complete" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="onComplete(row._id)"> </app-icon-button>
+                                    <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)"> </app-icon-button>
+                                    <app-icon-button [icon]="'ri-delete-bin-line'" matTooltip="Delete" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="delete(row._id, 'followup/delete', 'Delete')" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-container *ngIf="skLoading">
+                        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(6)">
+                            <td *ngFor="let row of [].constructor(10)">
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- //--skeleton--// -->
+                </spk-reusable-tables>
+                <ng-container *ngIf="!listing.length && !skLoading">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+            </div>
+            
+            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="listing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+        </app-showcode-card>
+    </div>
+</div>
+<!--End::row-1 -->

@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "ngx-reusable-table.component.scss"
+    ],
+    "names": [],
+    "file": "ngx-reusable-table.component.css"
+}

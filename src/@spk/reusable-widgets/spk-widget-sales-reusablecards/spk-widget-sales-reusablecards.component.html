@@ -1,0 +1,21 @@
+
+<div
+class="box border-{{borderClass}}/50 dark:!border-{{borderClass}}/50 border overflow-hidden main-content-card">
+<div class="box-body">
+    <div class="flex items-start justify-between">
+        <div class="grow">
+            <span
+                class="text-secondary font-semibold me-1 inline-block badge bg-secondary/10"><i
+                    class="fe fe-arrow-up !text-[0.75rem]"></i>{{percentageChange}}</span>
+            <h4 class="mt-2 mb-2 font-medium">{{value}}</h4>
+            <p class="mb-0 text-xs font-medium">{{description}}
+            </p>
+        </div>
+        <div>
+            <span class="avatar avatar-md {{avatarClass}}" >
+                <span [innerHTML]="svg"></span>
+            </span>
+        </div>
+    </div>
+</div>
+</div>

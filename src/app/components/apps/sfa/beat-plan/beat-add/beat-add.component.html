@@ -1,0 +1,96 @@
+<app-page-header [title]="'SFA'" [title1]="['Beat Add']" [activeitem]="'Beat Add'"></app-page-header>
+<!-- Start::row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-9 col-span-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-title">Beat Plan</div>
+            </div>
+            <div class="box-body">
+                <div id="calendar2">
+                    <full-calendar [options]="calendarOptions"></full-calendar>
+                </div>
+            </div> 
+        </div>
+    </div>
+    <div class="xl:col-span-3 col-span-12">
+        <div class="box">
+            <div class="box-body p-0">
+                <div class="p-4 pb-0">
+                    <form [formGroup]="userBeatForm">
+                        <spk-ng-select formControlName="selectedUserId" label="Select User" [fieldReq]="true" [search]="true" (searchChanged)="onSearch($event)"
+                        (selectedChange)="onUserChange($event)" [options]="userList"></spk-ng-select>
+                    </form>
+                </div>
+                
+                <ul id="external-events" #external class="mt-2 mb-0 p-4 pt-0 list-none">
+                    <!-- Skeleton Loader -->
+                    <ng-container *ngIf="skLoading">
+                        <ul *ngFor="let row of [].constructor(6)" class="h-10">
+                            <li>
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </li>
+                        </ul>
+                    </ng-container>
+                    <!-- Main Content -->
+                    <ng-container *ngIf="!skLoading">
+                        <!-- List of Beats -->
+                        <li *ngFor="let event of beatListData; let i = index" class="fc-event fc-h-event fc-daygrid-event fc-daygriblock-event mb-1 flex justify-between items-center px-3 py-2 rounded-md" [ngClass]="applyDynamicColor(i).bgClass" draggable="true" [attr.data-class]="applyDynamicColor(i).bgClass" [attr.data-id]="event.beat_route_code" [attr.data-description]="event.description">
+                            <div class="">
+                                <p class="font-medium">{{ event.beat_route_code || "---" }}</p>
+                                <span class="mt-1 text-[10px] text-textmuted dark:text-textmuted/50">{{ event.description || '--'}}</span>
+                            </div>
+                            <span class="font-semibold text-[14px]">{{ event.count || 0 }}</span>
+                        </li>
+                        
+                        <div class="max-w-sm p-6 mx-auto text-center" *ngIf="beatListData.length === 0">
+                            <div class="flex flex-col items-center space-y-3">
+                                <span class="material-icons text-5xl text-textmuted dark:text-textmuted/50">swipe_up</span>
+                                <p class="text-ls font-semibold text-textmuted dark:text-textmuted/50">Select an user first</p>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ul>              
+            </div>
+        </div>
+        <div class="box" *ngIf="beatListData?.length > 0">
+            <div class="box-header justify-between pb-1">
+                <div class="box-title">Activity Timeline</div>
+            </div>
+            <div class="box-body p-4">
+                <ul class="list-none mb-0 fullcalendar-events-activity scroll-y-470">
+                    <ng-container *ngIf="skLoading">
+                        <ul *ngFor="let row of [].constructor(6)" class="h-10">
+                            <li>
+                                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                            </li>
+                        </ul>
+                    </ng-container>
+                    <li *ngFor="let item of activityList">
+                        <!-- Display Date and Day -->
+                        <p class="mb-0 font-medium">
+                            {{ item.day }}, {{ item.date | date: 'MMM d, yyyy' }}
+                        </p>
+                        <ng-container *ngIf="item.beats && item.beats.length > 0; else noBeats">
+                            <div *ngFor="let beat of item.beats">
+                                <p class="mb-0 font-medium text-primary">
+                                    {{ beat.beat_code ? beat.beat_code : "---" }}
+                                </p>
+                                <p class="mb-0 text-[11px] text-textmuted dark:text-textmuted/50">
+                                    {{ beat.description ? beat.description : "---" }}
+                                </p>
+                            </div>
+                        </ng-container>
+                        <!-- Show when beats array is empty -->
+                        <ng-template #noBeats>
+                            <p class="mb-0 text-[12px] text-textmuted dark:text-textmuted/50">
+                                No Beat Planned
+                            </p>
+                        </ng-template>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End::row-1 -->

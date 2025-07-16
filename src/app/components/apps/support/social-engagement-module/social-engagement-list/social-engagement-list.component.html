@@ -1,0 +1,175 @@
+<app-page-header [title]="'Support'" [title1]="['Social Engagement']" [activeitem]="'Social Engagement List'" [btnShow1]="true" [buttonText1]="'Manage Social'" [icon1]="'public'" (buttonClick1)="openModal('add' , '')"></app-page-header>
+
+<!-- Start::Row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xxl:col-span-8 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            <ng-container *ngIf="!skLoadingSocialMedia">
+                @for(socialmedia of socialPlatformListing;track $index){
+                    <div class="xl:col-span-4 col-span-12">
+                        <spk-social-media-card [socialmedia]="socialmedia" [showEditButton]="true" (clickEvent)="openModal('edit' , socialmedia)"></spk-social-media-card>
+                    </div>
+                }
+            </ng-container>
+            <ng-container *ngIf="skLoadingSocialMedia">
+                <div class="xl:col-span-4 col-span-12" *ngFor="let row of [].constructor(6)">
+                    <app-skeleton [class]="'wp100 h100 mb-3'"></app-skeleton>
+                </div>
+            </ng-container>
+        </div>
+        
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xl:col-span-12 col-span-12">
+                <div class="box">
+                    <div class="box-header justify-between">
+                        <div class="box-title">
+                            Social Media Performance
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive overflow-auto table-bordered-default">
+                            <spk-reusable-tables [columns]="socialMediColumns" tableClass="ti-custom-table text-nowrap" [showCheckbox]="false" [showS_No]="true">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>
+                                        <div class="table-search-filters">
+                                            <!-- {{filter.customer_type_name}}
+                                            <spk-input-listing
+                                            [(ngModel)]="filter.customer_type_name"
+                                            [label]="'Search...'"
+                                            (enterKey)="getPerformance()"
+                                            ></spk-input-listing> -->
+                                            
+                                            <!-- <spk-ng-select formControlName="customer_type_id" label="Customer Category" [fieldReq]="true" [options]="CommonApiService.productList" (selectedChange)="findName($event, 'product');"></spk-ng-select> -->
+                                            <mat-form-field class="table-input">
+                                                <input matInput type="text" [(ngModel)]="filter.customer_type_name" placeholder="Search..." (keyup.enter)="getPerformance()">
+                                                @if (filter.customer_type_name) {
+                                                    <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_type_name=''; getPerformance()">
+                                                        <mat-icon>close</mat-icon>
+                                                    </button>
+                                                }
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="table-search-filters">
+                                            <mat-form-field class="table-input">
+                                                <input matInput type="text" [(ngModel)]="filter.customer_name" placeholder="Search..." (keyup.enter)="getPerformance()">
+                                                @if (filter.customer_name) {
+                                                    <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_name=''; getPerformance()">
+                                                        <mat-icon>close</mat-icon>
+                                                    </button>
+                                                }
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="table-search-filters">
+                                            <mat-form-field class="table-input">
+                                                <input matInput type="text" [(ngModel)]="filter.customer_mobile" placeholder="Search..." (keyup.enter)="getPerformance()">
+                                                @if (filter.customer_mobile) {
+                                                    <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_mobile=''; getPerformance()">
+                                                        <mat-icon>close</mat-icon>
+                                                    </button>
+                                                }
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr class="border-b border-defaultborder dark:border-defaultborder/10" *ngFor="let row of performanceListing; let i = index;">
+                                    <td class="text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                                    <td>{{ row.created_at ? (row.created_at | date:'d MMM yyyy, hh:mm a') : '--' }}</td>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <span class="avatar avatar-sm bg-{{ comanFuncation.getSocialStyles(row.title).bg }}/10 !text-{{ comanFuncation.getSocialStyles(row.title).bg }}">
+                                                <i class="ri-{{ comanFuncation.getSocialStyles(row.title).icon }}-fill text-[1rem] text-{{ comanFuncation.getSocialStyles(row.title).textcolor }}"></i>
+                                            </span>
+                                            <span class="font-medium">{{ row.title || '--' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>{{row.customer_type_name || '--'}}</td>
+                                    <td>{{row.customer_name || '--'}}</td>
+                                    <td>{{row.customer_mobile || '--'}}</td>
+                                    <td><span class="badge bg-light text-textmuted dark:text-textmuted/50 m-0 border border-defaultborder dark:border-defaultborder/10">{{row.customer_state || '--'}}</span></td>
+                                    <td class="text-center">{{row.points || '--'}}</td>
+                                </tr>
+                            </spk-reusable-tables>
+                            <ng-container *ngIf="!performanceListing.length">
+                                <app-data-not-found></app-data-not-found>
+                            </ng-container>
+                            <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages" [pageLimit]="pagination.limit" [listLength]="performanceListing.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="xxl:col-span-4 col-span-12">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                    Requests
+                </div>
+            </div>
+            <div class="box-body">
+                <ul class="list-none personal-favourite mb-0 scroll-y-700">
+                    <ng-container *ngIf="!skLoading">
+                        <li *ngFor="let row of socialRequestList">
+                            <div class="flex items-center gap-1">
+                                <div class="me-1">
+                                    <span class="avatar avatar-sm">
+                                        <!-- <img 
+                                        [src]="row.profile_pic ? row.profile_pic.signed_url : ''" 
+                                        alt=""
+                                        (click)="row.profile_pic ? comanFuncation.zoom(row.profile_pic._id, 'customer/get-doc') : null"
+                                        /> -->
+
+                                        <img src="./assets/images/faces/12.jpg" alt="">
+                                    </span>
+                                </div>
+                                <div class="flex-auto truncate">
+                                    <span class="font-medium block mb-0">{{row.customer_name}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50 block text-xs w-75 truncate">{{row.customer_type_name}} | {{row.customer_mobile}} | {{row.customer_state}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50 flex items-center gap-1">
+                                        <i 
+                                        [ngClass]="{
+                                            'ri-youtube-fill': row.title === 'Youtube',
+                                            'ri-twitter-x-fill': row.title === 'Twitter',
+                                            'ri-facebook-fill': row.title === 'Facebook',
+                                            'ri-linkedin-fill': row.title === 'Linkedin',
+                                            'ri-instagram-fill': row.title === 'Instagram',
+                                            'ri-google-fill': row.title === 'Google Review'
+                                        }" 
+                                        class="text- text-[1rem]"></i>
+                                        {{row.title}}
+                                    </span>
+                                </div>
+                                <div class="ti-btn-list text-nowrap ms-auto">
+                                    <app-icon-button [icon]="'ri-eye-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'"
+                                    (clickEvent)="comanFuncation.zoom(row._id, 'web-social/get-doc')"> 
+                                </app-icon-button>
+                                <app-icon-button [icon]="'ri-check-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="updateStatus(row._id , 'Approved')"> </app-icon-button>
+                                <app-icon-button [icon]="'ri-close-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="updateStatus(row._id , 'Reject')"> </app-icon-button>
+                            </div>
+                        </div>
+                    </li>
+                </ng-container>
+                <ng-container *ngIf="skLoading">
+                    <li *ngFor="let row of [].constructor(5)">
+                        <app-skeleton [class]="'h30'"></app-skeleton>
+                    </li>
+                </ng-container>
+            </ul>
+            <ng-container *ngIf="!socialRequestList.length && !skLoading">
+                <app-data-not-found></app-data-not-found>
+            </ng-container>
+        </div>
+    </div>
+</div>
+</div>
+<!-- End::Row-1 -->

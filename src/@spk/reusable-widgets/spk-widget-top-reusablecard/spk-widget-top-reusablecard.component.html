@@ -1,0 +1,19 @@
+<div class="box overflow-hidden">
+  <div class="box-body">
+      <div class="sm:flex gap-4 items-center flex-wrap">
+          <div class="avatar avatar-lg " [ngClass]="avatarClass" [innerHTML]="svg">
+          </div>
+          <div>
+              <div class="flex-auto text-[13px] text-textmuted dark:text-textmuted/50">{{ title }}</div>
+              <div class="text-[21px] font-medium">{{ value }}<span
+                      class="badge " [ngClass]="percentageClass"><i
+                      [ngClass]="percentageIcon"></i>{{ percentage }}</span></div>
+          </div>
+          <div class="ms-auto">
+              <div id="chart-01">
+                <spk-apexcharts [chartOptions]="chartOptions"></spk-apexcharts>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>

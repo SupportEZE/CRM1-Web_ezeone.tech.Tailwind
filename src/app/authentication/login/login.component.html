@@ -1,0 +1,397 @@
+<div class="grid grid-cols-12 authentication authentication-cover-main mx-0">
+    <div class="col-span-12 gap-1 flex item-center items-center justify-center bg-white" *ngIf="loginContent">
+        <span class="loading"><i class="animate-spin ri-loader-2-fill text-[1.5rem]"></i></span>
+        <p>Loading, please wait...</p>
+    </div>
+    <ng-container *ngIf="!loginContent">
+        <div class="xxl:col-span-6 xl:col-span-7 col-span-12">
+            <div class="grid grid-cols-12 justify-center items-center h-full bg-white">
+                <div class="xxl:col-span-2 xl:col-span-2 lg:col-span-3 md:col-span-3 sm:col-span-2 col-span-12"></div>
+                <div class="xxl:col-span-8 xl:col-span-8 lg:col-span-6 md:col-span-6 sm:col-span-8 col-span-12 px-3">
+                    <div class="box my-auto border border-defaultborder dark:border-defaultborder/10">
+                        <div class="box-body p-[3rem] overflow-x-hidden wp100">
+                            
+                            <nav class="nav nav-tabs tab-style-8 scaleX md:flex block justify-around border border-dashed dark:border-defaultborder/10 border-b-0 bg-light rounded-sm mb-4" id="myTab1" role="tablist">
+                                <button
+                                type="button"
+                                class="nav-link !p-4 md:w-auto w-full wp100"
+                                [ngClass]="{'active': activeLoginTab === 'backend_team'}"
+                                (click)="switchTab('backend_team')"
+                                style="padding: 4px 15px !important">
+                                <i class="ri-admin-line me-2 align-middle"></i>Backend Team</button>
+                                
+                                <button
+                                type="button"
+                                class="nav-link !p-4 md:w-auto w-full wp100"
+                                [ngClass]="{'active': activeLoginTab === 'individual'}"
+                                (click)="switchTab('individual')"
+                                style="padding: 4px 15px !important">
+                                <i class="ri-user-3-line me-2 align-middle"></i>Individual</button>
+                            </nav>
+                            
+                            <div class="flex items-center">
+                                <ng-container *ngIf="activeLoginTab === 'backend_team'">
+                                    <ng-container *ngIf="activeTab === 'login'">
+                                        <div class="wp100 animate__animated animate__slideInRight">
+                                            <form [formGroup]="loginForm" (ngSubmit)="onAdminLoginSubmit()">
+                                                <p class="font-semibold !mb-1 text-[1rem] mb-4">Sign In</p>
+                                                <p class="mb-4 text-textmuted dark:text-textmuted/50 font-normal">Welcome back</p>
+                                                <div class="grid grid-cols-12 gap-y-4">
+                                                    <div class="xl:col-span-12 col-span-12">
+                                                        <label for="signup-firstname" class="ti-form-label text-default">User Name</label>
+                                                        
+                                                        <div class="relative">
+                                                            <input class="ti-form-input rounded-sm ps-11 focus:z-10" id="signup-firstname" placeholder="User Name" autocomplete formControlName="username" required>
+                                                            <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4 text-[1rem] opacity-60">
+                                                                <i class="ri-user-fill"></i>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div *ngIf="loginForm.controls['username']?.invalid && loginForm.controls['username']?.touched" class="float-end font-medium text-danger text-[0.75rem]">
+                                                            Username is required
+                                                        </div>
+                                                    </div>
+                                                    <div class="xl:col-span-12 col-span-12">
+                                                        <label for="signin-password" class="ti-form-label text-default block">Password</label>
+                                                        
+                                                        <div class="relative">
+                                                            <input [type]="showPassword ? 'text' : 'password'" class="ti-form-input rounded-sm ps-11 focus:z-10" id="signin-password" placeholder="Password" autocomplete="off" formControlName="password" [(ngModel)]="password" required>
+                                                            <a *ngIf="password"  class="show-password-button text-textmuted dark:text-textmuted/50 p-3" (click)="togglePassword()">
+                                                                <i class="{{toggleClass}}  align-middle"></i>
+                                                            </a>
+                                                            <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4 text-[1rem] opacity-60">
+                                                                <i class="ri-lock-password-fill"></i>
+                                                            </div>
+                                                            <div *ngIf="loginForm.controls['password']?.invalid && loginForm.controls['password']?.touched" class="float-end font-medium text-danger text-[0.75rem]">
+                                                                Password is required
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center my-4 authentication-barrier" *ngIf="authOrgData?.social?.length">
+                                                    <span class="opacity-40 text-[0.6875rem]">Our Social Handles</span>
+                                                </div>
+                                                <div class="flex items-center  flex-wrap justify-between gap-2 mb-4">
+                                                    <ng-container *ngFor="let item of authOrgData?.social">
+                                                        <a class="ti-btn ti-btn-light !border  !border-defaultborder dark:!border-defaultborder/10 flex items-center justify-center flex-grow gap-0" [href]="item.social_url" target="_blank" *ngIf="['Facebook', 'Instagram', 'Youtube'].includes(item.title)">
+                                                            <span class="!text-primary avatar avatar-xs bg-primary/10">
+                                                                <i [ngClass]="iconMap[item.title] || 'ri-share-fill'" class="text-[0.8125rem]"></i>
+                                                            </span>
+                                                            <span class="leading-none ms-2 text-[0.8125rem] text-default font-medium">{{ item.title }}</span>
+                                                        </a>
+                                                    </ng-container>
+                                                </div>
+                                                <div class="grid mt-4">
+                                                    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0 wp100'" [disabled]="api.disabled" [label]="'Login'" [formType]="'add'" [iconClass]="'ri-arrow-right-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p class="text-textmuted dark:text-textmuted/50 mt-4 mb-0">Powered By  
+                                                        <a href="https://ezeonetech.com/" class="text-primary font-semibold">EzeOne Technologies Private Limited</a>
+                                                    </p>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </ng-container>
+                                    
+                                    <ng-container *ngIf="activeTab === 'authorized_person'">
+                                        <div class="wp100 animate__animated animate__slideInRight">
+                                            <form [formGroup]="authorizedPersonForm" (ngSubmit)="onOtpSend()">
+                                                <p class="font-semibold !mb-1 text-[1rem] mb-4">Sign In</p>
+                                                <p class="mb-4 text-textmuted dark:text-textmuted/50 font-normal">Select an authorized person to send the OTP.</p>
+                                                
+                                                <spk-ng-select
+                                                formControlName="authorized_person"
+                                                label="Authorized Person"
+                                                [options]="authOrgData?.org?.authorized_person"></spk-ng-select>
+                                                
+                                                <div class="xl:col-span-12 col-span-12 grid mt-6 sm:flex items-center justify-between">
+                                                    <button type="button" class="ti-btn ti-btn-soft-danger m-0" (click)="goToPreviousTab('backend_team' , 'login')">
+                                                        <i class="material-icons align-middle inline-block">arrow_back</i>Previous
+                                                    </button>
+                                                    
+                                                    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-arrow-right-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+                                                </div>
+                                                
+                                                <div class="text-center">
+                                                    <p class="text-textmuted dark:text-textmuted/50 mt-4 mb-0">Powered By  
+                                                        <a href="https://ezeonetech.com/" class="text-primary font-semibold underline">EzeOne Technologies Private Limited</a>
+                                                    </p>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                                
+                                <ng-container *ngIf="activeLoginTab === 'individual'">
+                                    <ng-container *ngIf="activeTab === 'mobile'">
+                                        <div class="wp100 animate__animated animate__slideInRight">
+                                            <form [formGroup]="individualForm" (ngSubmit)="onOtpSend()">
+                                                <p class="font-semibold !mb-1 text-[1rem] mb-4">Sign In</p>
+                                                <p class="mb-4 text-textmuted dark:text-textmuted/50 font-normal">Welcome back</p>
+                                                <div class="grid grid-cols-12 gap-y-4">
+                                                    <div class="xl:col-span-12 col-span-12">
+                                                        <label for="signup-firstname" class="ti-form-label text-default">Mobile</label>
+                                                        
+                                                        <div class="relative">
+                                                            <input type="text" class="ti-form-input rounded-sm ps-11 focus:z-10" placeholder="Mobile" autocomplete formControlName="mobile" (keypress)="formValidation.handleInputFilter($event, 'mobile')" required>
+                                                            <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4 text-[1rem] opacity-60">
+                                                                <i class="ri-phone-fill"></i>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div *ngIf="individualForm.controls['mobile']?.touched && individualForm.controls['mobile']?.errors" class="float-end font-medium text-danger text-[0.75rem]">
+                                                            <span *ngIf="individualForm.controls['mobile']?.errors?.['required']">
+                                                                Mobile number is required.
+                                                            </span>
+                                                            <span *ngIf="individualForm.controls['mobile']?.errors?.['pattern']">
+                                                                Enter a valid 10-digit mobile number.
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center my-4 authentication-barrier" *ngIf="authOrgData?.social?.length">
+                                                    <span class="opacity-40 text-[0.6875rem]">Our Social Handles</span>
+                                                </div>
+                                                <div class="flex items-center flex-wrap justify-between gap-2 mb-4">
+                                                    <ng-container *ngFor="let item of authOrgData?.social">
+                                                        <a class="ti-btn ti-btn-light !border  !border-defaultborder dark:!border-defaultborder/10 flex items-center justify-center flex-grow gap-0" [href]="item.social_url" target="_blank" *ngIf="['Facebook', 'Instagram', 'Youtube'].includes(item.title)">
+                                                            <span class="!text-primary avatar avatar-xs bg-primary/10">
+                                                                <i [ngClass]="iconMap[item.title] || 'ri-share-fill'" class="text-[0.8125rem]"></i>
+                                                            </span>
+                                                            <span class="leading-none ms-2 text-[0.8125rem] text-default font-medium">{{ item.title }}</span>
+                                                        </a>
+                                                    </ng-container>
+                                                </div>
+                                                <div class="grid mt-4">
+                                                    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0 wp100'" [disabled]="api.disabled" [label]="'Login'" [formType]="'add'" [iconClass]="'ri-arrow-right-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p class="text-textmuted dark:text-textmuted/50 mt-4 mb-0">Powered By  
+                                                        <a href="https://ezeonetech.com/" class="text-primary font-semibold">EzeOne Technologies Private Limited</a>
+                                                    </p>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                                
+                                <ng-container *ngIf="activeTab === 'otp'">
+                                    <div class="wp100 animate__animated animate__slideInRight">
+                                        <form [formGroup]="otpForm" (ngSubmit)="Submit()">
+                                            <p class="text-xl mb-2 text-center font-medium">Verification Code</p>
+                                            <p class="mb-4 text-textmuted dark:text-textmuted/50 opacity-70 font-normal text-center text-xs">Enter the 6 digit code sent to the mobile number {{ getMaskedMobile() }}.</p>
+                                            <div class="grid grid-cols-12 gy-3">
+                                                <div class="xl:col-span-12 col-span-12 mb-2">
+                                                    <div class="grid grid-cols-12 gap-x-2">
+                                                        <div class="col-span-2">
+                                                            <input #oneInput  type="text" maxlength="1" class="form-control text-center" formControlName="d1" (keyup)="onDigitInput($event, twoInput, null)" (keydown)="formValidation.handleInputFilter($event, 'number')" style="padding: 6px 10px !important;">
+                                                        </div>
+                                                        <div class="col-span-2">
+                                                            <input #twoInput  type="text" maxlength="1" class="form-control text-center" formControlName="d2" (keyup)="onDigitInput($event, threeInput, oneInput)" (keydown)="formValidation.handleInputFilter($event, 'number')" style="padding: 6px 10px !important;">
+                                                        </div>
+                                                        <div class="col-span-2">
+                                                            <input #threeInput type="text" maxlength="1" class="form-control text-center" formControlName="d3" (keyup)="onDigitInput($event, fourInput, twoInput)" (keydown)="formValidation.handleInputFilter($event, 'number')" style="padding: 6px 10px !important;">
+                                                        </div>
+                                                        <div class="col-span-2">
+                                                            <input #fourInput type="text" maxlength="1" class="form-control text-center" formControlName="d4" (keyup)="onDigitInput($event, fiveInput, threeInput)" (keydown)="formValidation.handleInputFilter($event, 'number')" style="padding: 6px 10px !important;">
+                                                        </div>
+                                                        <div class="col-span-2">
+                                                            <input #fiveInput type="text" maxlength="1" class="form-control text-center" formControlName="d5" (keyup)="onDigitInput($event, sixInput, fourInput)" (keydown)="formValidation.handleInputFilter($event, 'number')" style="padding: 6px 10px !important;">
+                                                        </div>
+                                                        <div class="col-span-2">
+                                                            <input #sixInput  type="text" maxlength="1" class="form-control text-center" formControlName="d6" (keyup)="onDigitInput($event, null, fiveInput)" (keydown)="formValidation.handleInputFilter($event, 'number')" style="padding: 6px 10px !important;">
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div *ngIf="otpForm.touched && (otpForm.get('d1')?.hasError('required') || otpForm.get('d2')?.hasError('required') || otpForm.get('d3')?.hasError('required') || otpForm.get('d4')?.hasError('required') || otpForm.get('d5')?.hasError('required') || otpForm.get('d6')?.hasError('required'))" class="text-danger text-[0.75rem] mt-2 text-center font-medium">
+                                                        All 6 digits are required.
+                                                    </div>
+                                                    
+                                                    <div class="form-check mt-2">
+                                                        <label class="form-check-label text-[14px]" for="defaultCheck1">
+                                                            Didn't recieve a code ?<a [routerLink]="['/under-maintanace']" class="text-primary ms-2 inline-block">Resend</a>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="xl:col-span-12 col-span-12 grid mt-6 sm:flex items-center justify-between">
+                                                    <button type="button" class="ti-btn ti-btn-soft-danger m-0" (click)="goToPreviousTab(activeLoginTab, activeTab)">
+                                                        <i class="material-icons align-middle inline-block">arrow_back</i>Previous
+                                                    </button>
+                                                    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [label]="'Login'" [formType]="'add'" [iconClass]="'ri-arrow-right-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="xxl:col-span-2 xl:col-span-2 lg:col-span-3 md:col-span-3 sm:col-span-2 col-span-12"></div>
+            </div>
+        </div>
+        <div class="xxl:col-span-6 xl:col-span-5 lg:col-span-12 xl:block hidden px-0">
+            <div class="authentication-cover overflow-hidden">
+                <div class="authentication-cover-logo"> 
+                    <a href="{{authOrgData?.org?.website_url}}" target="_blank"> 
+                        <img src="{{api.rootUrl}}brand-logos/{{authOrgData?.org?.org_name}}/desktop-white.png" alt="logo" class="desktop-white">
+                    </a> 
+                </div>
+                <div class="aunthentication-cover-content flex items-center justify-center">
+                    <div>
+                        <div class="">
+                            <div class="mb-5 flex justify-center">
+                                <div class="">
+                                    <div class="login-swiper">
+                                        <swiper-container #swiperContainer1 class="swiper mySwiper"  space-between="30" slides-per-view="1" slides-per-group="1"   autoplay-delay="2000" pagination="true" pagination-clickable="true"  autoplay-disable-on-interaction="false">
+                                            <swiper-slide *ngFor="let image of webBanner; index as i">
+                                                <div class="swiper-slide">
+                                                    <img [src]="image.src" alt="banner {{ i + 1 }}" class="w-full h-auto object-cover" />
+                                                </div>
+                                            </swiper-slide>
+                                        </swiper-container>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="mb-5 flex justify-center gap-3" *ngIf="authOrgData?.org?.play_store_link || authOrgData?.org?.app_store_link">
+                                <a href="{{authOrgData?.org?.play_store_link}}" target="_blank" *ngIf="authOrgData?.org?.play_store_link">
+                                    <img src="./assets/images/media/media-93.svg" alt="google-play" style="height: 40px;">
+                                </a>
+                                
+                                <a href="{{authOrgData?.org?.app_store_link}}" target="_blank" *ngIf="authOrgData?.org?.app_store_link">
+                                    <img src="./assets/images/media/media-94.png" alt="apple-store" style="height: 40px;">
+                                </a>
+                            </div>
+                        </div>                           
+                        
+                        <h6 class="text-white mb-3 font-semibold text-[1.5rem] text-center">{{authOrgData?.org?.title || '--'}}</h6>
+                        <p class="text-white mb-1  text-[15px] font-semibold text-center">{{authOrgData?.org?.sub_title || '--'}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ----Backup ---- -->
+<!-- <div id="segment-1"  class="hidden" role="tabpanel" aria-labelledby="segment-item-1">
+    <div class="box my-6" >
+        <div class="box-body !p-[3rem]">
+            <div class="mb-3 flex justify-center">
+                <a [routerLink]="['/dashboards/sales']">
+                    <img src="./assets/images/brand-logos/desktop-logo.png" alt="logo" class="desktop-logo">
+                    <img src="./assets/images/brand-logos/desktop-white.png" alt="logo" class="desktop-white">
+                </a>
+            </div>
+            <form [formGroup]="loginForm" (ngSubmit)="login()" >
+                @if(errorMessage.length > 0){
+                
+                <p class="text-danger">  
+                    {{errorMessage}}</p>
+                    }
+                    @if(_error.message.length > 0){   
+                    <p class="text-danger">{{_error.message}} </p>
+                    }
+                    <p class="h4 font-semibold !mb-1">Sign In</p>
+                    <p class="mb-4 text-textmuted dark:text-textmuted/50 font-normal">Welcome back</p>
+                    <div class="grid grid-cols-12 gap-y-4">
+                        <div class="xl:col-span-12 col-span-12">
+                            <label for="signup-firstname" class="ti-form-label text-default">Use Name</label>
+                            <input type="email" class="form-control" id="signup-firstname" placeholder="User Name" autocomplete formControlName="username"
+                            [ngModel]="email" required>
+                        </div>
+                        <div class="xl:col-span-12 col-span-12">
+                            <label for="signin-password" class="ti-form-label text-default block">Password<a routerLink="/authentication/reset-password/basic" class="float-end text-danger opacity-50 font-medium text-[0.75rem]">Forget password ?</a></label>
+                            <div class="relative">
+                                <input type="password" [type]="showPassword ? 'text' : 'password'" class="form-control" id="signin-password" placeholder="password"  autocomplete placeholder="password"
+                                [type]="showPassword ? 'text' : 'password'" autocomplete
+                                placeholder="Password" formControlName="password"
+                                [ngModel]="password" required>
+                                <a href="javascript:void(0);" class="show-password-button text-textmuted dark:text-textmuted/50" (click)="togglePassword()"><i class="{{toggleClass}}  align-middle"></i></a>
+                                
+                            </div>
+                            <div class="mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                                    <label class="form-check-label text-textmuted dark:text-textmuted/50 font-normal text-[0.75rem]" for="defaultCheck1">
+                                        Remember password ?
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center my-4 authentication-barrier">
+                        <span class="opacity-40 text-[0.6875rem]">OR SignIn With</span>
+                    </div>
+                    <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
+                        <button class="ti-btn ti-btn-light ti-btn-w-lg !border !border-defaultborder dark:!border-defaultborder/10 flex items-center justify-center flex-grow">
+                            <span class="avatar avatar-xs">
+                                <img src="./assets/images/media/apps/google.png" alt="">
+                            </span>
+                            <span class="leading-none ms-2 text-[0.8125rem] text-default font-medium">Google</span>
+                        </button>
+                        <button class="ti-btn ti-btn-light ti-btn-w-lg !border  !border-defaultborder dark:!border-defaultborder/10 flex items-center justify-center flex-grow">
+                            <span class="avatar avatar-xs">
+                                <img src="./assets/images/media/apps/facebook.png" alt="">
+                            </span>
+                            <span class="leading-none ms-2 text-[0.8125rem] text-default font-medium">Facebook</span>
+                        </button>
+                    </div>
+                    <div class="grid mt-4">
+                        <button  [disabled]="!loginForm.valid || authservice.showLoader" autofocus                                    [class.loader--text]="authservice.showLoader" class="ti-btn ti-btn-primary{{                                    disabled                                    }}" >Sign In</button>
+                    </div>
+                    
+                </form>
+            </div>
+        </div> 
+    </div> -->

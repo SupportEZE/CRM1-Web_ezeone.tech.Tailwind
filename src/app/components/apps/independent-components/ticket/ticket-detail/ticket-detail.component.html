@@ -1,0 +1,162 @@
+<app-page-header [title]="'Ticket'" [title1]="['Ticket Detail']" [activeitem]="'Ticket Detail'"></app-page-header>
+
+<!-- Start:: row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="box profile-card">
+            <div class="profile-banner-img">
+                <img src="./assets/images/media/media-3.jpg" class="card-img-top" alt="...">
+            </div>
+            <div class="box-body pb-0 relative">
+                <!-- profile-content -->
+                <div class="grid grid-cols-12 sm:gap-x-6 profile-content">
+                    <div class="xl:col-span-3 col-span-12">
+                        <app-showcode-card [title]="'User Detail'"  [classbody]="'p-0'"  [titleView]="true"  [view]="false"  *ngIf="orgData?.org?.sfa">
+                            <ul class="ti-list-group list-group-flush !border-0">
+                                <li class="ti-list-group-item border-0">
+                                    <div><span class="font-medium me-2">Name :</span><span class="text-textmuted dark:text-textmuted/50">{{ticketDetail?.assign_to_user_detail?.name || '-'}}</span></div>
+                                </li>
+                                <li class="ti-list-group-item border-0">
+                                    <div><span class="font-medium me-2">User Code :</span><span class="text-textmuted dark:text-textmuted/50">{{ticketDetail?.assign_to_user_detail?.user_code || '-'}}</span></div>
+                                </li>
+                                
+                            </ul>
+                        </app-showcode-card>
+                        
+                        <app-showcode-card [title]="'Customer Detail'" [classbody]="'p-0'"  [titleView]="true"  [view]="false">
+                            <ul class="ti-list-group list-group-flush !border-0">
+                                <li class="ti-list-group-item border-0">
+                                    <div><span class="font-medium me-2">Name :</span><span class="text-textmuted dark:text-textmuted/50">{{ticketDetail?.customer_detail?.customer_name || '-'}}</span></div>
+                                </li>
+                                <li class="ti-list-group-item border-0">
+                                    <div><span class="font-medium me-2">Type :</span><span class="text-textmuted dark:text-textmuted/50">{{ticketDetail?.customer_detail?.customer_type_name || '-'}}</span></div>
+                                </li>
+                                <li class="ti-list-group-item border-0">
+                                    <div><span class="font-medium me-2">Mobile No. :</span><span class="text-textmuted dark:text-textmuted/50">{{ticketDetail?.customer_detail?.mobile || '-'}}</span></div>
+                                </li>
+                            </ul>
+                        </app-showcode-card>
+                    </div>
+                    
+                    
+                    <div class="xl:col-span-9 col-span-12">
+                        <app-showcode-card [title]="'Basic Detail'"  [titleView]="true"  [view]="false">
+                            <div *ngIf="!skLoading">
+                                <div class="flex gap-5 mb-1 flex-wrap">
+                                    <div class="flex items-center">
+                                        <div>
+                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Ticket No.</span>
+                                            <span class="block text-primary font-medium">{{ticketDetail?.ticket_no || '--'}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div>
+                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Created At</span>
+                                            <span class="block font-medium">{{ticketDetail?.created_at | date : 'dd MMM yyyy hh:mm a'}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div>
+                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Created by</span>
+                                            <span class="block font-medium">{{ticketDetail?.created_name || '--'}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div>
+                                            <span class="text-xs block text-textmuted dark:text-textmuted/50">Category</span>
+                                            <span class="badge" [ngClass]="ticketDetail.ticket_category === 'Marketing' ? 'bg-warning/10 text-warning' : ticketDetail.ticket_category === 'Billing' ? 'bg-danger/10 text-danger' : ticketDetail.ticket_category === 'Quality' ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'">{{ticketDetail?.ticket_category || '--'}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center ">
+                                        <div>
+                                            <span  class="text-xs block text-textmuted dark:text-textmuted/50">Priority</span>
+                                            <span class="badge"
+                                            [ngClass]="ticketDetail.ticket_priority === 'High' ? 'bg-primarytint1color/10  text-primarytint1color' : ticketDetail.ticket_priority === 'Critical' ? 'bg-danger/10 text-danger' : ticketDetail.ticket_priority === 'Medium' ? 'bg-warning/10 text-warning' : 'bg-primary/10 text-primary'"
+                                           >{{ticketDetail?.ticket_priority || '--'}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3 items-center">
+                                        <div>
+                                            <span class="text-xs block text-textmuted dark:text-textmuted/50">Status</span>
+                                            <span class="block font-medium" [ngClass]="{'bg-success/10 text-success': ticketDetail.status === 'Complete','bg-warning/10 text-warning': ticketDetail.status === 'Pending', 'bg-danger/10 text-danger': ticketDetail.status === 'Cancel'}">{{ticketDetail?.status || '--'}}</span>
+                                        </div>
+
+                                        <app-icon-button [icon]="'ri-pencil-line'" [buttonClass]="'btn-wave ti-btn ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" matTooltip="Change Status" (click)="openModal(ticketDetail)" *ngIf="ticketDetail.status !== 'Complete' && accessRight?.approveRight" matTooltip="Change Status"></app-icon-button>
+                                    </div>
+
+                                    <div class="flex items-center" *ngIf="ticketDetail.status !== 'Pending'">
+                                        <div>
+                                            <span class="text-xs text-textmuted dark:text-textmuted/50">{{ticketDetail.status}} Remark</span>
+                                            <span class="block font-medium">{{ticketDetail?.status_remark || '--'}}</span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="flex items-center">
+                                        <div>
+                                            <span class="text-xs text-textmuted dark:text-textmuted/50">Remark</span>
+                                            <span class="block font-medium">{{ticketDetail?.ticket_description || '--'}}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    
+                                </div>
+                            </div>
+                            
+                            <!-- Loading Start -->
+                            <div *ngIf="skLoading">
+                                <div class="flex gap-2 mb-1 flex-wrap">
+                                    <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                        <app-skeleton [class]="'w180'"></app-skeleton>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Loading End -->
+                        </app-showcode-card>
+                        
+                        
+                        <div class="box">
+                            <nav class="nav nav-tabs tab-style-6 flex bg-white dark:bg-bodybg" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                <button type="button" class="nav-link text-start rounded-md active" [ngClass]="{'active': activeTab ==='comments'}" (click)="activeTab = 'comments'; getComments()">
+                                    Comments
+                                </button>
+                                <button type="button" class="nav-link text-start rounded-md active" [ngClass]="{'active': activeTab ==='attachment'}" (click)="activeTab = 'attachment';">
+                                    Attachment
+                                </button>
+                            </nav>
+                            
+                            <div class="box-body tab-content">
+                                <ng-container *ngIf="activeTab ==='comments'">
+                                    <app-comments [detailId]="ticketId" [module]="'ticket'" [showAvatar]="true"></app-comments>
+                                </ng-container>
+                                <!-- <div  *ngIf="activeTab ==='attachment'"  class="hidden" role="tabpanel" aria-labelledby="logs-tab-pane">
+                                    <app-logs [logList]="logList" [closeBtn]="false" [hideHeader]="false"></app-logs>
+                                </div> -->
+                                <ng-container *ngIf="activeTab ==='attachment'" >
+                                    <!-- <div class="swiper swiper-preview-details product-details-page">
+                                        <spk-gallery [mainClass]="'grid grid-cols-12 gap-x-3'"
+                                        [imageWithText]="false" [imageWithDelete]="false"
+                                        [lightboxClass]="'box'"
+                                    [colClass]="'lg:col-span-3 md:col-span-3 sm:col-span-6 col-span-12'"
+                                        [imageData]="ticketDetailImages"></spk-gallery>
+                                    </div> -->
+                                    <div class="grid grid-cols-12 gap-x-4">
+                                        <div class="xxl:col-span-2 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of ticketDetailImages">
+                                            <spk-product-card [apiPath]="'ticket/get-doc'" [imageData]="image" [editBtn]="false" [heading]="false" [subHeading]="false" [delBtn]="false" >
+                                            </spk-product-card>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="!ticketDetailImages?.length">
+                                        <app-data-not-found></app-data-not-found>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End:: row-1 -->

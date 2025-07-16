@@ -1,0 +1,45 @@
+<!-- Start::page-header -->
+<div class="flex items-center justify-between page-header-breadcrumb mb-4 flex-wrap gap-2 single-page-header">
+    <div>
+        <nav aria-label="nav">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item">
+                    <a (click)="back()">
+                        {{title}}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{title1}}</li>
+            </ol>
+        </nav>
+        <h1 class="page-title font-medium text-lg mb-0">{{activeitem}}</h1>
+    </div>
+    
+    <div class="flex gap-2 align-middle">
+        <form [formGroup]="filterForm" *ngIf="filterForm">
+            @if(showSelectOption){
+                <spk-ng-select
+                formControlName="select_value"
+                [label]="filterLabel ? labelName :'' "
+                [options]="optionArray"
+                [multiple]="multiple"
+                [search]="search"
+                (searchChanged)="onsearchChangeHanler($event)"
+                (selectedChange)="onSingleSelectChangeHandler($event)"
+                ></spk-ng-select>
+            }
+            @if(showInput){
+                <spk-input  formControlName="input_value"  (input)="emitValueChange($event)"  class="remove-default-class {{class}}" [type]="inputType"></spk-input>
+            }
+        </form>
+        
+        <div class="btn-list">
+            <button type="button" class="ti-btn ti-btn-sm ti-btn-soft-primary btn-wave"  (click)="onButtonClick()" *ngIf="btnShow" [disabled]="btnDisabled" style="width:max-content">
+                <i class="material-icons ms-1">{{icon}}</i>{{buttonText}}
+            </button>
+            <button type="button" class="ti-btn ti-btn-sm ti-btn-soft-primary1 btn-wave" [attr.data-hs-overlay]="dataHsOverlay ? dataHsOverlay : null"  (click)="onButtonClick1()" *ngIf="btnShow1" style="width:max-content">
+                <i class="material-icons ms-1">{{icon1}}</i> {{buttonText1}}
+            </button>
+        </div>
+    </div>
+</div>
+<!-- End::page-header -->

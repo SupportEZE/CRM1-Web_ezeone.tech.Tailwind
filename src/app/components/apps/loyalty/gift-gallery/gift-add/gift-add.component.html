@@ -1,0 +1,128 @@
+<app-page-header [title]="'Gift Gallery'" [title1]="['Gift']" [activeitem]="'Gift Add'" [btnShow1]="false"></app-page-header>
+
+<div class="box" *ngIf="skLoading">
+  <div class="p-4">
+    <div class="grid grid-cols-12 gap-x-6">
+      <div class="xl:col-span-3 col-span-12 mb-4"
+      *ngFor="let card of [].constructor(10)">
+      <app-skeleton></app-skeleton>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="xl:col-span-12 col-span-12" *ngIf="!skLoading">
+  <form [formGroup]="giftForm" (ngSubmit)="onSubmit()">
+    <div class="box">
+      <div class="p-4">
+        <!-- Radio Buttons with Bottom Margin -->
+        <div class="mt-2 mb-4"> <!-- Added mb-4 for margin bottom -->
+          <mat-radio-group formControlName="gift_type" aria-label="Select Gift Type"  (change)="onGiftTypeChange($event)">
+            <mat-radio-button value="Gift">Gift</mat-radio-button>
+            <mat-radio-button value="Cash" class="ml-4">Bank Transfer</mat-radio-button>
+            <mat-radio-button value="Voucher" class="ml-4">Voucher</mat-radio-button>
+          </mat-radio-group>
+          <div *ngIf="giftForm.get('gift_type')?.invalid && giftForm.get('gift_type')?.touched" class="error">
+            Gift type is required.
+          </div>
+        </div>
+        <!-- Use Grid Layout to Align Items in One Row -->
+        <div class="grid grid-cols-12 sm:gap-x-6 gap-y-5">
+          <!-- User Type -->
+          <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+            <spk-ng-select
+            formControlName="login_type_id"
+            label="Customer Type"
+            [fieldReq]="true"
+            [options]="commonApi.loginType"
+            [multiple]="false"
+            (selectedChange)="commonApi.getCustomerCategorySubType($event); findName($event, 'login_type');"
+            >
+          </spk-ng-select>
+        </div>
+        
+        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12" *ngIf="giftForm.get('login_type_id')?.value">
+          <spk-ng-select
+          formControlName="customer_type_id"
+          label="Customer Category"
+          [fieldReq]="true"
+          [options]="commonApi.customerCategorySubType"
+          [multiple]="true"
+          (selectedChange)="findName($event, 'customer_type');"
+          >
+        </spk-ng-select>
+      </div>
+      
+      <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+        <ng-container *ngIf="giftForm.get('gift_type')?.value != 'Voucher'">
+          <spk-input label="Title"
+          [fieldReq]="true"  formControlName="title" class="remove-default-class" type="text"></spk-input>
+        </ng-container>
+        <ng-container *ngIf="giftForm.get('gift_type')?.value == 'Voucher'">
+          <spk-ng-select
+          formControlName="title"
+          label="Title"
+          [fieldReq]="true"
+          [options]="voucher"
+          [multiple]="false"
+          (selectedChange)="findName($event, 'voucher');"
+          >
+        </spk-ng-select>
+      </ng-container>
+    </div>
+    
+    <ng-container *ngIf="giftForm.get('gift_type')?.value === 'Gift'  || giftForm.get('gift_type')?.value === 'Voucher'">
+      <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+        <spk-input [label]="giftForm.get('gift_type')?.value === 'Gift'?  'Gift Point Value':'Eligible Point Value'"  formControlName="point_value"
+        [fieldReq]="true" class="remove-default-class" type="text"></spk-input>
+      </div>
+      
+    </ng-container>
+    
+    <ng-container *ngIf="giftForm.get('gift_type')?.value === 'Cash'">
+      <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+        <spk-input label="Range Start"
+        [fieldReq]="true"  formControlName="range_start" class="remove-default-class" type="number"></spk-input>
+      </div>
+      <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+        <spk-input label="Range End"
+        [fieldReq]="true"  formControlName="range_end" class="remove-default-class" type="number"></spk-input>
+      </div>
+      <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+        <spk-input label="Per Point Value"
+        [fieldReq]="true"  formControlName="point_value" class="remove-default-class" type="number"></spk-input>
+      </div>
+    </ng-container>
+  </div>
+  <div class="grid grid-cols-12 sm:gap-x-6 gap-y-5" >
+    <div  class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12" *ngIf="giftForm.get('gift_type')?.value === 'Gift'  || giftForm.get('gift_type')?.value === 'Voucher'">
+      <label class="form-label">Upload Gift Image<span class="text-red-500">*</span></label>
+      <file-pond class="filepond basic-filepond" [options]="pondOptions" [files]="pondFiles" (onremovefile)="onFileRemove($event)"  (onprocessfile)="onFileProcessed($event)">
+      </file-pond>
+      <div *ngIf="giftForm.get('uploadedFile')?.invalid && giftForm.get('uploadedFile')?.touched" 
+      class="text-red-500">
+      Gift Image is required.
+    </div>
+    
+    <p class="text-[.625rem] font-semibold text-right text-red-500">Image dimensions must be exactly 1400X700 px and file size must not exceed 2 MB.</p>
+  </div>    
+  
+  <div class="xxl:col-span-6 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+    <label class="form-label">Description<span class="text-red-500">*</span></label>
+    <div id="product-features" class="ngx-editor-custom">
+      <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+      <ngx-editor [editor]="editor" class="overflow-auto" formControlName="description"></ngx-editor>
+    </div>
+    <div *ngIf="giftForm.get('description')?.invalid && giftForm.get('description')?.touched" class="text-red-500 text-right">
+      Decription is required.
+    </div>
+  </div>
+</div>   
+<div class="flex items-center justify-end mt-10 gap-2">                     
+  <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [iconClass]="api.disabled ? 'ri-loader-2-fill animate-spin' : 'ri-save-line'"  
+  [loadingIconClass]="'ri-loader-2-fill'" [disabled]="api.disabled"></app-button>
+</div>                
+</div> 
+</div>
+</form>
+</div>

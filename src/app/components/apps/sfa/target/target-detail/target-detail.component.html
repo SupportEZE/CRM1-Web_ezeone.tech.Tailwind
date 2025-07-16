@@ -1,0 +1,243 @@
+<app-page-header [title]="'SFA'" [title1]="['Target Detail']" [activeitem]="'Target Detail'" [buttonText1]="'Edit Target'"  [icon1]="'edit'"  [btnShow1]="true" (buttonClick1)="editPage()"></app-page-header>
+
+<ng-container *ngIf="!skLoading">
+    <div class="grid grid-cols-12 sm:gap-x-6">
+        <div class="xl:col-span-4 col-span-12">
+            <app-showcode-card [title]="'Basic Detail'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true">
+                <ul class="ti-list-group list-group-flush border-0 h190">
+                    <li>
+                        <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{basiqDetail.created_at ? (basiqDetail.created_at | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Date Created</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{basiqDetail.created_name || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Created By</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{basiqDetail.title ? basiqDetail.title : '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Title</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{basiqDetail.start_date ?  date.formatToDDMMYYYY(basiqDetail.start_date) : '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Start Date</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{basiqDetail.end_date ?  date.formatToDDMMYYYY(basiqDetail.end_date) : '---'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">End Date</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{basiqDetail.target_type || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Target Type</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap" *ngIf="basiqDetail.target_type === 'Customer'">
+                                <div>
+                                    <span class="block font-medium text-primay">Distributors</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Type</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap" *ngIf="basiqDetail.assign_to_name">
+                                <div>
+                                    <span class="block font-medium text-primay">{{basiqDetail.assign_to_name || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Assign To Name</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{CURRENCY_SYMBOLS.RUPEE}} {{basiqDetail.sale_value || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Target Value</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{basiqDetail.is_additional_target === true ? 'Yes' : 'No'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Additional Target</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </app-showcode-card>
+            
+        </div>
+        
+        <div class="xl:col-span-4 col-span-12">
+            <app-spk-widget-total-budget-card [budgetTitle]="'Target Detail'" [budgetAmount]="this.overallSummary.customer_achievement_summary" [increasePercentage]="this.overallSummary.progress" [incomeItems] = "incomeItems"> </app-spk-widget-total-budget-card>
+        </div>
+        
+        <div class="xl:col-span-4 col-span-12">
+            <div>
+                <app-logs [logList]="logList" [scrollHeight]="'190'" [closeBtn]="false"></app-logs>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="additionalTargets">
+        <div class="xl:col-span-12 col-span-12">
+            <app-showcode-card [title]="'Target Detail'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="false" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [classbody]="'pt-0'" [iconName]="'ri-add-line'">
+                <div class="grid grid-cols-12 gap-x-6" >
+                    <div class="xxl:col-span-12 col-span-12">
+                        <div class="tab-pane show active border-0 p-0 mb-5">
+                            
+                            <div class="accordion accordion-customicon1 accordion-primary accordions-items-seperate" id="accordionFAQ1">
+                                <div class="hs-accordion-group">
+                                    <div class="hs-accordion bg-white dark:bg-bodybg border dark:border-defaultborder/10 border-defaultborder mt-[0.5rem] rounded-sm active" id="faq-one">
+                                        
+                                        <div *ngIf="additionalTargets && additionalTargets.length > 0"  id="faq-collapse-one" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-one">
+                                            <div class="p-2">
+                                                <div class="bg-light pt-2 p-4 rounded-md !mb-6" *ngIf="getCategorySummaries(additionalTargets)?.length > 0;">
+                                                    <label class="font-medium text-xs">
+                                                        Category Wise Target
+                                                    </label>
+                                                    <div class="table-responsive table-bordered-default mt-3">
+                                                        <spk-reusable-tables [columns]="summaryColumns" tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true">
+                                                            <tr *ngFor="let summary of getCategorySummaries(additionalTargets); let j = index">
+                                                                <td class="text-center">{{ j + 1 }}</td>
+                                                                <td>
+                                                                    <span class="font-medium"> {{summary.field_name}}</span>
+                                                                </td>
+                                                                <td>{{summary.input_type === 'Value' ? CURRENCY_SYMBOLS.RUPEE : 'Pcs'}} {{summary.total_achieved}} <span class="opacity-70">/{{summary.target_value}}</span></td>
+                                                                <td>
+                                                                    <div class="flex items-center">
+                                                                        <div class="progress progress-sm w-full bg-gray-200" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
+                                                                            <div class="progress-bar  bg-primary" [style.width]="summary.progress + '%'"  [attr.aria-valuenow]="summary.progress"></div>
+                                                                        </div>
+                                                                        <div class="ms-2">{{summary.progress }}%</div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge leading-none" [ngClass]="{'text-success bg-success/10': summary.status === 'Completed', 'text-warning bg-warning/10': summary.status === 'Pending', 'text-info bg-info/10': summary.status === 'In Progress'}">{{summary.status}}</span>
+                                                                </td>
+                                                            </tr>
+                                                        </spk-reusable-tables>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="bg-light pt-2 p-4 rounded-md !mb-6" *ngIf="getProductSummaries(additionalTargets)?.length > 0;">
+                                                    <label class="font-medium text-xs">
+                                                        Product Wise Target
+                                                    </label>
+                                                    <div class="table-responsive table-bordered-default mt-3">
+                                                        <spk-reusable-tables [columns]="summaryColumns" tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true">
+                                                            <tr *ngFor="let summary of getProductSummaries(additionalTargets); let j = index">
+                                                                <td class="text-center">{{ j + 1 }}</td>
+                                                                <td>
+                                                                    <span class="font-medium"> {{summary.field_name}}</span>
+                                                                </td>
+                                                                <td>{{summary.input_type === 'Value' ? CURRENCY_SYMBOLS.RUPEE : 'Pcs'}} {{summary.total_achieved}} <span class="opacity-70">/{{summary.target_value}}</span></td>
+                                                                <td>
+                                                                    <div class="flex items-center">
+                                                                        <div class="progress progress-sm w-full bg-gray-200" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
+                                                                            <div class="progress-bar  bg-primary" [style.width]="summary.progress + '%'"  [attr.aria-valuenow]="summary.progress"></div>
+                                                                        </div>
+                                                                        <div class="ms-2">{{summary.progress }}%</div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge leading-none" [ngClass]="{'text-success bg-success/10': summary.status === 'Completed', 'text-warning bg-warning/10': summary.status === 'Pending', 'text-info bg-info/10': summary.status === 'In Progress'}">{{summary.status}}</span>
+                                                                </td>
+                                                            </tr>
+                                                        </spk-reusable-tables>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="grid grid-cols-12 sm:gap-x-6 gap-y-3 mb-6 mt-3" *ngIf="getOtherSummaries(additionalTargets)?.length > 0;">
+                                                    <div *ngFor="let customer of getOtherSummaries(additionalTargets); let i = index" class="xl:col-span-6 col-span-12">
+                                                        <div class="form-check shipping-method-container mb-0 flex items-center bg-light mb-2 px-2 py-2 relative">
+                                                            <div class="form-check-label wp100">
+                                                                <div class="sm:flex items-center justify-between">
+                                                                    <div class="me-4 ms-2 flex">
+                                                                        <i class="material-icons text-primary" style="font-size: 25px !important;">{{ customer.icon }}</i>
+                                                                    </div>
+                                                                    <div class="shipping-partner-details wp100">
+                                                                        <p class="mb-0 font-semibold">{{ customer.name || '--'}}
+                                                                            <span class="badge leading-none ml-2" [ngClass]="{'text-warning bg-warning/10': customer.status === 'Pending', 'text-info bg-info/10': customer.status === 'In Progress', 'text-primary bg-primary/10': customer.status === 'Completed'}">{{ customer.status }}</span>
+                                                                        </p>
+                                                                        <p class="text-textmuted dark:text-textmuted/50 text-[11px] mb-0">{{ customer.description || '--'}}</p>
+                                                                    </div>
+                                                                    
+                                                                    <div class="mr-2 text-[11px]">
+                                                                        <p class="mb-0 font-medium whitespace-nowrap">{{customer.input_type === 'Value' ? CURRENCY_SYMBOLS.RUPEE : ''}} {{ customer.total_achieved || '0'}} <span class="opacity-70">/ {{ customer.target_value || '0'}}</span></p>
+                                                                        <div class="flex items-center">
+                                                                            <div class="progress progress-sm w-full bg-gray-400" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
+                                                                                <div class="progress-bar  bg-primary" [style.width]="customer.progress + '%'"  [attr.aria-valuenow]="customer.progress"></div>
+                                                                            </div>
+                                                                            <div class="ms-2 font-medium">{{ customer.progress || '0'}}%</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </app-showcode-card>
+        </div>
+    </div>
+</ng-container>
+
+<!-- Sk Loading Start -->
+<div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="grid grid-cols-12 sm:gap-x-6">
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <div >
+                        <div class="flex gap-2 mb-1 flex-wrap">
+                            <div class="flex items-center" *ngFor="let card of [].constructor(14)">
+                                <app-skeleton [class]="'w175'"></app-skeleton>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+            
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+            
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-12 sm:gap-x-6 mt-5">
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <div >
+                        <div class="flex gap-2 mb-1 flex-wrap">
+                            <div class="flex items-center" *ngFor="let card of [].constructor(16)">
+                                <app-skeleton [class]="'w180'"></app-skeleton>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sk Loading End -->

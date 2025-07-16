@@ -1,0 +1,575 @@
+<app-page-header [title]="'WCMS'" [title1]="['Complaint Detail']" [activeitem]="'Complaint Detail'" [buttonText1]="'Edit Complaint'" [icon1]="'edit'" [btnShow1]="true" (buttonClick1)="editPage($event)"></app-page-header>
+
+<!-- Start:: row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        <div class="box profile-card">
+            <div class="profile-banner-img">
+                <img src="./assets/images/media/media-3.jpg" class="card-img-top" alt="...">
+            </div>
+            <div class="box-body pb-0 relative profile-content">
+                <!-- profile-content -->
+                <div class="grid grid-cols-12 sm:gap-x-6 profile-content" *ngIf="!skLoading">
+                    <div class="xl:col-span-3 col-span-12">
+                        <div class="box overflow-hidden">
+                            <div class="box-header justify-between">
+                                <div class="box-title">Activity</div>
+                            </div>
+                            <div class="box-body pt-0">
+                                <div class="mt-45px mb-3" id="total-orders">
+                                    <spk-apexcharts [chartOptions]="chartOptions1"></spk-apexcharts>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box overflow-hidden">
+                            <div class="box-header">
+                                <div class="flex items-center justify-between wp100">
+                                    <div class="box-title">Activity Information</div>
+                                </div>
+                            </div>
+                            
+                            <div class="box-body p-0">
+                                <div class="table-responsive">
+                                    <spk-reusable-tables tableClass="table text-nowrap" [showCheckbox]="false">
+                                        <ng-container *ngIf="assignType === 'upcomming'">
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td>
+                                                    <span class="font-medium text-[11px]">Name :</span>
+                                                </td>
+                                                <td>
+                                                    <div class="flex items-center">
+                                                        <span class="text-[11px]">{{Detail?.service_engineer_name || '--'}}</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td><span class="font-medium text-[11px]">Priority Type :</span></td>
+                                                <td>
+                                                    <span class="badge bg-info/10 text-info text-[11px]">
+                                                        {{ Detail?.priority ? (Detail.priority | titlecase) : '--' }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td><span class="font-medium text-[11px]">Date :</span></td>
+                                                <td>
+                                                    <span class="text-primary font-medium me-1 text-[11px]">
+                                                        {{ Detail?.visit_date ? (Detail?.visit_date | date:'d MMM yyyy') : '--' }}
+                                                    </span>
+                                                    <span class="badge bg-primary/10 text-primary text-[12px]">
+                                                        {{ getTatDaysReadable(Detail?.tat_days) }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td class="vertical-align-top"><span class="font-medium text-[11px]">Remark :</span></td>
+                                                <td><span class="text-[11px] ellipsis w180" matTooltip="{{Detail?.remark}}">{{Detail?.remark || '--'}}</span></td>
+                                            </tr>
+                                        </ng-container>
+                                        
+                                        <ng-container *ngIf="assignType === 'last'">
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td>
+                                                    <span class="font-medium text-[11px]">Name :</span>
+                                                </td>
+                                                <td>
+                                                    <div class="flex items-center">
+                                                        <span class="text-[11px]">{{ Detail?.last_activity?.customer_details?.customer_name || '--' }} ({{Detail?.last_activity?.customer_details?.mobile || '--'}})</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td><span class="font-medium text-[11px]">Type :</span></td>
+                                                <td>
+                                                    <span class="badge bg-info/10 text-info text-[11px]">
+                                                        <i class="ri-{{ Detail?.last_activity?.visit_type === 'call' ? 'phone' : 'walk' }}-fill text-[11px] me-1"></i>
+                                                        {{ Detail?.last_activity?.visit_type ? (Detail.last_activity.visit_type | titlecase) : '--' }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td><span class="font-medium text-[11px]">Date :</span></td>
+                                                <td>
+                                                    <span class="text-primary font-medium me-1 text-[11px]">
+                                                        {{ Detail?.last_activity?.activity_date ? (Detail?.last_activity?.activity_date | date:'d MMM yyyy') : '--' }}
+                                                    </span>
+                                                    <span class="badge bg-primary/10 text-primary text-[12px]">
+                                                        {{ getTatDaysReadable(Detail?.last_activity?.tat_days) }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b !border-defaultborder dark:!border-defaultborder/10 text-[11px]">
+                                                <td class="vertical-align-top"><span class="font-medium text-[11px]">Remark :</span></td>
+                                                <td><span class="text-[11px] ellipsis w180" matTooltip="{{Detail?.last_activity?.remark}}">{{Detail?.last_activity?.remark || '--'}}</span></td>
+                                            </tr>
+                                        </ng-container>
+                                    </spk-reusable-tables>
+                                </div>
+                            </div>                            
+                        </div>
+                        <!-- <div class="box overflow-hidden"> -->
+                            <!-- <div *ngIf="activeTab === 'Logs'"> -->
+                                <app-logs [logList]="logList" [scrollHeight]="'400'" [closeBtn]="false"></app-logs>
+                            <!-- </div>                            -->
+                        <!-- </div> -->
+                    </div>
+                    
+                    
+                    <div class="xxl:col-span-9 xl:col-span-8 lg:col-span-8 md:col-span-7 col-span-12">
+                        <div class="box">
+                            <div class="box-header">
+                                <div class="box-title text-primarytint1color wp100 flex justify-between">
+                                    Customer  Detail
+                                </div>
+                            </div>
+                            <div class="box-body pt-0">
+                                <ul class="ti-list-group list-group-flush border-0">
+                                    <li>
+                                        <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                                            <div class="flex items-center  flex-wrap">
+                                                <div>
+                                                    <span class="block font-medium text-primay">{{Detail?.customer_name || '--'}}</span>
+                                                    <span class="text-textmuted dark:text-textmuted/50">Customer Name</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center  flex-wrap">
+                                                <div>
+                                                    <span class="block font-medium text-primay">{{Detail?.customer_mobile || '--'}}</span>
+                                                    <span class="text-textmuted dark:text-textmuted/50">Customer Mobile</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center  flex-wrap">
+                                                <div>
+                                                    <span class="block font-medium text-primay">{{Detail?.alternate_mobile_no || '--'}}</span>
+                                                    <span class="text-textmuted dark:text-textmuted/50">Customer Alternate Mobile</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center  flex-wrap">
+                                                <div>
+                                                    <span class="block font-medium text-primay">{{Detail?.address || '--'}}, {{Detail?.city || '--'}}, {{Detail?.district || '--'}}, {{Detail?.state || '--'}}, {{Detail?.pincode || '--'}}
+                                                    </span>
+                                                    <span class="text-textmuted dark:text-textmuted/50">Address</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <app-showcode-card  [titleView]="false"  [view]="false">
+                            <div class="flex justify-between mb-3">
+                                <div class="box-title flex items-center text-primarytint1color">Basic Detail</div>
+                                
+                                <div class="md:mb-0 mb-2">
+                                    <app-icon-button [icon]="'ri-mail-line'" [buttonClass]="'ti-btn ti-btn-icon bg-primary/10 text-primary !border hover:bg-primary hover:text-white !rounded-full btn-wave'"> </app-icon-button>
+                                    <app-icon-button matTooltip="Add New Invoice" [icon]="'ri-add-line'" (click)="addInvoice(Detail)" [buttonClass]="'ti-btn ti-btn-icon bg-secondary/10 text-secondary hover:bg-secondary hover:text-white !rounded-full btn-wave'"> </app-icon-button>
+                                    <app-icon-button [icon]="'ri-whatsapp-line'" [buttonClass]="'ti-btn ti-btn-icon bg-secondary/10 text-secondary hover:bg-secondary hover:text-white !rounded-full btn-wave'"> </app-icon-button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-6 mb-1 flex-wrap text-[11px]">
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Created At</span>
+                                        <span class="block font-medium">{{Detail?.created_at ? (Detail?.created_at | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Created By</span>
+                                        <span class="block font-medium">{{Detail?.created_name || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Complaint ID</span>
+                                        <span class="block font-medium">{{Detail?.complaint_no || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Nature Of Problem</span>
+                                        <span class="block font-medium">{{Detail?.nature_of_problem || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Product Name</span>
+                                        <span class="block font-medium">{{Detail?.product_description || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Date Of Purchase</span>
+                                        <span class="block font-medium">{{Detail?.date_of_purchase || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Technician Name</span>
+                                        <span class="block font-medium">{{Detail?.customer_name || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Technician Mobile</span>
+                                        <span class="block font-medium">{{Detail?.customer_mobile || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Complaint Status</span>
+                                        <span class="flex items-center block font-medium badge bg-info/10 text-info">{{Detail?.status || '--'}}
+                                            <a class="text-info font-medium" (click)="updateStatus()">
+                                                <i class="material-icons ms-1">edit</i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center" *ngIf="Detail.reason">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Reason</span>
+                                        <span class="block font-medium">{{Detail?.reason || '--'}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Inspection Status</span>
+                                        <span class="block font-medium">{{Detail?.inspection_status || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Closure Status</span>
+                                        <span class="block font-medium">{{Detail?.inspection_status || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Closure Status</span>
+                                        <span class="block font-medium">{{Detail?.inspection_status || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Closure Status</span>
+                                        <span class="block font-medium">{{Detail?.inspection_status || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Closure Status</span>
+                                        <span class="block font-medium">{{Detail?.inspection_status || '--'}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dropdown-divider mb-3 mt-3"></div>
+                            
+                            <div class="flex gap-5 mb-1 flex-wrap text-[11px]">
+                                <div class="flex items-center gap-2" *ngFor="let key of formattedKeysFormData | keyvalue">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">{{ key.key }}</span>
+                                        <span class="block font-medium">{{ key.value }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </app-showcode-card>
+                        
+                        <app-showcode-card  [titleView]="false"  [view]="false">
+                            <div class="flex justify-between mb-3">
+                                <div class="box-title flex items-center text-primarytint1color">Inspection Detail</div>
+                            </div>
+                            
+                            <div class="flex gap-6 mb-1 flex-wrap text-[11px]">
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Created At</span>
+                                        <span class="block font-medium">{{inspectionDetails?.created_at ? (inspectionDetails?.created_at | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Created By</span>
+                                        <span class="block font-medium">{{inspectionDetails?.created_name || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Product Verification</span>
+                                        <span class="block font-medium">{{inspectionDetails?.product_verification || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Purchase Bill</span>
+                                        <span class="block font-medium">{{inspectionDetails?.purchase_bill || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Purchase Location</span>
+                                        <span class="block font-medium">{{inspectionDetails?.purchase_location || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Resolution Type</span>
+                                        <span class="block font-medium">{{inspectionDetails?.resolution_type || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Warranty Verification</span>
+                                        <span class="block font-medium">{{inspectionDetails?.warranty_verification || '--'}}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Warranty Slip</span>
+                                        <span class="block font-medium">{{inspectionDetails?.warranty_slip || '--'}}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50">Inspection Remarks</span>
+                                        <span class="block font-medium">{{inspectionDetails?.inspection_remarks || '--'}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dropdown-divider mb-3 mt-3"></div>
+                        </app-showcode-card>
+                        
+                        <div class="box">
+                            <div class="box-header justify-between">
+                                <nav class="nav nav-tabs tab-style-8 scaleX profile-settings-tab gap-2 flex mt-2" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md active" [ngClass]="{'active': activeTab ==='Visit Activity'}" (click)="activeTab = 'Visit Activity'">
+                                        Visit Activity
+                                    </button>
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md active" [ngClass]="{'active': activeTab ==='point_location'}" (click)="activeTab = 'point_location';loadMap()">
+                                        Point Location
+                                    </button>
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='Comments'}" (click)="activeTab = 'Comments';">
+                                        Comments
+                                    </button>
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='Attachment'}" (click)="activeTab = 'Attachment';">
+                                        Attachment
+                                    </button>
+                                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='Invoice'}" (click)="activeTab = 'Invoice'">
+                                        Invoice
+                                    </button>
+                                </nav>
+                            </div>
+                            
+                            <div class="box-body tab-content">
+                                <div *ngIf="activeTab === 'Visit Activity'">
+                                    <ng-container *ngIf="!skLoading">
+                                        <ul class="list-none profile-timeline mb-3">
+                                            <li *ngFor="let row of visitDetails">
+                                                <div>
+                                                    <span class="avatar avatar-sm avatar-rounded profile-timeline-avatar bg-primarytint3color">
+                                                        <i class="ri-walk-fill text-[14px]"></i> 
+                                                    </span>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-2">
+                                                        <span class="text-defaulttextcolor dark:text-defaulttextcolor/80">
+                                                            <span class="font-medium">{{row?.customer_details?.customer_name}} </span>{{row?.customer_details?.mobile}}
+                                                        </span>
+                                                        <span class="float-end text-[11px] badge bg-primarytint3color/10 text-primarytint3color">{{row.type | titlecase}} - {{ row?.visit_date ? (row?.visit_date | date:'d MMM yyyy, hh:mm a') : '--' }}</span>
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Visit Start : </span>{{ row?.visit_start_time ? (row?.visit_start_time | date:'hh:mm a') : '--' }}
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Start Address : </span>{{ row?.start_address || '--' }}
+                                                    </p>
+                                                    
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Visit Stop : </span>{{ row?.visit_stop_time ? (row?.visit_stop_time | date:'hh:mm a') : '--' }}
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Stop Address : </span>{{ row?.stop_address || '--' }}
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Avarage Meeting Time : </span>
+                                                        <span class="font-medium text-success">{{ row?.avarage_meeting_time || '--' }}</span>
+                                                    </p>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Remark : </span>
+                                                        <span class="font-medium text-success">{{ row?.remark || '--' }}</span>
+                                                    </p>
+                                                </div>
+                                                
+                                                <div *ngIf="row.type === 'call'">
+                                                    <span class="avatar avatar-sm avatar-rounded profile-timeline-avatar bg-info">
+                                                        <i class="ri-phone-fill text-[14px]"></i> 
+                                                    </span>
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-2">
+                                                        <span class="text-defaulttextcolor dark:text-defaulttextcolor/80">
+                                                            <span class="font-medium">{{row?.customer_details?.customer_name}} </span>{{row?.customer_details?.mobile}}
+                                                        </span>
+                                                        <span class="float-end text-[11px] badge bg-info/10 text-info">{{row.type | titlecase}} - {{ row?.activity_date ? (row?.activity_date | date:'d MMM yyyy, hh:mm a') : '--' }}</span>
+                                                    </p>
+                                                    
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Call Start : </span>
+                                                        {{ row?.call_start ? (row?.call_start | date:'hh:mm a') : '--' }}
+                                                    </p>
+                                                    
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Call End : </span>
+                                                        {{ row?.call_end ? (row?.call_end | date:'hh:mm a') : '--' }}
+                                                    </p>
+                                                    
+                                                    <p class="text-textmuted dark:text-textmuted/50 mb-1 text-[12px]">
+                                                        <span class="font-medium text-[11px]">Remark : </span>
+                                                        {{ row?.remark || '--' }}
+                                                    </p>
+                                                    
+                                                    <audio id="player2" controls>
+                                                        <source src="./assets/audio/perfect-beauty.mp3" type="audio/mp3" >
+                                                    </audio>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <ng-container *ngIf="!visitDetails.length">
+                                            <app-data-not-found></app-data-not-found>
+                                        </ng-container>
+                                    </ng-container>
+                                    
+                                    <!-- //--skeleton--// -->
+                                    <ng-container *ngIf="skLoading">
+                                        <div *ngFor="let card of [].constructor(5)">
+                                            <app-skeleton [class]="'h50 mb-2'"></app-skeleton>
+                                        </div>
+                                    </ng-container>
+                                    <!-- //--skeleton--// -->
+                                </div>
+                                <div *ngIf="activeTab === 'point_location'">
+                                    <app-showcode-card [title]="'Point Location'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'"  [titleView]="true"  [actionIcons]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" [boxHeader]="'pt-0 pb-0'" [classbody]="'pt-0'" [iconName]="!Detail.lat || !Detail.long ? 'ri-add-line' : 'ri-pencil-line'" (action)="openModal('point_location' , Detail)">
+                                        <ng-container *ngIf="Detail.lat && Detail.long">
+                                            <div id="map" style="width: 100%; height: 300px;"></div>
+                                            
+                                            <div class="flex gap-6 mt-2 flex-wrap text-[12px]">
+                                                <div class="flex items-center">
+                                                    <div>
+                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">latitude</span>
+                                                        <span class="block font-medium">{{Detail?.lat || '--'}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <div>
+                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">longitude</span>
+                                                        <span class="block font-medium">{{Detail?.long || '--'}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <div>
+                                                        <span class="text-xs text-textmuted dark:text-textmuted/50">GPS Address</span>
+                                                        <span class="block font-medium">{{Detail?.gps_address || '--'}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        
+                                        <ng-container *ngIf="!Detail.lat || !Detail.long">
+                                            <div class="max-w-sm p-6 mx-auto text-center">
+                                                <div class="flex flex-col items-center space-y-3">
+                                                    <span class="material-icons text-6xl text-danger">location_on</span>
+                                                    <p class="text-lg font-semibold text-gray-800">Point your location first</p>
+                                                    <p class="text-sm text-gray-500">Once location is point, map will appear here.</p>
+                                                    
+                                                    <div class="border-t border-block-start-dashed sm:flex justify-end">
+                                                        <app-button [buttonType]="'submit'" [buttonClass]="'m-0 ti-btn ti-btn-outline-success'" [label]="'Point Your Location'" [iconClass]="'ri-map-pin-user-line'" (buttonClick)="openModal('point_location' , Detail)"></app-button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        
+                                    </app-showcode-card>
+                                </div>
+                                <div *ngIf="activeTab === 'Comments'">
+                                    <app-comments [detailId]="DetailId" [module]="'complaint'" [showAvatar]="true"></app-comments>
+                                </div>
+                                <div *ngIf="activeTab === 'Attachment'">
+                                    <ng-container *ngIf="complaintImages.length !== 0">
+                                        <div class="grid grid-cols-12 sm:gap-x-6">
+                                            <div class="xxl:col-span-4 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of complaintImages">
+                                                <spk-product-card [apiPath]="'complaint/get-doc'" [imageData]="image" [editBtn]="false" [delBtn]="false" [heading]="false" [subHeading]="false">
+                                                </spk-product-card>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="complaintImages.length === 0">
+                                        <app-data-not-found></app-data-not-found>
+                                    </ng-container>
+                                </div>
+                                <div *ngIf="activeTab === 'Invoice'">
+                                    <div class="table-responsive overflow-auto table-bordered-default">
+                                        <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showS_No]="true" [columns]="headers_one">
+                                            <ng-container *ngIf="!skLoading">
+                                                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of invoiceDetails.items; let i = index;">
+                                                    <td class="!text-center">{{i + 1 }}</td>
+                                                    <td>{{row.product_name ? (row.product_name | titlecase) : '--'}} -- ({{row.product_code ? row.product_code : '--'}})</td>
+                                                    <td class="text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row.qty ? row.qty : '--'}}</td>
+                                                    <td class="text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row.sub_total ? (row.sub_total) : '0'}}</td>
+                                                </tr>
+                                            </ng-container>
+                                            <!-- //--skeleton--// -->
+                                            <ng-container *ngIf="skLoading">
+                                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(4)">
+                                                    <td *ngFor="let row of [].constructor(5)">
+                                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                            <!-- //--skeleton--// -->
+                                        </spk-reusable-tables>
+                                        <ng-container *ngIf="!invoiceDetails.items.length && !skLoading">
+                                            <app-data-not-found></app-data-not-found>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sk Loading Start -->
+                <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+                    <div class="xl:col-span-12 col-span-12">
+                        
+                        <div class="grid grid-cols-12 sm:gap-x-6">
+                            <div class="xl:col-span-12 col-span-12">
+                                <app-showcode-card [titleView]="false"  [view]="false">
+                                    <div >
+                                        <div class="flex gap-2 mb-1 flex-wrap">
+                                            <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                                <app-skeleton [class]="'w180'"></app-skeleton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </app-showcode-card>
+                            </div>
+                            
+                            <div class="xl:col-span-4 col-span-12">
+                                <app-showcode-card [titleView]="false"  [view]="false">
+                                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                                </app-showcode-card>
+                            </div>
+                            
+                            <div class="xl:col-span-8 col-span-12">
+                                <app-showcode-card [titleView]="false"  [view]="false">
+                                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                                </app-showcode-card>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sk Loading End -->
+            </div>
+        </div>
+    </div>
+</div>

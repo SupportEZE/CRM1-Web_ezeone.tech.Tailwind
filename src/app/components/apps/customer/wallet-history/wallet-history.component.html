@@ -1,0 +1,71 @@
+<nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist" *ngIf="data_hide">
+    <app-listing-tab *ngFor="let tab of mainTabs"
+    [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon}]"
+    [activeTab]="activeTab"
+    [countShow]="false"
+    (tabChange)="onTabChange($event.tab)">
+</app-listing-tab>
+</nav>
+<ng-container *ngIf="activeTab == 'Ledger'">
+    <app-showcode-card>
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <spk-reusable-tables
+            tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" 
+            [columns]="getColumns()"
+            [showCheckbox]="false">
+            <ng-container *ngIf="!skLoading">
+                <tr *ngFor="let row of ledger; let i = index;">
+                    <td class="w50">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                    <td class="w120">{{row.created_at ?  (row.created_at| date : 'dd MMM yyyy hh:mm a') : '---'}}</td>
+                    <td class="w150">{{row.creation_type}}</td>
+                    <td class="text-right">
+                        <span class="text-success font-bold block">{{row.transaction_type == 'credit' ? ( '+' + row.points + 'PT') : ''}} </span>
+                        {{row.transaction_type == 'credit' ? row.remark :'---'}}
+                    </td>
+                    <td class="text-right">
+                        <span class="text-danger font-bold block">
+                            {{row.transaction_type == 'debit' ? ('-' + row.points + 'PT') : '---'}} PT
+                        </span>
+                        {{row.transaction_type == 'debit' ? row.remark :''}}
+                    </td>
+                    <td class="w120 text-right">
+                        <span class="font-bold block">{{row.balance}} PT</span>
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="skLoading">
+                <tr *ngFor="let row of [].constructor(10);">
+                    <td class="w50"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                    <td class="w120"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                    <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                    <td class="text-right"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton> </td>
+                    <td class="text-right"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                    <td class="w120 text-right"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                </tr>
+            </ng-container>
+            
+            
+        </spk-reusable-tables>
+    </div>
+    
+    <ng-container *ngIf="!ledger.length && !skLoading">
+        <app-data-not-found></app-data-not-found>
+    </ng-container>
+    <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages ? pagination.total_pages : 0" [pageLimit]="pagination.limit" [listLength]="ledger.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+</app-showcode-card>
+</ng-container>
+<ng-container *ngIf="activeTab == 'Scan History'">
+    <app-qr-list [_id]="basicDetail._id" [detail_page_active]="true"  [active_tab]="'scan_history'"></app-qr-list>
+</ng-container>
+
+<ng-container *ngIf="activeTab == 'Gift Redeem'">
+    <app-redeem-list  [_id]="basicDetail._id" [detail_page_active]="true"  [redeem_type]="'Gift'"></app-redeem-list>
+</ng-container>
+
+<ng-container *ngIf="activeTab == 'Cash Redeem'">
+    <app-redeem-list  [_id]="basicDetail._id" [detail_page_active]="true"  [redeem_type]="'Cash'"></app-redeem-list>
+</ng-container>
+
+<ng-container *ngIf="activeTab == 'Purchase Req'">
+    <app-purchase-list  [_id]="basicDetail._id" [customerDetail] ="basicDetail"  [pageHeader]="false"></app-purchase-list>
+</ng-container>

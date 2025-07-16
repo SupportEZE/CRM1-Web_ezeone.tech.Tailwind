@@ -1,0 +1,287 @@
+<app-page-header [title]="'Quotation'" [title1]="['Quotation list']" [activeitem]="'Quotation list'"></app-page-header>
+
+<!-- Start::row-1 -->
+<!-- <div class="grid grid-cols-12 gap-x-6"> -->
+    <div class="xl:col-span-12 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xxl:col-span-7 col-span-12">
+                <div class="box">
+                    <div class="box-body" [ngClass]="topCountLoading ? 'p-4' : 'p-0'">
+                        <div id="invoice-list-stats">
+                            <spk-apexcharts *ngIf="!topCountLoading" [chartOptions]="chartOptions"></spk-apexcharts>
+                            <app-skeleton [class]="'h235 wp100 bg-skeleton'" *ngIf="topCountLoading"></app-skeleton>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="xxl:col-span-5 col-span-12">
+                <div class="grid grid-cols-12 gap-x-6">
+                    <ng-container *ngIf="!skLoading">
+                    <div class="xxl:col-span-6 col-span-12">
+                        <div class="box overflow-hidden main-content-card">
+                            <div class="box-body p-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="flex-auto">
+                                        <h5 class="mb-2 text-xs">Total</h5> 
+                                        <div class="pb-0 mt-0"> 
+                                            <div> 
+                                                <h4 class="font-medium mb-1">₹<span class="count-up">{{dataCount.total_approved_amount}}</span></h4> 
+                                                <span class="badge bg-primary">{{dataCount.approved_count}}</span>
+                                            </div> 
+                                        </div> 
+                                    </div>
+                                    <div class="main-card-icon primary border-[3px] border-primary/50 !rounded-full">
+                                        <div class="avatar avatar-md bg-primary border border-primary/10 avatar-rounded">
+                                            <div class="avatar avatar-sm">
+                                                <svg  class="!fill-white !stroke-primary" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="rgba(var(--primary-rgb))" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16l-3 -2l-2 2l-2 -2l-2 2l-2 -2l-3 2m4 -14h6m-6 4h6m-2 4h2" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xxl:col-span-6 col-span-12">
+                        <div class="box overflow-hidden main-content-card">
+                            <div class="box-body p-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="flex-auto">
+                                        <h5 class="mb-2 text-xs">Negotiation</h5> 
+                                        <div> 
+                                            <h4 class="font-medium mb-1">₹<span class="count-up">{{dataCount.total_negotiation_amount}}</span></h4> 
+                                            <span class="badge bg-primarytint1color">{{dataCount.negotiation_count}}</span>
+                                        </div> 
+                                    </div>
+                                    <div class="main-card-icon primary1 border-[3px] border-primarytint1color/50 !rounded-full">
+                                        <div class="avatar avatar-md bg-primarytint1color border border-primarytint1color/10 avatar-rounded">
+                                            <div class="avatar avatar-sm">
+                                                <svg class="!fill-white !stroke-primarytint1color icon icon-tabler icon-tabler-discount-check" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="var(--primary-tint1-color)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <path d="M5 7.2a2.2 2.2 0 0 1 2.2 -2.2h1a2.2 2.2 0 0 0 1.55 -.64l.7 -.7a2.2 2.2 0 0 1 3.12 0l.7 .7c.412 .41 .97 .64 1.55 .64h1a2.2 2.2 0 0 1 2.2 2.2v1c0 .58 .23 1.138 .64 1.55l.7 .7a2.2 2.2 0 0 1 0 3.12l-.7 .7a2.2 2.2 0 0 0 -.64 1.55v1a2.2 2.2 0 0 1 -2.2 2.2h-1a2.2 2.2 0 0 0 -1.55 .64l-.7 .7a2.2 2.2 0 0 1 -3.12 0l-.7 -.7a2.2 2.2 0 0 0 -1.55 -.64h-1a2.2 2.2 0 0 1 -2.2 -2.2v-1a2.2 2.2 0 0 0 -.64 -1.55l-.7 -.7a2.2 2.2 0 0 1 0 -3.12l.7 -.7a2.2 2.2 0 0 0 .64 -1.55v-1" />
+                                                    <path d="M9 12l2 2l4 -4" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xxl:col-span-6 col-span-12">
+                        <div class="box overflow-hidden main-content-card">
+                            <div class="box-body p-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="flex-auto">
+                                        <h5 class="mb-2 text-xs">Win</h5> 
+                                        <div> 
+                                            <h4 class="font-medium mb-1"><span class="count-up">{{dataCount.total_win_amount}}</span></h4> 
+                                            <span class="badge bg-success">{{dataCount.win_count}}</span>
+                                        </div> 
+                                    </div>
+                                    <div class="main-card-icon primarytint2color  border-[3px] border-primarytint2color/50 !rounded-full">
+                                        <div class="avatar avatar-md bg-primarytint2color border border-primarytint2color/10 avatar-rounded">
+                                            <div class="avatar avatar-sm ">
+                                                <svg class="!fill-white !stroke-primarytint2color icon icon-tabler icon-tabler-help-octagon" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="var(--primary-tint2-color)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <path d="M12.802 2.165l5.575 2.389c.48 .206 .863 .589 1.07 1.07l2.388 5.574c.22 .512 .22 1.092 0 1.604l-2.389 5.575c-.206 .48 -.589 .863 -1.07 1.07l-5.574 2.388c-.512 .22 -1.092 .22 -1.604 0l-5.575 -2.389a2.036 2.036 0 0 1 -1.07 -1.07l-2.388 -5.574a2.036 2.036 0 0 1 0 -1.604l2.389 -5.575c.206 -.48 .589 -.863 1.07 -1.07l5.574 -2.388a2.036 2.036 0 0 1 1.604 0z" />
+                                                    <path d="M12 16v.01" />
+                                                    <path d="M12 13a2 2 0 0 0 .914 -3.782a1.98 1.98 0 0 0 -2.414 .483" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xxl:col-span-6 col-span-12">
+                        <div class="box overflow-hidden main-content-card">
+                            <div class="box-body p-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="flex-auto">
+                                        <h5 class="mb-2 text-xs">Lost</h5> 
+                                        <div> 
+                                            <h4 class="font-medium mb-1"><span class="count-up">{{dataCount.total_lost_amount}}</span></h4> 
+                                            <span class="badge bg-primarytint3color">{{dataCount.lost_count}}</span>
+                                        </div> 
+                                    </div>
+                                    <div class="main-card-icon primarytint3color  border-[3px] border-primarytint3color/50 !rounded-full">
+                                        <div class="avatar avatar-md bg-primarytint3color border border-primarytint3color/10 avatar-rounded">
+                                            <div class="avatar avatar-sm">
+                                                <svg class="!fill-white !stroke-primarytint3color icon icon-tabler icon-tabler-hourglass" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="var(--primary-tint3-color)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <path d="M6.5 7h11" />
+                                                    <path d="M6.5 17h11" />
+                                                    <path d="M6 20v-2a6 6 0 1 1 12 0v2a1 1 0 0 1 -1 1h-10a1 1 0 0 1 -1 -1z" />
+                                                    <path d="M6 4v2a6 6 0 1 0 12 0v-2a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>
+                    </div>
+                    </ng-container>
+                    <ng-container *ngIf="skLoading">
+                        <div class="xl:col-span-6 col-span-12" *ngFor="let row of [].constructor(4)">
+                            <app-skeleton [class]="'w250 h100 mb-3'"></app-skeleton>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="box py-3 px-4">
+        <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+            <ng-container *ngIf="skLoading">
+                <app-skeleton  *ngFor="let row of [].constructor(3)" [class]="'w100 h25'"></app-skeleton>
+            </ng-container>
+            <ng-container *ngIf="!skLoading">
+                <app-listing-tab *ngFor="let tab of mainTabs" [tabs]="[{ name: tab.name, label: tab.label, count: tab.count}]" [activeTab]="activeTab"
+                (tabChange)="onTabChange($event.tab)"></app-listing-tab>
+            </ng-container>
+        </nav>
+        
+        <div class="row">
+            <div class="col-xl-12">
+                <app-page-sub-header [refreshLabel]="'Refresh'"  [refreshLabel]="'Refresh'" (onRefresh)="onRefresh()"[addBtnLabel]="'Add Quotation'" [btnShow]="true" [btnShow1]="true" [logsLabel]="'Logs'" (logBtn)="openMainLogModal('')" [btnShow2]="accessRight?.addRight" (button1)="addQuotation()"></app-page-sub-header>
+            <!-- </div> -->
+        <!-- </div> -->
+        <!-- <div class="box-body p-0"> -->
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables [columns]="invoiceColumn" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap"
+                [showCheckbox]="false" > 
+                <ng-container *ngIf="!skLoading">
+                    <tr class="border-b ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap">
+                        <td>&nbsp;</td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="onDateChange('created_at',$event)">
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>  
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.created_name" placeholder="Search..." (keyup.enter)="getQuotationList()">
+                                    @if (filter.created_name) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.created_name=''; getQuotationList()">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.quotation_id" placeholder="Search..." (keyup.enter)="getQuotationList()">
+                                    @if (filter.quotation_id) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.quotation_id=''; getQuotationList()">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.customer_type_name" placeholder="Search..." (keyup.enter)="getQuotationList()">
+                                    @if (filter.customer_type_name) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.customer_type_name=''; getQuotationList()">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.login_type_name" placeholder="Search..." (keyup.enter)="getQuotationList()">
+                                    @if (filter.login_type_name) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.login_type_name=''; getQuotationList()">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-search-filters">
+                                <mat-form-field class="table-input">
+                                    <input matInput type="text" [(ngModel)]="filter.login_type_name" placeholder="Search..." (keyup.enter)="getQuotationList()">
+                                    @if (filter.login_type_name) {
+                                        <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.login_type_name=''; getQuotationList()">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    }
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr class="invoice-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of listing; let i = index;">
+                        <td class="!text-center"> {{(listPagination.cur_page - 1) * listPagination.limit + i + 1 }}</td>
+                        <td>{{row.created_at ? (row.created_at | date:'d MMM yyyy, hh:mm a') : '---'}}</td>
+                        <td>{{row.created_name || '---'}}</td>  
+                        <td class="text-center"><a (click)="quotationDetail(row._id)" class="text-primary font-semibold underline">{{row.quotation_id || '---' }}</a></td>
+                        <td>{{row.quotation_type || '---' }}</td>
+                        <td>{{row.customer_type_name || '---' }}</td>
+                        <td>
+                            <div class="flex items-center">
+                                <div>
+                                    <p class="mb-0 font-medium">{{row.customer_name || '---' }}</p>
+                                    <!-- <p class="mb-0 text-[11px] text-textmuted dark:text-textmuted/50">{{row.Mail || '---' }}</p> -->
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            {{row.total_qty || '---' }}
+                        </td>
+                        <td class="text-center">
+                            {{row.total_item || '---' }}
+                        </td>
+                        <td class="text-right">
+                            {{CURRENCY_SYMBOLS.RUPEE}}{{row.total_amount || '---' }}
+                        </td>
+                        <td class="text-center">
+                            <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="onDeleteRow(row._id)" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                        </td>
+                    </tr>
+                </ng-container>  
+                <!-- //--skeleton--// -->
+                <ng-container *ngIf="skLoading">
+                    <tr class="border-b ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" *ngFor="let row of [].constructor(10)">
+                        <td *ngFor="let row of [].constructor(11)">
+                            <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                        </td>
+                    </tr>
+                </ng-container>
+                <!-- //--skeleton--// -->  
+            </spk-reusable-tables>
+            <ng-container *ngIf="!listing.length && !skLoading">
+                <app-data-not-found></app-data-not-found>
+            </ng-container>
+        <!-- </div> -->
+    </div>
+    <div class="box-footer">
+        <app-pagination-footer [currentPage]="listPagination.cur_page" [totalPage]="listPagination.total_pages" [pageLimit]="listPagination.limit" [listLength]="listing.length" [preBtn]="!listPagination.prev" [nextBtn]="!listPagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)"></app-pagination-footer>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- </div> -->
+<!--End::row-1 -->

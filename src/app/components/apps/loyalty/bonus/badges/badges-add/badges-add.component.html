@@ -1,0 +1,82 @@
+<app-page-header [title]="'Loyalty'" [title1]="['Bonus']" [activeitem]="'Add Badges'" [btnShow1]="false"></app-page-header>
+<div class="box" *ngIf="skLoading">
+  <div class="p-4">
+    <div class="grid grid-cols-12 gap-x-6">
+      <div class="xl:col-span-3 col-span-12 mb-4"
+      *ngFor="let card of [].constructor(10)">
+      <app-skeleton></app-skeleton>
+    </div>
+  </div>
+</div>
+</div>
+<div class="xl:col-span-12 col-span-12" *ngIf="!skLoading">
+  <form [formGroup]="badgeForm" (ngSubmit)="onSubmit()">
+    <div class="box">
+      <div class="p-4">
+        <div class="grid grid-cols-12 gap-x-6">
+          <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3">
+            <spk-ng-select formControlName="customer_type_id"  label="Customer Category" [search]="true" [multiple]="true"  [fieldReq]="true"  [options]="commonApi.customerCategorySubType" (searchChanged)="onSearch($event)"  (selectedChange)="findName($event)">
+            </spk-ng-select>
+          </div>
+          
+          <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3">
+            <spk-input label="Title" formControlName="title" [fieldReq]="true" class="remove-default-class" type="text"></spk-input>
+          </div>
+          <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3">
+            <spk-flatpickr 
+            placeholder="Start Date"
+            label="Start Date"
+            [fieldReq]="true" 
+            [min]="today"
+            class="form-control custom-datepickr"
+            formControlName="start_date"
+            (dateChange)="onDateChange()"
+            >
+          </spk-flatpickr>
+        </div>
+        
+        <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3">
+          <spk-flatpickr 
+          placeholder="End Date"
+          label="End Date"
+          [min]="badgeForm.value.start_date"
+          [fieldReq]="true" 
+          class="form-control custom-datepickr"
+          formControlName="end_date"
+          >
+        </spk-flatpickr>
+      </div>
+      
+      
+      
+      <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3">
+        <spk-input label="Eligible Points" [fieldReq]="true" formControlName="eligible_points" class="remove-default-class" type="number"></spk-input>
+      </div>
+      
+      
+      <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3">
+        <spk-ng-select formControlName="incentive_type"  label="Incentive Type"  [fieldReq]="true"  [options]="[{label: 'Fixed Point', value: 'Fixed Point'}, {label: 'Gift', value: 'Gift'}]">
+        </spk-ng-select>
+      </div>
+      
+      <div class="col-span-12 mb-4 xl:col-span-4 xxl:col-span-3" *ngIf="badgeForm.value.incentive_type">
+        <spk-input [label]="badgeForm.value.incentive_type" [fieldReq]="true" formControlName="incentive_value" class="remove-default-class" [type]="'text'"></spk-input>
+      </div>
+      
+      <div class="col-span-12 mb-4 xl:col-span-6 xxl:col-span-6">
+        <label class="form-label">Upload Image<span class="text-red-500">*</span></label>
+        <file-pond class="filepond basic-filepond" [options]="pondOptions" [files]="pondFiles" (onprocessfile)="onFileProcessed($event)" (onremovefile)="onFileRemove($event)" >
+        </file-pond>
+        
+        <p class="text-[.625rem] font-semibold text-right text-red-500">Image dimensions must be exactly 300X300 px and file size must not exceed 2 MB.</p>
+      </div>
+    </div> 
+    
+    <div class="flex items-center justify-end mt-10 gap-2">                     
+      <app-button [buttonType]="'submit'" [disabled]="api.disabled"  [buttonClass]="'ti-btn ti-btn-primary m-0'" [iconClass]="api.disabled ? 'ri-loader-2-fill animate-spin' : 'ri-save-line'"  
+      [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </div>                
+  </div> 
+</div>
+</form>
+</div>

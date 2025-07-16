@@ -1,0 +1,36 @@
+    <div class="box">
+      <div class="box-header">
+          <div class="box-title">
+              Recent Transactions
+          </div>
+      </div>
+      <div class="box-body">
+          <ul class="list-none mb-3">
+            @for(transaction of transactions;track $index){
+              <li class="mb-3">
+                  <div class="flex items-center flex-wrap gap-2">
+                      <div class="leading-none">
+                          <span
+                              class="avatar  avatar-md avatar-rounded p-1 bg-{{transaction.avatarClass}} border border-defaultborder dark:border-defaultborder/10">
+                              <i class="{{transaction.iconClass}}"></i>
+                          </span>
+                      </div>
+                      <div class="flex-auto leading-none">
+                          <span class="font-medium mb-2 block text-[14px]">{{ transaction.title }}</span>
+                          <span class="block text-textmuted dark:text-textmuted/50 text-xs">{{ transaction.date }}</span>
+                      </div>
+                      <div class="flex items-center">
+                          <span class="{{transaction.isPositive ? 'text-success' : 'text-danger'}}"><i
+                                  class="{{transaction.isPositive ? 'ti ti-arrow-narrow-up' : 'ti ti-arrow-narrow-down'}}"></i>{{ transaction.percentage }}</span>
+                      </div>
+                  </div>
+              </li>
+            }
+          </ul>
+          <div class="text-center">
+              <a href="javascript:void(0);" class="text-secondary font-medium underline"> View All
+                  Transactions</a>
+          </div>
+      </div>
+  </div>
+  

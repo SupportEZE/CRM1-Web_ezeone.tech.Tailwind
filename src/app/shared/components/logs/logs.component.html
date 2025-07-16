@@ -1,0 +1,48 @@
+<div class="box">
+    
+    <ng-container *ngIf="hideHeader">
+        <app-modal-header [title]="'Logs'" [closeBtn]="closeBtn" (close)="close()">
+        </app-modal-header>
+    </ng-container>
+   
+    <div class="box-body">
+        <ul class="widgets-task-list mb-0 ps-[2rem]" [ngClass]="'scroll-y-' + scrollHeight">
+            <!-- If not loading -->
+            <ng-container *ngIf="!skLoading && logList.length">
+                <li *ngFor="let log of logList; let i = index">
+                    <div>
+                        <div class="grow flex item-center justify-between">
+                            <div>
+                                <i class="task-icon bg-primary"></i>
+                                <h6 class="text-[14px] mb-0">{{ log.createdName }}</h6>
+                            </div>
+                            <div>
+                                <p class="mb-0 text-textmuted dark:text-textmuted/50 text-[11px]">
+                                    {{ log.createdAt | date:'d MMM yyyy, hh:mm a' }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="grow flex items-center justify-between">
+                            <div>
+                                <span #content [innerHTML]="log.changes" class="text-xs text-textmuted dark:text-textmuted/50 two-line-text-ellipsis" [ngClass]="{'ellipsis-none': readMore[i]}"></span>
+                                <span *ngIf="isContentOverflowed(content)" class="text10px text-primary font-medium underline ms-1 cursor-pointer" (click)="toggleReadMore(i)">{{ readMore[i] ? 'Read Less' : 'Read More' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ng-container>
+            
+            <!-- If loading -->
+            <ng-container *ngIf="skLoading">
+                <div *ngFor="let card of [].constructor(5)">
+                    <app-skeleton [class]="'h100 mb-5'"></app-skeleton>
+                </div>
+            </ng-container>
+        </ul>
+        
+        <!-- If no logs -->
+        <ng-container *ngIf="logList.length ===0 && !skLoading">
+            <app-data-not-found></app-data-not-found>
+        </ng-container>
+    </div>
+</div>

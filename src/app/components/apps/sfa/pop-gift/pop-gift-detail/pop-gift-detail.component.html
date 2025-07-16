@@ -1,0 +1,246 @@
+<app-page-header [title]="'Pop & Gift'" [title1]="['Pop & Gift Detail']" [activeitem]="'Pop & Gift Detail'"></app-page-header>
+
+<div class="grid grid-cols-12 sm:gap-x-6" *ngIf="!skLoading">
+    <div class="xl:col-span-12 col-span-12">
+        <app-showcode-card [title]="'Basic Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'"  [titleView]="true">
+            <ul class="ti-list-group list-group-flush border-0">
+                <li>
+                    <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                        
+                        <ng-container *ngIf="listingActiveTab === 'company_stock'">
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{Detail.created_at ? (Detail.created_at | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Date Created</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{Detail.created_name || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Created By</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{Detail.product_name || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Product Name</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{Detail.product_code || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Product Code</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{Detail.description || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Description</span>
+                                </div>
+                            </div>
+                        </ng-container>
+                        
+                        <ng-container *ngIf="listingActiveTab !== 'company_stock'">
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{Detail.first_transaction_date ? (Detail.first_transaction_date | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Date Created</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{Detail.assigned_to_name || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Name</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{Detail.mobile || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Mobile</span>
+                                </div>
+                            </div>
+                        </ng-container>
+                        
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay">{{Detail.last_transaction_date ? (Detail.last_transaction_date | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Last Transaction</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </app-showcode-card>
+    </div>
+    
+    <div class="xl:col-span-12 col-span-12">
+        <div class="box">
+            <div class="box-header justify-between">
+                <nav class="nav nav-tabs tab-style-8 scaleX profile-settings-tab gap-2 flex mt-2" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md active" [ngClass]="{'active': activeTab ==='Incoming'}" (click)="activeTab = 'Incoming'; getDetail()">
+                        Incoming
+                    </button>
+                    <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='Outgoing'}" (click)="activeTab = 'Outgoing'; getDetail()">
+                        Outgoing
+                    </button>
+
+                    <ng-container *ngIf="listingActiveTab !== 'company_stock'">
+                        <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='Product'}" (click)="activeTab = 'Product'; getDetail()">
+                            Product
+                        </button>
+                    </ng-container>
+
+                    <ng-container *ngIf="listingActiveTab === 'company_stock'">
+                        <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='Team'}" (click)="activeTab = 'Team'; getDetail()">
+                            Team Stock
+                        </button>
+                        <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='Customer'}" (click)="activeTab = 'Customer'; getDetail()">
+                            Customer Stock
+                        </button>
+                    </ng-container>
+                    <!-- <button type="button" class="nav-link ti-btn-soft-primary px-4 rounded-md" [ngClass]="{'active': activeTab ==='Logs'}" (click)="activeTab = 'Logs'; getDetail()">
+                        Logs
+                    </button> -->
+                </nav>
+            </div>
+            <div class="box-body tab-content">
+                <div *ngIf="activeTab === 'Incoming' || activeTab === 'Outgoing'">
+                    <div class="table-responsive overflow-auto table-bordered-default">
+                        <spk-reusable-tables  [columns]="header" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [showS_No]="true">
+                            <ng-container *ngIf="!skLoading">
+                                <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of Detail.stock_history; let i = index;">
+                                    <td class="text-center">{{i + 1}}</td>
+                                    <td>{{row.created_name || '--'}}</td>
+                                    <td>{{row.created_at | date:'d MMM yyyy, hh:mm a' : '--'}}</td>
+                                    <td>{{row.transaction_type || '--'}}</td>
+                                    <td class="cart-items01" *ngIf="listingActiveTab === 'company_stock'">
+                                        <div class="flex items-center">
+                                            <div class="flex-auto">
+                                                <div class="mb-1 text-[12px] font-semibold">{{row.assigned_to_name || '--'}} ({{row.assign_to_type || '--'}})</div>
+                                                <!-- <div class="flex gap-4 flex-wrap mb-1 items-center">
+                                                    <div>
+                                                        <span class="me-1">Mobile:</span><span
+                                                        class="font-normal text-textmuted dark:text-textmuted/50">{{row.mobile || '--'}}</span>
+                                                    </div>
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="cart-items01" *ngIf="listingActiveTab !== 'company_stock'">
+                                        <div class="flex items-center">
+                                            <div class="flex-auto">
+                                                <div class="mb-1 text-[12px] font-semibold">{{row.product_name || '--'}}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{row.transaction_qty || '--'}} Pcs</td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                            <ng-container *ngIf="skLoading">
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+                                    <td *ngFor="let row of [].constructor(7)">
+                                        <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <!-- //--skeleton--// -->
+                        </spk-reusable-tables>
+                        <ng-container *ngIf="!Detail.stock_history.length && !skLoading">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </div>
+                </div>
+                
+                <div *ngIf="activeTab === 'Team' || activeTab === 'Customer'">
+                    <ul class="ti-list-group list-group-flush border-0 scroll-y-325">
+                        <li class="border-b-2 pb-2 pt-2" *ngFor="let row of Detail.stock_history">
+                            <div class="flex items-center">
+                                <span class="avatar avatar-sm bg-primarytint1color">
+                                    {{nameUtils.getInitials(row.assigned_to_name)}} 
+                                </span>
+                                <div class="ms-2 font-semibold">
+                                    {{row.assigned_to_name ? (row.assigned_to_name | titlecase) : '---'}} {{row.total_stock ? ( '('+row.total_stock+' Qty )') : ''}}
+                                </div>
+                            </div>
+                        </li>
+                        <ng-container *ngIf="!Detail.stock_history.length">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </ul>
+                </div>
+
+                <div *ngIf="activeTab === 'Product'">
+                    <ul class="ti-list-group list-group-flush border-0 scroll-y-325">
+                        <li class="border-b-2 pb-2 pt-2" *ngFor="let row of Detail.stock_history">
+                            <div class="flex items-center">
+                                <span class="avatar avatar-sm bg-primarytint1color">
+                                    {{nameUtils.getInitials(row.product_name)}} 
+                                </span>
+                                <div class="ms-2 font-semibold">
+                                    {{row.product_name ? (row.product_name | titlecase) : '---'}} {{row.product_code ? ( '('+row.product_code+')') : ''}} {{row.stock_qty ? ( '('+row.stock_qty+' Qty )') : ''}}
+                                </div>
+                            </div>
+                        </li>
+                        <ng-container *ngIf="!Detail.stock_history.length">
+                            <app-data-not-found></app-data-not-found>
+                        </ng-container>
+                    </ul>
+                </div>
+                
+                <div *ngIf="activeTab === 'Logs'">
+                    <ul class="widgets-task-list mb-0 ps-[2rem] scroll-y-550">
+                        <li>
+                            <div>
+                                <div class="grow flex item-center justify-between">
+                                    <div>
+                                        <i class="task-icon bg-primary"></i>
+                                        <h6 class="text-[14px] mb-0">Advance Laminates</h6>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0 text-textmuted dark:text-textmuted/50 text-[11px]">
+                                            10 Apr 2025, 10:17 AM
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="grow flex items-center justify-between">
+                                    <div>
+                                        <span class="text-xs text-textmuted dark:text-textmuted/50 two-line-text-ellipsis">Pop & Gift has been created</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sk Loading Start -->
+<div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+    <div class="xl:col-span-12 col-span-12">
+        
+        <div class="grid grid-cols-12 sm:gap-x-6">
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <div >
+                        <div class="flex gap-2 mb-1 flex-wrap">
+                            <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                <app-skeleton [class]="'w180'"></app-skeleton>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+            
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(7)"></app-skeleton>
+                </app-showcode-card>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sk Loading End -->

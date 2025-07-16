@@ -1,0 +1,8 @@
+<!-- <a aria-label="anchor" class="ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light" matTooltip="Edit Zone" (click)="onUpdate(row)">
+    <i class="ri-edit-line"></i>
+</a>
+<a aria-label="anchor" (click)="onDeleteLeave(row._id)" class="ti-btn btn-wave leave-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light"><i class="ri-delete-bin-line"></i></a> -->
+
+<button matTooltip="{{ tooltipText }}" (click)="onClick()" [ngClass]="buttonClass" type="button"  [disabled]="disabled">
+    <i [ngClass]="icon"></i>
+</button>

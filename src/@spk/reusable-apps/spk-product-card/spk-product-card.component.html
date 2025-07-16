@@ -1,0 +1,83 @@
+<div class="box card-style-2 mb-0">
+  <div class="box-body p-0">
+    <!-- <div class="top-left-badge">
+      @if(imageData.trending){
+      <div class="badge bg-{{imageData.color}} d-inline-flex gap-1 leading-none items-center text-white mb-1">
+        <div class="badge-icon"><i class="ti ti-bolt"></i></div>
+        <div class="badge-text">Trending</div>
+      </div>
+      }
+      @if(imageData.discount){
+      <div class="badge bg-{{imageData.color1}} inline-block">{{imageData.discount }}</div>
+      }
+    </div> -->
+    <div class="card-img-top border-b border-dashed dark:border-defaultborder/10">
+      <div class="btns-container-1 items-center gap-1" >
+        <ng-container *ngIf="imageData.file_type === 'image'">
+          <div class="hs-tooltip inline-block">
+            <a (click)="comanFuncation.zoom(imageData._id, apiPath)" matTooltip="Zoom" class="hs-tooltip-toggle ti-btn ti-btn-icon !rounded-full bg-primary hs-tooltip-toggle text-white transition">
+              <i class="ri-zoom-in-line align-cente"></i>
+            </a>
+          </div>
+          <div class="hs-tooltip inline-block" *ngIf="editBtn">
+            <a matTooltip="Edit Image" (click)="onEditClick()" class="hs-tooltip-toggle ti-btn ti-btn-icon !rounded-full bg-success text-white transition">
+              <i class="ri-edit-line align-center"></i>
+            </a>
+          </div>
+          <div class="hs-tooltip inline-block" *ngIf="delBtn">
+            <a (click)="onClick()" matTooltip="Delete" class="hs-tooltip-toggle ti-btn ti-btn-icon !rounded-full bg-danger text-white transition">
+              <i class="ri-delete-bin-line align-center"></i>
+            </a>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="imageData.file_type !== 'image'">
+          <div class="hs-tooltip inline-block">
+            <a (click)="downloadFile(imageData.signed_url)" matTooltip="View" class="hs-tooltip-toggle ti-btn ti-btn-icon !rounded-full bg-primary hs-tooltip-toggle text-white transition">
+              <i class="ri-eye-line align-cente"></i>
+            </a>
+          </div>
+        </ng-container>
+      </div>
+      <div class="img-box-2 p-2">
+        <ng-container *ngIf="imageData.file_type === 'image'">
+          <img [src]="imageData.signed_url ? imageData.signed_url : imageData.signed_url" alt="img" class="scale-img img-fluid w-full bg-primary/10  rounded">
+        </ng-container>
+        
+        <ng-container *ngIf="imageData.file_type !== 'image'">
+          <img [src]="'./assets/images/doc-img/'+imageData.file_type+'.png'"  alt="img" class="scale-img img-fluid w-full bg-primary/10  rounded">
+        </ng-container>
+      </div>
+      <!-- <div class="hs-tooltip ti-main-tooltip [--placement:top] btn-style-1">
+        <a [routerLink]="['/apps/ecommerce/cart']" class="ti-btn bg-primary text-white rounded-full ti-btn-icon" title="Add to Cart">
+          <i class="bx bxs-cart-add text-lg"></i>
+          <span
+          class="hs-tooltip-content ti-main-tooltip-content py-1 px-2 !bg-black !text-xs !font-medium !text-white shadow-sm dark:bg-slate-700"
+          role="tooltip">
+          Add To Cart
+        </span>
+      </a>
+    </div> -->
+  </div>
+  <div class="p-2" *ngIf="subHeading || heading">
+    <h6 class="font-semibold text-[.6875rem]" *ngIf="heading">{{ imageData.label }}</h6>
+    <div class="mt-1 flex align-items-end justify-between flex-wrap"  *ngIf="subHeading && imageData.doc_no">
+      <div class="grow">
+        <div class="flex items-baseline justify-between text-[11px]">
+          <p class="min-w-fit-content text-textmuted dark:text-textmuted/50">
+            <span>{{ imageData.doc_no ? imageData.doc_no : '---'}}</span>
+          </p>
+          <a matTooltip="Edit Number" (click)="onEditNumberClick()" class="hs-tooltip-toggle text-success transition">
+            <i class="ri-pencil-line align-center text-[16px]"></i>
+          </a>
+        </div>
+      </div>
+      <!-- <div class="min-w-fit-content">
+        <h5 class="font-semibold text-primary mb-0">{{ imageData.price }}</h5>
+        @if(imageData.originalPrice){
+        <span class="text-[13px] ms-2 text-textmuted dark:text-textmuted/50 text-decoration-line-through">{{ imageData.originalPrice }}</span>
+        }
+      </div> -->
+    </div>
+  </div>
+</div>
+</div>

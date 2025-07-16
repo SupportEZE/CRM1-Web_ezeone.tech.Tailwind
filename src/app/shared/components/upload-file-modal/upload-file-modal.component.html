@@ -1,0 +1,38 @@
+<div class="mat-dialoge">
+    <div class="flex items-center justify-between">
+        <h2 mat-dialog-title>Upload File</h2>
+    </div>
+    <form #uploadForm="ngForm" (ngSubmit)="onSubmit(uploadForm)">
+        <mat-dialog-content class="mat-typography">
+            
+            <div class="grid grid-cols-12 gap-x-12">
+            <ng-container *ngIf="errorLogs.length ===0">
+                <div class="col-span-12 md:col-span-12 xxl:!col-span-12">
+                    <file-pond #myPond [options]="pondOptions" class="filepond filepond--root basic-filepond" [files]="pondFiles"
+                    (oninit)="pondHandleInit()" (onaddfile)="onFileAdd($event)"
+                    (onactivatefile)="pondHandleActivateFile($event)">
+                </file-pond>
+            </div>
+            <div class="col-span-12 md:col-span-12 xxl:!col-span-12 text-right">
+                <a class="font-medium text-primary" (click)="sampleFile()">Download Sample File</a>
+            </div>
+            </ng-container>
+
+            <div class="col-span-12 md:col-span-12 xxl:!col-span-12" *ngIf="errorLogs.length > 0">
+                <spk-blockquote-card
+                      [quote]="'The uploaded CSV file has an incorrect format or missing/invalid data. Please review the file and upload again.'"
+                      [author]="'Click here to download'"
+                      [source]="'the correct template.'"
+                      [isDarkTheme]="true"
+                      [backgroundClass]="'bg-danger'"
+                      (buttonClick)="downloadErrorFile()">
+                </spk-blockquote-card>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+         <app-button mat-dialog-close [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-2'" [label]="'Cancel'"></app-button>
+         <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="'add'" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </mat-dialog-actions>
+    </form>
+</div>

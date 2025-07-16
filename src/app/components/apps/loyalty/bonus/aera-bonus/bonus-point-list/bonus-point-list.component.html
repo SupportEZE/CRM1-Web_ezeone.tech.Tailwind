@@ -1,0 +1,145 @@
+<app-page-header [title]="'IRP'" [title1]="['Bonus']" [activeitem]="'Bonus List'" [btnShow1]="false"></app-page-header>
+
+<div class="box py-3 px-4">
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+        <ng-container *ngIf="skLoading">
+            <app-skeleton  *ngFor="let row of [].constructor(2)" [class]="'w100 h25'"></app-skeleton>
+        </ng-container>
+        <ng-container *ngIf="!skLoading">
+            <app-listing-tab *ngFor="let tab of mainTabs"
+            [tabs]="[{ name: tab.name, label: tab.label,count: tab.count}]"
+            [activeTab]="activeTab"
+            (tabChange)="onTabChange($event.tab)">
+        </app-listing-tab>
+    </ng-container>
+</nav>
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <app-page-sub-header [pageTitle]="'Bonus List'"  [refreshLabel]="'Refresh'" [btnShow]="true" [btnShow2]="accessRight?.addRight" [class]="'p-0 pt-3'"    [addBtnLabel]="'Add Bonus'" (onRefresh)="onRefresh()" (button1)="goToBonusAdd()"></app-page-sub-header>
+        
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-hover ti-head-primary"
+                [tableHead]="'border-b'" [tableHeadColumn]="'!text-center'" [tableHeight]="'630px'" [showCheckbox]="false" [columns]="spinWinListColumns">
+                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                    <td class="!text-center">&nbsp;</td>
+                    <td class="w100">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="onDateChange('created_at', $event)">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>  
+                        </div>
+                    </td>
+                    <td class="!text-center w150">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text"
+                                [(ngModel)]="filter.created_name"
+                                placeholder="Search..."
+                                (keyup.enter)="getBonusList()">
+                                @if (filter.created_name) {
+                                    <button matSuffix mat-icon-button
+                                    aria-label="Clear"
+                                    (click)="filter.created_name='';getBonusList()">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            }
+                        </mat-form-field>
+                    </div>
+                </td>
+                <td class="w100">
+                    <div class="table-search-filters">
+                        <mat-form-field class="table-input">
+                            <input matInput  [matDatepicker]="picker2" [(ngModel)]="filter.start_date" name="dateFrom" placeholder="Date From" (ngModelChange)="onDateChange('start_date', $event)">
+                            <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                            <mat-datepicker #picker2></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </td>
+                <td class="w100">
+                    <div class="table-search-filters">
+                        <mat-form-field class="table-input">
+                            <input matInput  [matDatepicker]="picker3"  [(ngModel)]="filter.end_date" name="dateTo" placeholder="Date To" (ngModelChange)="onDateChange('end_date', $event)">
+                            <mat-datepicker-toggle matIconSuffix [for]="picker3"></mat-datepicker-toggle>
+                            <mat-datepicker #picker3></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </td>
+                <td class="!text-center">
+                    <div class="table-search-filters">
+                        <mat-form-field class="table-input">
+                            <input matInput type="text" [(ngModel)]="filter.customer_type_name" placeholder="Search..."
+                            (keyup.enter)="getBonusList()">
+                            @if (filter.customer_type_name) {
+                                <button matSuffix mat-icon-button
+                                aria-label="Clear"
+                                (click)="filter.customer_type_name='';getBonusList()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        }
+                    </mat-form-field>
+                </div>
+            </td>
+            <td class="!text-center">
+                <div class="table-search-filters">
+                    <mat-form-field class="table-input">
+                        <input matInput type="text" [(ngModel)]="filter.title" placeholder="Search..."
+                        (keyup.enter)="getBonusList()">
+                        @if (filter.title) {
+                            <button matSuffix mat-icon-button
+                            aria-label="Clear"
+                            (click)="filter.title='';getBonusList()">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    }
+                </mat-form-field>
+            </div>
+        </td>
+        <td class="!text-center w50">&nbsp;</td>
+    </tr>
+    <ng-container *ngIf="!skLoading">
+        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10"
+        *ngFor="let list of bonusList; let i = index; trackBy: trackById" [class.bg-gray-400]="isHighlighted(list._id)">
+        <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+        <td>{{list.created_at ? (list.created_at | date:'d MMM yyyy') : '---'}}</td>
+        <td>{{list.created_name ? list.created_name : '---'}}</td>
+        <td>{{list.start_date ? (list.start_date | date:'d MMM yyyy') : '---'}}</td>
+        <td>{{list.end_date ? (list.end_date | date:'d MMM yyyy') : '---'}}</td>
+        <td>{{ list.customer_type_name ? list.customer_type_name : '---' }}</td>
+        <td>
+            <a [routerLink]="['/apps/loyalty/bonus/detail', list._id]" class="text-primary underline" (click)="setHighLight(list._id)">{{list.title || '--'}}</a></td>
+            <td>
+                <span class="badge">
+                    <app-toggle [checked]="list.isChecked" (checkedChange)="onToggleChange($event, list._id, list.status)"></app-toggle>
+                </span>
+            </td>
+        </tr>
+    </ng-container>
+    
+    <!-- //--skeleton--// -->
+    <ng-container *ngIf="skLoading">
+        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of [].constructor(8)">
+            <td *ngFor="let row of [].constructor(8)">
+                <app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton>
+            </td>
+        </tr>
+    </ng-container>
+    <!-- //--skeleton--// -->
+</spk-reusable-tables>
+<ng-container *ngIf="!bonusList.length && !skLoading">
+    <app-data-not-found></app-data-not-found>
+</ng-container>
+</div>
+<app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages"
+[pageLimit]="pagination.limit" [listLength]="bonusList.length" [preBtn]="!pagination.prev"
+[nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)">
+</app-pagination-footer>
+</div>
+</div>
+</div>
+</div>
+<!--End::row-1 -->

@@ -1,0 +1,102 @@
+<app-showcode-card>
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+        <app-listing-tab 
+        *ngFor="let tab of mainTabs()"
+        [tabs]="[{ name: tab.name, label: tab.label, icon: tab.icon}]"
+        [activeTab]="activeTab"
+        [countShow]="false" (tabChange)="onTabChange($event.tab)"></app-listing-tab>
+    </nav>
+    
+    <ng-container *ngIf="activeTab === 'Stock' || activeTab === 'Out of stock'">
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [columns]="getColumns()" [showCheckbox]="false">
+                <tr class="todo-box border-b !border-defaultborder dark:!border-defaultborder/10">
+                    <td class="w50">&nbsp;</td>
+                    <td>
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text" [(ngModel)]="filter.product_name" placeholder="Search..." (keyup.enter)="getStock()">
+                                @if (filter.product_name) {
+                                    <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.product_name=''; getStock()">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td class="w150">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text" [(ngModel)]="filter.product_code" placeholder="Search..." (keyup.enter)="getStock()">
+                                @if (filter.product_code) {
+                                    <button matSuffix mat-icon-button aria-label="Clear" (click)="filter.product_code=''; getStock()">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </td>
+                    <td class="w120 text-center">&nbsp;</td>
+                </tr>
+                <ng-container *ngIf="!skLoading">
+                    <tr *ngFor="let row of stockList; let i = index;">
+                        <td class="w50">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+                        <td>{{row.product_name ? (row.product_name | titlecase) : '---'}}</td>
+                        <td class="w150">{{row.product_code ? row.product_code : '---'}}</td>
+                        <td class="w120 text-center">{{row.total_quantity ? row.total_quantity : '0'}}</td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="skLoading">
+                    <tr *ngFor="let row of [].constructor(10);">
+                        <td class="w50"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                        <td><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                        <td class="w150"><app-skeleton [class]="'h20 bg-skeleton'"></app-skeleton></td>
+                    </tr>
+                </ng-container>
+            </spk-reusable-tables>
+        </div>
+        
+        <ng-container *ngIf="stockList.length === 0 && !skLoading">
+            <app-data-not-found></app-data-not-found>
+        </ng-container>
+        <app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages ? pagination.total_pages : 0" [pageLimit]="pagination.limit" [listLength]="stockList.length" [preBtn]="!pagination.prev" [nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)">
+        </app-pagination-footer>
+    </ng-container>
+    
+    
+    
+    <!-- Company To Customer Stock Transfer Start -->
+    <ng-container *ngIf="activeTab === 'Company To Customer'">
+        <app-company-stock-transfer-list [pageHeader]="false" [stockType]="'company'" [_id]="basicDetail._id"></app-company-stock-transfer-list>
+    </ng-container>
+    <!-- Company To Customer Stock Transfer End -->
+    
+    
+    <!-- Customer To Customer Stock Transfer Start -->
+    <ng-container *ngIf="activeTab === 'Purchase Request' || activeTab === 'Stock Transfer'">
+        <app-customer-stock-transfer-list [pageHeader]="false" 
+        [btnLabel]="activeTab === 'Purchase Request' ? 'Purchase Request' : 'Stock Transfer'" 
+        [stockType]="'customer'" [mainTab]="activeTab" [customerDetail]="basicDetail"
+        [_id]="basicDetail._id"> </app-customer-stock-transfer-list>
+    </ng-container>
+    <!-- Customer To Customer Stock Transfer End -->
+    
+    
+    
+    <!-- Customer To Customer Stock Return  Start -->
+    <ng-container *ngIf="activeTab === 'Purchase Return'">
+        <app-stock-return-list [pageHeader]="false" [_id]="basicDetail._id"></app-stock-return-list>
+    </ng-container>
+    <!-- Customer To Customer Stock Return  End -->
+    
+    
+    <!-- Stock Return Stock Transfer Start -->
+    <ng-container *ngIf="activeTab === 'Stock Return'">
+        <app-customer-stock-return-list  [pageHeader]="false" [tabView]="basicDetail.login_type_id === LOGIN_TYPES.INFLUENCER ? false : true"  [customerDetail]="basicDetail" [_id]="basicDetail._id"> </app-customer-stock-return-list>
+    </ng-container>
+    <!-- Stock Return Stock Transfer End -->
+    
+</app-showcode-card>
+
+

@@ -1,0 +1,54 @@
+
+<div class="box overflow-hidden">
+    <!-- <div class="box-body bg-primary m-4 rounded-md">
+        <div class="flex text-white gap-4 items-center flex-wrap">
+            <div class="avatar avatar-rounded avatar-lg bg-white/10 svg-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256">
+                    <path d="M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z">
+                    </path>
+                </svg>
+            </div>
+            <div>
+                <p class="text-[15px] mb-0 op-8">{{budgetTitle}}</p>
+                <p class="text-lg font-semibold mb-0">{{budgetAmount}}</p>
+            </div>
+            <div class="text-white text-[13px] align-self-end ms-auto">
+                
+                <div class="relative size-12">
+                    <svg class="size-full" width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="18" cy="18" r="16" fill="none" class="stroke-current text-success dark:text-success/10" stroke-width="2"></circle>
+                        <g class="origin-center -rotate-90 transform">
+                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-current text-white" stroke-width="2" stroke-dasharray="100" [attr.stroke-dashoffset]="increasePercentage"></circle>
+                        </g>
+                    </svg>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+                        <span class="text-center text-[10px] font-bold text-white dark:text-white">{{increasePercentage}}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <div class="box-body p-0">
+        <ul class="ti-list-group list-group-flush !border-0 !rounded-none">
+            @for(item of incomeItems;track $index){
+                <li class="ti-list-group-item !p-[0.84rem] {{item.liClass}}">
+                    <div class="flex items-start gap-4">
+                        <div>
+                            <span
+                            class="avatar avatar-rounded bg-{{item.iconBgClass}}/10 !text-{{item.iconBgClass}}"><i
+                            class="{{item.iconClass}}"></i></span>
+                        </div>
+                        <div class="flex-auto">
+                            <span class="mb-0 font-medium block">{{ item.title }}</span>
+                            <span class="text-textmuted dark:text-textmuted/50 text-xs">{{ item.subtitle }}</span>
+                            
+                        </div>
+                        <div class="text-end">
+                            <span class="text-{{item.valueClass}} fs-medium text-xl font-medium">{{ item.value }}</span>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

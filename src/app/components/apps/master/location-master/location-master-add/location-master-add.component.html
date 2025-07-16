@@ -1,0 +1,191 @@
+<!-- Pincode Add Start -->
+<ng-container *ngIf="modalData.lastPage === 'Pincode'">
+    <div class="xl:col-span-12 col-span-12">
+        <app-showcode-card [title]="'Pincode'" [view]="false">
+            <div class="xxl:col-span-8 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12" *ngIf="skLoading">
+                <div class="grid grid-cols-12 gap-4 mt-0">
+                    <div class="md:col-span-12 col-span-12" *ngFor="let card of [].constructor(4)">
+                        <app-skeleton></app-skeleton>
+                    </div>
+                </div>
+            </div>
+            
+            <form #f="ngForm" (ngSubmit)="f.valid && onSubmitPincode()" *ngIf="!skLoading">
+                <div class="xxl:col-span-8 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                    
+                    <div class="mt-2">
+                        <label class="form-label">State<span class="text-red-500">*</span></label>
+                        <mat-form-field  class="mat-custom-field remove-space">
+                            <mat-select placeholder="Select an option" [(ngModel)]="data.state" name="state" #state="ngModel" (selectionChange)="getDistrict(data.state)" required>
+                                <mat-option *ngFor="let state of this.CommonApiService.statList" [value]="state.label">{{state.label}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="state.touched || f.submitted">
+                            <ng-container *ngIf="state.errors?.['required']">This field is required</ng-container>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <label class="form-label">District<span class="text-red-500">*</span></label>
+                        <mat-form-field  class="mat-custom-field remove-space">
+                            <mat-select placeholder="Select an option" [(ngModel)]="data.district" name="district" #district="ngModel" required>
+                                <mat-option *ngFor="let district of districtList" [value]="district.label">{{district.label}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="district.touched || f.submitted">
+                            <ng-container *ngIf="district.errors?.['required']">This field is required</ng-container>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <label class="form-label">City<span class="text-red-500">*</span></label>
+                        <mat-form-field class="mat-custom-field remove-space">
+                            <input matInput placeholder="Type Here ..." name="city" [(ngModel)]="data.city"  pattern="^[^\s].*"  #city="ngModel" required>
+                        </mat-form-field>
+                        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="city.touched || f.submitted">
+                            <ng-container *ngIf="city.errors?.['required']">This field is required</ng-container>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <label class="form-label">Pincode<span class="text-red-500">*</span></label>
+                        <mat-form-field class="mat-custom-field remove-space">
+                            <input type="text"  matInput placeholder="Type Here ..." name="pincode" [(ngModel)]="data.pincode"  pattern="^[0-9]{6}$" minlength="6" maxlength="6"  #pincode="ngModel" required>
+                            <mat-hint align="end" *ngIf="pincode.touched || f.submitted">
+                            </mat-hint>
+                        </mat-form-field>
+                        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="pincode.errors">
+                            <ng-container *ngIf="pincode.errors?.['required']">This field is required</ng-container>
+                            <ng-container *ngIf="pincode.errors['pattern'] || pincode.errors['minlength'] || pincode.errors['maxlength']">Enter a valid 6-digit pincode</ng-container>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="flex items-center justify-end mt-10 gap-2">
+                        <app-button [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-0'" [label]="'Cancel'"  (buttonClick)="close()"> </app-button>                        
+                        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+                    </div>
+                </div>
+            </form>
+        </app-showcode-card>
+    </div>
+</ng-container>
+<!-- Pincode Add End -->
+
+<!-- Zone Add Start -->
+<ng-container *ngIf="modalData.lastPage === 'Zone'">
+    <div class="xl:col-span-12 col-span-12">
+        <app-showcode-card [title]="'Zone'" [view]="false">
+            <div class="xxl:col-span-8 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12" *ngIf="skLoading">
+                <div class="grid grid-cols-12 gap-4 mt-0">
+                    <div class="md:col-span-12 col-span-12" *ngFor="let card of [].constructor(2)">
+                        <app-skeleton></app-skeleton>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="xxl:col-span-8 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                <form #f="ngForm" (ngSubmit)="f.valid && onSubmiZone()" *ngIf="!skLoading">                    
+                    <div class="mt-2">
+                        <label class="form-label">Zone Name<span class="text-red-500">*</span></label>
+                        <mat-form-field class="mat-custom-field remove-space">
+                            <input matInput placeholder="Type Here ..." name="zone" [(ngModel)]="data.zone"  pattern="^[^\s].*"  #zone="ngModel" required>
+                        </mat-form-field>
+                        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="zone.touched || f.submitted">
+                            <ng-container *ngIf="zone.errors?.['required']">This field is required</ng-container>
+                        </div>
+                    </div>
+                    
+                    <ng-container *ngIf="modalData.formType === 'edit'">
+                        <div class="mt-2">
+                            <label class="form-label">State<span class="text-red-500">*</span></label>
+                            <mat-form-field  class="mat-custom-field multiple remove-space">
+                                <mat-select placeholder="Select an option" [(ngModel)]="data.state" name="state" #state="ngModel" multiple required>
+                                    <mat-option *ngFor="let state of this.CommonApiService.statList" [value]="state.label">{{state.label}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="state.touched || f.submitted">
+                                <ng-container *ngIf="state.errors?.['required']">This field is required</ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+                    
+                    <!-- Submit Button -->
+                    <div class="flex items-center justify-end mt-10 gap-2">
+                        <app-button [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-0'" [label]="'Cancel'"  (buttonClick)="close()"> </app-button>                        
+                        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+                    </div>
+                </form>
+            </div>
+        </app-showcode-card>
+    </div>
+</ng-container>
+<!-- Zone Add End -->
+
+<!-- Beat Route Add Start -->
+<ng-container *ngIf="modalData.lastPage === 'Beat Route'">
+    <div class="xl:col-span-12 col-span-12">
+        <app-showcode-card [title]="'Beat Route'" [view]="false">
+            <div class="xxl:col-span-8 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12" *ngIf="skLoading">
+                <div class="grid grid-cols-12 gap-4 mt-0">
+                    <div class="md:col-span-12 col-span-12" *ngFor="let card of [].constructor(3)">
+                        <app-skeleton></app-skeleton>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="xxl:col-span-8 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                <form #f="ngForm" (ngSubmit)="f.valid && onSubmiBeatCode()" *ngIf="!skLoading">
+                    <div class="mt-2">
+                        <label class="form-label">State<span class="text-red-500">*</span></label>
+                        <mat-form-field  class="mat-custom-field remove-space">
+                            <mat-select placeholder="Select an option" [(ngModel)]="data.state" name="state" #state="ngModel" (selectionChange)="getDistrict(data.state)" required>
+                                <mat-option *ngFor="let state of this.CommonApiService.statList" [value]="state.label">{{state.label}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="state.touched || f.submitted">
+                            <ng-container *ngIf="state.errors?.['required']">This field is required</ng-container>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <label class="form-label">District<span class="text-red-500">*</span></label>
+                        <mat-form-field  class="mat-custom-field remove-space">
+                            <mat-select placeholder="Select an option" [(ngModel)]="data.district" name="district" #district="ngModel" required>
+                                <mat-option *ngFor="let district of districtList" [value]="district.label">{{district.label}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="district.touched || f.submitted">
+                            <ng-container *ngIf="district.errors?.['required']">This field is required</ng-container>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-2">
+                        <label class="form-label">Description<span class="text-red-500">*</span></label>
+                        <mat-form-field class="mat-custom-field remove-space">
+                            <textarea matInput placeholder="Type Here ..." [(ngModel)]="data.description" name="description" #description="ngModel" required></textarea>
+                        </mat-form-field>
+                        <div class="mt-1 text-xs text-red-500 text-right" *ngIf="description.touched || f.submitted">
+                            <ng-container *ngIf="description.errors?.['required']">This field is required</ng-container>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Submit Button -->
+                    <div class="flex items-center justify-end mt-10 gap-2">
+                        <app-button [buttonType]="'button'" [buttonClass]="'ti-btn ti-btn-outline-danger m-0'" [label]="'Cancel'"  (buttonClick)="close()"> </app-button>                        
+                        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+                    </div>
+                </form>
+            </div>
+        </app-showcode-card>
+    </div>
+</ng-container>
+<!-- Beat Route Add End -->
+
+<!-- logs Add Start -->
+<ng-container *ngIf="modalData.lastPage === 'logs'">
+    <app-logs [logList]="logList" [skLoading]="skLoading"></app-logs>
+</ng-container>
+<!-- logs Add Start -->

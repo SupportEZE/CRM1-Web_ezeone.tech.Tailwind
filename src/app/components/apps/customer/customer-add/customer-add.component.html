@@ -1,0 +1,54 @@
+<app-page-header [title]="'Customer'" [title1]="[spaceRemove.formatText(customerType)]"
+[activeitem]="(pageType | titlecase) + ' ' +  spaceRemove.formatText(customerType)"
+[buttonText]="'Filter'" [icon]="'filter_list'"
+[btnShow]="false" [buttonValue]="'filter_data'"
+(buttonClick)="onClick($event)" [buttonText1]="'Form Config'"
+[icon1]="'settings'" [btnShow1]="true" [buttonValue1]="''"
+(buttonClick1)="openModal($event)"></app-page-header>
+
+<!-- Start::row-1 -->
+<div class="box" *ngIf="skLoading">
+    <div class="p-4">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xl:col-span-3 col-span-12 mb-4"
+            *ngFor="let card of [].constructor(10)">
+            <app-skeleton></app-skeleton>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="xl:col-span-12 col-span-12" *ngIf="!skLoading">
+    <form *ngIf="formIniatialized" [formGroup]="myForm" (ngSubmit)="onSubmit()">
+        <div class="box">
+            <div class="p-4">
+                <div class="grid grid-cols-12 gap-x-6"
+                *ngIf="myForm && myForm.controls">
+                <ng-container
+                *ngFor="let field of formFields, let i = index">
+                <!-- <h5 style="font-size: 10px;">{{field.label}}
+                    {{field.is_child_show ? field.is_child_show :
+                    false}}</h5> -->
+                    
+                    <div class="mb-4 {{field.class_name}}"
+                    *ngIf="field.is_show === true && ( field.is_parent_dependency === false || field.is_child_show===true)">
+                    <app-form-field
+                    [field]="field"
+                    [form]="myForm"
+                    (valueChange)="onFieldChange($event, field)"
+                    (searchChanged)="field.search ? onSearch($event, field) : ''"
+                    #dynamicForm></app-form-field>
+                </div>
+                
+            </ng-container>
+        </div>
+    </div>
+    
+    <div
+    class="box-footer border-t border-block-start-dashed sm:flex justify-end">
+        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="pageType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </div>
+</div>
+</form>
+</div>
+<!--End::row-1 -->

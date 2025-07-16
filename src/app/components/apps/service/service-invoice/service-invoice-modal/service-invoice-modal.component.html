@@ -1,0 +1,100 @@
+<!-- // -----Status Start----- // -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'invoice-detail'">
+    <app-modal-header [title]="'Change Status'" [closeBtn]="true" (close)="closeModal()"></app-modal-header>
+    <form #f="ngForm" (ngSubmit)="f.valid && statusChange()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="">
+                <label class="form-label mb-0">Status {{data.status}}<span class="text-red-500">*</span></label>
+                <mat-form-field  class="mat-custom-field remove-space">
+                    <mat-select placeholder="Select an option" [(ngModel)]="data.status" name="status" #status="ngModel" required>
+                        <mat-option *ngFor="let row of this.modalData.options" [value]="row.name">{{row.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="status.touched || f.submitted">
+                    <ng-container *ngIf="status.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+            
+            <div class="mt-2" *ngIf="data.status == 'Cancel'">
+                <label class="form-label mb-0">Reason<span class="text-red-500">*</span></label>
+                <mat-form-field class="mat-custom-field remove-space text-area-height">
+                    <textarea matInput placeholder="Type Here ..." [(ngModel)]="data.reason" name="reason" #reason="ngModel" required></textarea>
+                </mat-form-field>
+                <div class="mt-1 text-xs text-red-500 text-right" *ngIf="reason.touched || f.submitted">
+                    <ng-container *ngIf="reason.errors?.['required']">This field is required</ng-container>
+                </div>
+            </div>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="modalData.formType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- // -----Status Start----- // -->
+
+<!-- Start::row-1 -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'complaint-detail'">
+    <app-modal-header [title]="'Add Invoice'" [closeBtn]="true" (close)="closeModal()"></app-modal-header>
+    <form [formGroup]="stockForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="mat-typography">
+            <div class="grid grid-cols-12 gap-x-6" *ngIf="!skLoading">
+                <div class="xl:col-span-12 col-span-12">
+                    <div class="grid grid-cols-12 sm:gap-x-6">
+                        <div class="xxl:col-span-3 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                            <spk-ng-select formControlName="payment_mode" label="Payment Mode" [options]="payment_mode" [multiple]="false" [fieldReq]="true">
+                            </spk-ng-select>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12" *ngIf="stockForm.get('payment_mode')?.value === 'UPI/Online'">
+                            <spk-input label="Transaction Number" formControlName="transaction_number" class="remove-default-class" type="text" [fieldReq]="true"></spk-input>
+                        </div>
+                    </div>    
+                    <div class="grid grid-cols-12 sm:gap-x-6">
+                        <div class="xxl:col-span-3 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                            <spk-ng-select formControlName="product_id" label="Select Product" [search]="true" (searchChanged)="onSearch($event , 'product')"
+                            [fieldReq]="true" [options]="product" [multiple]="false"></spk-ng-select>
+                        </div>
+                        <div class="xxl:col-span-2 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12 mb-3" *ngIf="stockForm.get('product_id')?.value">
+                            <spk-input label="MRP" formControlName="price" class="remove-default-class" type="number" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xxl:col-span-2 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12 mb-3" *ngIf="stockForm.get('price')?.value">
+                            <spk-input label="Discount (%)" formControlName="total_discount" class="remove-default-class" type="number" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xxl:col-span-2 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12 mb-3" *ngIf="stockForm.get('total_discount')?.value">
+                            <spk-input label="Qty" formControlName="qty" class="remove-default-class" type="number" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="flex justify-start mt-6">
+                            <button type="button" aria-label="button" class="ti-btn ti-btn-icon ti-btn-primary btn-wave" (click)="addToList()">
+                                <i class="ri-add-line"></i>
+                            </button>
+                        </div>
+                        <div class="xl:col-span-12 col-span-12">
+                            <div class="table-responsive mt-4 table-bordered-default" *ngIf="selectedItems.length > 0">
+                                <spk-reusable-tables [columns]="headerColumn" tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showAction]="true">
+                                    <tr *ngFor="let row of selectedItems; let i = index">
+                                        <td class="w60 text-center">{{ i + 1 }}</td>
+                                        <td>{{ row.label || '---' }}</td>
+                                        <td class="text-right">{{ row.qty || 0 }}</td>
+                                        <td class="text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{ row.mrp | number:'1.2-2' }}</td>
+                                        <td class="text-right">{{ row.discount || 0 }}%</td>
+                                        <!-- <td class="text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{ row.sub_total | number:'1.2-2' }}</td> -->
+                                        <td class="text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{ row.net_price | number:'1.2-2' }}</td>
+                                        <td class="w60 relative">
+                                            <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                                <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="delete(i)"></app-icon-button>
+                                            </div>
+                                        </td>
+                                    </tr>   
+                                </spk-reusable-tables>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="pageType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!--End::row-1 -->

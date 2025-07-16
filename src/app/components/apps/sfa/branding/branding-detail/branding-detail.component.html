@@ -1,0 +1,87 @@
+<app-page-header [title]="'Branding'" [title1]="['Branding Detail']" [activeitem]="'Branding Detail'"></app-page-header>
+
+<!-- Start:: Row-1 -->
+<div class="grid grid-cols-12 gap-x-6">
+    <div class="xl:col-span-12 col-span-12">
+        <app-showcode-card [title]="'Basic Detail'"  [titleView]="true" [class]="'box-title font-medium text-[15px] block text-primarytint1color'">
+            <div>
+                <div class="flex gap-6 mb-1 flex-wrap text-[11px]">
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block font-medium">{{Detail?.created_at ? (Detail?.created_at | date:'d MMM yyyy, hh:mm a') : '---'}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Created At</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block font-medium">{{Detail?.created_name || '---'}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Created By</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block font-medium">{{Detail?.brand_req_id || '---'}}</span>
+                            <span class="text-xs text-textmuted dark:text-textmuted/50">Brand Request Id</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="block font-medium">{{Detail?.customer_name || '---'}}</span>
+                        <span class="text-textmuted dark:text-textmuted/50">Customer Name</span>
+                    </div>
+                    <div>
+                        <span class="block font-medium">{{Detail?.customer_mobile || '---'}}</span>
+                        <span class="text-textmuted dark:text-textmuted/50">Customer Mobile</span>
+                    </div>
+                    <div *ngIf="Detail?.remark">
+                        <span class="block font-medium">{{Detail?.remark || '---'}}</span>
+                        <span class="text-textmuted dark:text-textmuted/50">Remark</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <span class="block font-medium text-primay">
+                                <span class="badge" [ngClass]="{'text-success bg-success/10': Detail?.status === 'Approved', 'text-info bg-info/10': Detail?.status === 'Complete', 'text-warning bg-warning/10': Detail?.status === 'Pending', 'text-danger bg-danger/10': Detail?.status === 'Reject'}">{{Detail?.status || '--'}}</span>
+                            </span>
+                            <span class="text-textmuted dark:text-textmuted/50">Status</span>
+                        </div>
+                        <app-icon-button [icon]="'ri-pencil-line'" [buttonClass]="'btn-wave ti-btn ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" matTooltip="Change Status" (click)="statusChange(Detail._id)" *ngIf="accessRight?.approveRight"></app-icon-button>
+                    </div>
+                    <div *ngIf="Detail?.reason">
+                        <span class="block font-medium">{{Detail?.reason || '---'}}</span>
+                        <span class="text-textmuted dark:text-textmuted/50">Reason</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Loading Start -->
+            <div *ngIf="skLoading">
+                <div class="flex gap-2 mb-1 flex-wrap">
+                    <div class="flex items-center" *ngFor="let card of [].constructor(6)">
+                        <app-skeleton [class]="'w180'"></app-skeleton>
+                    </div>
+                </div>
+            </div>
+            <!-- Loading End -->
+        </app-showcode-card>
+        <div class="grid grid-cols-12 sm:gap-x-6">
+            <div class="xl:col-span-4 col-span-12">
+                <app-showcode-card [title]="'Location Images'" [class]="'box-title font-medium text-[15px] block text-primarytint1color'" [titleView]="true"  [actionIcons]="true"  [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (action)="addBrandGallery()" [classbody]="'pt-0'" [iconName]="'ri-add-line'">
+                    <div class="grid grid-cols-12 gap-x-4" *ngIf="brandDetailImages.length > 0">
+                        <ng-container>
+                            <div class="xl:col-span-2 lg:col-span-3 xl:col-span-4 sm:col-span-6 col-span-12" *ngFor="let image of brandDetailImages">
+                                <spk-product-card [apiPath]="'brand-audit/get-doc'" [imageData]="image" [editBtn]="false" [heading]="false" [subHeading]="false" (delete)="delete(image._id, 'brand-audit/delete-file', 'delete')">
+                                </spk-product-card>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <ng-container *ngIf="brandDetailImages.length === 0">
+                        <app-data-not-found></app-data-not-found>
+                    </ng-container>
+                </app-showcode-card>
+            </div>
+            <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-5 col-span-12">
+                <app-logs [logList]="logList" [scrollHeight]="'400'" [closeBtn]="false"></app-logs>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<!-- End:: Row-1 -->

@@ -1,0 +1,214 @@
+  
+  <app-page-header [title]="'Invoice'" [title1]="['Create Invoice']" [activeitem]="'Create Invoice'"></app-page-header>
+  <div class="box" *ngIf="skLoading">
+    <div class="p-4">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xl:col-span-3 col-span-12 mb-4" *ngFor="let card of [].constructor(10)">
+                <app-skeleton></app-skeleton>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start::row-1 -->
+<form [formGroup]="stockForm" (ngSubmit)="onSubmit()" *ngIf="!skLoading">
+    <div class="grid grid-cols-12 gap-x-6">
+        <div class="xl:col-span-9 col-span-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="grid grid-cols-12 sm:gap-x-6">
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Title" formControlName="title" class="remove-default-class" type="text" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xl:col-span-3 col-span-12">
+                            <label class="form-label">Invoice Date<span class="text-red-500">*</span></label>
+                            <mat-form-field class="mat-custom-field">
+                                <input matInput [matDatepicker]="picker" [min]="today" formControlName="invoice_date" placeholder="Select Invoice Date">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-12 sm:gap-x-6 gap-y-3">
+                        <div class="col-span-12">
+                            <p class="font-semibold mt-4">Billing From</p>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Company Name" formControlName="customer_name" class="remove-default-class" type="text" [fieldReq]="true"></spk-input>
+                        </div>
+                        <!-- <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Email" formControlName="email" class="remove-default-class" type="email" [fieldReq]="true"></spk-input>
+                        </div> -->
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Phone" formControlName="customer_mobile" class="remove-default-class" type="number" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xl:col-span-3 col-span-12">
+                            <label class="form-label mb-0">Address<span class="text-red-500">*</span></label>
+                            <textarea matInput class="form-control h60" placeholder="Type Here ..." formControlName="customer_address"></textarea>
+                            <div *ngIf="stockForm.get('note')?.invalid && stockForm.get('note')?.touched" class="error">
+                                This field is required.
+                            </div>
+                        </div>
+                        <!-- <div class="col-span-12 mt-2">
+                            <p class="font-semibold">Billing To</p>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Company Name" formControlName="billing_to_customer" class="remove-default-class" type="text" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Email" formControlName="billing_to_email" class="remove-default-class" type="email" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Phone" formControlName="billing_to_phone" class="remove-default-class" type="number" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Pin Code" formControlName="pincode" class="remove-default-class" type="number" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xl:col-span-3 col-span-12">
+                            <label class="form-label mb-0">Address<span class="text-red-500">*</span></label>
+                            <textarea matInput class="form-control h60" placeholder="Type Here ..." formControlName="billing_to_address"></textarea>
+                            <div *ngIf="stockForm.get('note')?.invalid && stockForm.get('note')?.touched" class="error">
+                                This field is required.
+                            </div>
+                        </div> -->
+                    </div>
+                    
+                    <div class="grid grid-cols-12 sm:gap-x-6">
+                        <div class="xxl:col-span-3 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12">
+                            <spk-ng-select formControlName="service_type" label="Service Type" [options]="Service_Type" [multiple]="false" [fieldReq]="true">
+                            </spk-ng-select>
+                        </div>
+                        
+                        <div class="xxl:col-span-3 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12" *ngIf="stockForm.get('service_type')?.value">
+                            <spk-ng-select formControlName="status" label="Status" [options]="service_Status" [multiple]="false" [fieldReq]="true">
+                            </spk-ng-select>
+                        </div>
+                        
+                        <div class="xxl:col-span-3 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12" *ngIf="stockForm.get('status')?.value">
+                            <spk-ng-select
+                            formControlName="product_id"
+                            label="Select Product"
+                            [search]="true"
+                            (searchChanged)="onSearch($event , 'product')"
+                            [fieldReq]="selectedItems.length === 0"
+                            [options]="product"
+                            [multiple]="false"></spk-ng-select>
+                        </div>
+                        
+                        <div class="xxl:col-span-3 xl:col-span-6 lg:col-span-6 md:col-span-6 col-span-12" *ngIf="stockForm.get('product_id')?.value">
+                            <div class="flex  gap-4 justify-center items-center ">
+                                <spk-input label="QTY"  formControlName="qty" [fieldReq]="selectedItems.length === 0" class="remove-default-class" type="number"></spk-input>
+                                
+                                <button type="button" aria-label="button" class="ti-btn mt-3 ti-btn-icon ti-btn-primary btn-wave" (click)="addToList()">
+                                    <i class="ri-add-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- *ngIf="selectedItems.length > 0" -->
+                        <div class="xl:col-span-12 col-span-12">
+                            <div class="table-responsive mt-4 table-bordered-default">
+                                <spk-reusable-tables [columns]="headerColumn" tableClass="ti-custom-table ti-custom-table-hover ti-head-primary" [tableHead]="'border-b'" [showCheckbox]="false" [showS_No]="true" [showAction]="true">
+                                    <tr *ngFor="let row of selectedItems; let i = index">
+                                        <td class="w60 text-center">{{ i + 1 }}</td>
+                                        <td>{{ row.label || '---' }}</td>
+                                        <td class="text-right">{{ row.qty || 0 }}</td>
+                                        <td class="text-right">{{ row.mrp | number:'1.2-2' }}</td>
+                                        <td class="text-right">{{ row.total_price | number:'1.2-2' }}</td>
+                                        <td class="w60 relative">
+                                            <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                                <app-icon-button
+                                                [icon]="'ri-delete-bin-line'"
+                                                [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'"
+                                                (clickEvent)="delete(i)">
+                                            </app-icon-button>
+                                        </div>
+                                    </td>
+                                </tr>   
+                            </spk-reusable-tables>
+                        </div>
+                        <!-- <spk-reusable-tables tableClass="table table-sm text-nowrap mb-0 table-borderless" [showCheckbox]="false" >
+                            <tr class="border-b !border-transparent">
+                                <th scope="row">
+                                    <div class="text-[14px] font-medium" readonly >Sub Total :</div>
+                                </th>
+                                <td>
+                                    <p class="mb-0 font-medium text-[15px] text-right">{{CUR.RUPEE}}{{ '--' }}</p>
+                                </td>
+                            </tr>
+                            <tr class="border-b !border-transparent">
+                                <th scope="row">
+                                    <div class="text-[14px] font-medium">Total Discount Amount :
+                                    </div>
+                                </th>
+                                <td>
+                                    <p class="mb-0 font-medium text-[15px] text-right">{{CUR.RUPEE}}{{ '--' }}</p>
+                                </td>
+                            </tr>
+                            <tr class="border-b !border-transparent">
+                                <th scope="row">
+                                    <div class="text-[14px] font-medium">Total GST Amount :
+                                    </div>
+                                </th>
+                                <td>
+                                    <p class="mb-0 font-medium text-[15px] text-right">{{CUR.RUPEE}}{{ '--' }}</p>
+                                </td>
+                            </tr>
+                            <tr class="border-b !border-transparent">
+                                <th scope="row">
+                                    <div class="text-[14px] font-medium">Net Amount :
+                                    </div>
+                                </th>
+                                <td>
+                                    <p class="mb-0 font-medium text-[1rem] text-success text-right">{{CUR.RUPEE}}{{ '--' }}</p>
+                                </td>
+                            </tr>
+                        </spk-reusable-tables> -->
+                    </div>
+                    
+                    <div class="xl:col-span-12 col-span-12">
+                        <div>
+                            <label class="form-label mb-0">Note<span class="text-red-500">*</span></label>
+                            <textarea matInput class="form-control form-control-light !pt-3" placeholder="Type Here ..." formControlName="invoice_note"></textarea>
+                            <div *ngIf="stockForm.get('note')?.invalid && stockForm.get('note')?.touched" class="error">
+                                This field is required.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer flex items-center justify-end gap-2">
+                <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="pageType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+            </div>
+        </div>
+    </div>
+    <div class="xl:col-span-3 col-span-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-title">
+                    Mode Of Payment
+                </div>
+            </div>
+            <div class="box-body pt-0">
+                <div class="grid grid-cols-12 gap-y-4">
+                    <div class="xl:col-span-12 col-span-12">
+                        <div class="btn-group inline-flex" role="group" aria-label="Basic radio toggle button group"> 
+                            <input type="radio" class="btn-check opacity-0 absolute" name="payment_mode" id="strap1" [value]="'UPI / Online'" formControlName="payment_mode" />
+                            <label class="!mb-0 ti-btn  btn-wave !m-0 !block sm:!inline-flex !py-2 !px-3 ti-btn-outline-primary z-0 !rounded-e-none !border-e-0 sm:text-[0.813rem] text-[0.75rem] waves-effect waves-light" for="strap1">
+                                UPI / Online
+                            </label>
+                            <input type="radio" class="btn-check opacity-0 absolute" name="payment_mode" id="strap3" [value]="'Cash'" formControlName="payment_mode" />
+                            <label class="!mb-0 ti-btn  btn-wave !m-0 !block sm:!inline-flex !py-2 text-primary !px-3 ti-btn-outline-primary !rounded-s-none z-0  sm:text-[0.813rem] text-[0.75rem] waves-effect waves-light" for="strap3">
+                                Cash
+                            </label> 
+                        </div>
+                    </div>
+                    <div class="xl:col-span-12 col-span-12">
+                        <input type="text" class="form-control form-control-light" id="invoice-payment-cardname"  placeholder="Transaction Number"   formControlName="transaction_number">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+<!--End::row-1 -->

@@ -1,0 +1,129 @@
+<app-page-header [title]="'IRP'" [title1]="['Bonus']" [activeitem]="'Spin & Win'" [btnShow1]="false"></app-page-header>
+
+<div class="box py-3 px-4">
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+        <ng-container *ngIf="skLoading">
+            <app-skeleton  *ngFor="let row of [].constructor(2)" [class]="'w100 h25'"></app-skeleton>
+        </ng-container>
+        <ng-container *ngIf="!skLoading">
+            <app-listing-tab *ngFor="let tab of mainTabs"
+            [tabs]="[{ name: tab.name, label: tab.label,count: tab.count}]"
+            [activeTab]="activeTab"
+            (tabChange)="onTabChange($event.tab)">
+        </app-listing-tab>
+    </ng-container>
+</nav>
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <app-page-sub-header [pageTitle]="'Spin & Win List'"  [refreshLabel]="'Refresh'" [btnShow]="true" [btnShow2]="accessRight?.addRight" [class]="'p-0 pt-3'"  [addBtnLabel]="'Add Spin & Win'" (onRefresh)="onRefresh()" (button1)="goToSpinWinAdd()"></app-page-sub-header>
+        
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-hover ti-head-primary"
+                [tableHead]="'border-b'" [tableHeadColumn]="'!text-center'" [tableHeight]="'630px'" [showCheckbox]="false"
+                [columns]="spinWinListColumns">
+                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                    <td class="!text-center">&nbsp;</td>
+                    <td>
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="onDateChange('created_at', $event)">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>  
+                        </div>
+                    </td>
+                    <td class="!text-center">
+                        <div class="table-search-filters">
+                            <mat-form-field class="table-input">
+                                <input matInput type="text"
+                                [(ngModel)]="filter.created_name"
+                                placeholder="Search..."
+                                (keyup.enter)="getSpinWinList()">
+                                @if (filter.created_name) {
+                                    <button matSuffix mat-icon-button
+                                    aria-label="Clear"
+                                    (click)="filter.created_name='';getSpinWinList()">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            }
+                        </mat-form-field>
+                    </div>
+                </td>
+                <td class="!text-center">
+                    <div class="table-search-filters">
+                        <mat-form-field class="table-input">
+                            <input matInput type="text"
+                            [(ngModel)]="filter.customer_type_name"
+                            placeholder="Search..."
+                            (keyup.enter)="getSpinWinList()">
+                            @if (filter.customer_type_name) {
+                                <button matSuffix mat-icon-button
+                                aria-label="Clear"
+                                (click)="filter.customer_type_name='';getSpinWinList()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        }
+                    </mat-form-field>
+                </div>
+            </td>
+            <td class="!text-center">&nbsp;</td>
+            <td class="!text-center">&nbsp;</td>
+            <td class="!text-center">&nbsp;</td>
+            <td class="!text-center">&nbsp;</td>
+            <td class="!text-center">&nbsp;</td>
+        </tr>
+        <ng-container *ngIf="!skLoading">
+            <tr
+            class="border-b !border-defaultborder dark:!border-defaultborder/10"
+            *ngFor="let row of spinWinList; let i = index; trackBy: trackById" [class.bg-gray-400]="isHighlighted(row._id)">
+            <td class="!text-center">{{(pagination.cur_page - 1) * pagination.limit + i + 1 }}</td>
+            <td>{{row.created_at ? (row.created_at | date:'d MMM yyyy') : '---'}}</td>
+            <td>{{row.created_name ? row.created_name : '---'}}</td>
+            <td>{{row.customer_type_name?.join(', ') || '--' }}</td>
+            <td>{{row.point_section || '--'}}</td>
+            <td>{{ row.eligible_days ? row.eligible_days + ' Days' : '--' }}</td>
+            <td>{{ getSlabPoints(row.slab_data) }}</td>
+            <td>
+                <span class="badge">
+                    <app-toggle [checked]="row.isChecked" (checkedChange)="onToggleChange($event, row._id, row.status)"></app-toggle>
+                </span>
+            </td>
+            <td>
+                <div>
+                    <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" (clickEvent)="openMainLogModal(row._id)"> </app-icon-button>
+                    <app-icon-button [icon]="'ri-edit-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-success waves-effect waves-light'" (clickEvent)="onUpdate(row._id)"> </app-icon-button>
+                </div>
+            </td>
+        </tr>
+    </ng-container>
+    
+    <!-- //--skeleton--// -->
+    <ng-container *ngIf="skLoading">
+        <tr class="border-b !border-defaultborder dark:!border-defaultborder/10"
+        *ngFor="let row of [].constructor(8)">
+        <td *ngFor="let row of [].constructor(9)">
+            <app-skeleton
+            [class]="'h20 bg-skeleton'"></app-skeleton>
+        </td>
+    </tr>
+</ng-container>
+<!-- //--skeleton--// -->
+</spk-reusable-tables>
+
+<ng-container *ngIf="!spinWinList.length && !skLoading">
+    <app-data-not-found></app-data-not-found>
+</ng-container>
+</div>
+<app-pagination-footer [currentPage]="pagination.cur_page" [totalPage]="pagination.total_pages"
+[pageLimit]="pagination.limit" [listLength]="spinWinList.length" [preBtn]="!pagination.prev"
+[nextBtn]="!pagination.next" (preButtonClick)="changeToPagination('Previous')" (nextButtonClick)="changeToPagination('Next')" (pageChange)="changeToPage($event)">
+</app-pagination-footer>
+</div>
+</div>
+</div>
+</div>
+
+<!--End::row-1 -->

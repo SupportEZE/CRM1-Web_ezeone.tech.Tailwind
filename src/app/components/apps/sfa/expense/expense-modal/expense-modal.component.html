@@ -1,0 +1,135 @@
+<!-- Expense Modal Start  -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'expense-modal'">
+    <app-modal-header [title]="'Add Expense'" [closeBtn]="true" (close)="closeModal()"></app-modal-header>
+    <div class="box" *ngIf="skLoading">
+        <div class="p-4">
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="xl:col-span-3 col-span-12 mb-4" *ngFor="let card of [].constructor(10)">
+                    <app-skeleton></app-skeleton>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form [formGroup]="expenseForm" (ngSubmit)="onSubmitExpenseData()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="grid grid-cols-12 sm:gap-x-6" *ngIf="!skLoading">
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-flatpickr 
+                    placeholder="Expense Date"
+                    label="Expense Date"
+                    [fieldReq]="true" 
+                    [min]="modalData.expenseDetail.start_date"
+                    [max]="modalData.expenseDetail.end_date"
+                    class="form-control custom-datepickr"
+                    formControlName="expense_date"></spk-flatpickr>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-ng-select formControlName="expense_type" label="Expense Type" [fieldReq]="true" [options]="expensePolicyType" (selectedChange)="onSingleSelectChange($event)"></spk-ng-select>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12" *ngIf="expenseForm.value.expense_type === 'Car' || expenseForm.value.expense_type === 'Bike'">
+                    <spk-input formControlName="km" [label]="'KM'" [fieldReq]="true" [type]="'number'" class="remove-default-class" (valueChange)="onAmountCalculate($event);"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-input formControlName="expense_amount" [label]="'Expense Amount'" [fieldReq]="true" [type]="'number'" class="remove-default-class" (valueChange)="onValueChange($event);"></spk-input>
+                </div>
+                
+                <div class="xl:col-span-4 col-span-12">
+                    <spk-input formControlName="description" [label]="'Description'" [fieldReq]="true" [type]="'textarea'" class="remove-default-class"></spk-input>
+                </div>
+                
+                <div class="flex justify-end mt-6">
+                    <button type="button" aria-label="button" class="ti-btn ti-btn-icon ti-btn-primary btn-wave" (click)="addToList()">
+                        <i class="ri-add-line"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-responsive overflow-auto table-bordered-default mt-4 mb-4" *ngIf="expenseList.length > 0">
+                <spk-reusable-tables [columns]="headerColumn" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [tableHead]="'border-b'" [showCheckbox]="false">
+                    <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of expenseList; let i = index;">
+                        <td class="w60 text-center">{{i+1}}</td>
+                        <td>{{ row.expense_date ? (row.expense_date | date:'d MMM yyyy') : '--' }}</td>
+                        <td>{{row.expense_type}}</td>
+                        <td>{{CURRENCY_SYMBOLS.RUPEE}} {{row.expense_amount}}</td>
+                        <td>{{row.description}}</td>
+                        <td class="w60 relative">
+                            <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" (clickEvent)="deleteExpense(i)"></app-icon-button>
+                            </div>
+                        </td>
+                    </tr>
+                </spk-reusable-tables>
+            </div>
+            
+            <div class="xl:col-span-6 col-span-12">
+                <label class="form-label mb-0">Upload Bills/Attachment<span class="text-red-500">*</span></label>
+                <file-pond class="filepond basic-filepond" 
+                [options]="pondOptions" 
+                [files]="pondFiles" 
+                (onremovefile)="onFileRemove($event, 'image')"
+                (onprocessfile)="onFileProcessed($event, 'image')"></file-pond>
+            </div>
+            
+        </mat-dialog-content>
+        <mat-dialog-actions class="gap-2" align="end">
+            <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled" [formType]="pageType" [iconClass]="'ri-save-line'"  [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+        </mat-dialog-actions>
+    </form>
+</div>
+<!-- Expense Modal Start  -->
+
+<!-- Expense Status Modal Start -->
+<div class="mat-dialoge" *ngIf="modalData.lastPage === 'expense-status-modal'">
+    <app-modal-header [title]="'Change Expense Status'" [closeBtn]="true" (close)="closeModal()">
+    </app-modal-header>
+    <form #f="ngForm" (ngSubmit)="f.valid && expenseStatusChange()">
+        <mat-dialog-content class="mat-typography py-1">
+            <div class="">
+                <label class="form-label mb-0">Status<span class="text-red-500">*</span></label>
+                <mat-form-field class="mat-custom-field remove-space">
+                    <mat-select placeholder="Select an option" [(ngModel)]="data.status" name="status" #status="ngModel"
+                    required>
+                    <mat-option *ngFor="let row of expenseStatusOptions"
+                    [value]="row.name">{{row.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="status.touched || f.submitted">
+                <ng-container *ngIf="status.errors?.['required']">This field is required</ng-container>
+            </div>
+        </div>
+        
+        <div class="mt-2" *ngIf="data.status == 'Approved'">
+            <label class="form-label mb-0">Approved Amount<span class="text-red-500">*</span></label>
+            <mat-form-field class="mat-custom-field remove-space">
+                <input type="number" matInput placeholder="Type Here ..." [(ngModel)]="data.approved_amount"
+                name="approved_amount" #approved_amount="ngModel" (input)="onInputChange(data.approved_amount)"
+                required>
+            </mat-form-field>
+            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="approved_amount.touched || f.submitted">
+                <ng-container *ngIf="approved_amount.errors?.['required']">This field is required</ng-container>
+            </div>
+        </div>
+        
+        <div class="mt-2" *ngIf="data.status == 'Reject'">
+            <label class="form-label mb-0">Reject Reason<span class="text-red-500">*</span></label>
+            <mat-form-field class="mat-custom-field remove-space text-area-height">
+                <textarea matInput placeholder="Type Here ..." [(ngModel)]="data.reason" name="reason"
+                #reason="ngModel" required></textarea>
+            </mat-form-field>
+            <div class="mt-1 text-xs text-red-500 text-right" *ngIf="reason.touched || f.submitted">
+                <ng-container *ngIf="reason.errors?.['required']">This field is required</ng-container>
+            </div>
+        </div>
+    </mat-dialog-content>
+    
+    <mat-dialog-actions class="gap-2" align="end">
+        <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'" [disabled]="api.disabled"
+        [formType]="modalData.formType" [iconClass]="'ri-save-line'"
+        [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+    </mat-dialog-actions>
+</form>
+</div>
+<!-- Expense Status Modal Start -->

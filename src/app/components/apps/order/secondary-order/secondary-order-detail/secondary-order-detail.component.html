@@ -1,0 +1,279 @@
+<app-page-header [title]="'Secondary Order'" [title1]="['Secondary Order Detail']" [activeitem]="'Secondary Order Detail'"></app-page-header>
+
+
+<div class="grid grid-cols-12 sm:gap-x-6" *ngIf="!skLoading">
+    <div class="xl:col-span-8 col-span-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-title text-primarytint1color wp100 flex justify-between">
+                    Customer Detail
+                    <div class="">
+                        <app-icon-button [icon]="'bi bi-file-earmark-pdf'" [buttonClass]="'ti-btn ti-btn-icon bg-primary/10 text-primary !border hover:bg-primary hover:text-white !rounded-full btn-wave'" (click)="exportOrderPdf()" matTooltip="Export Order PDF"> </app-icon-button>
+                    </div>
+                </div>
+            </div>
+            <div class="box-body pt-0">
+                <ul class="ti-list-group list-group-flush border-0">
+                    <li>
+                        <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{customerDetail?.customer_type_name || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Customer Catgeory</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{customerDetail?.customer_name || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Retailers Details</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{customerDetail?.distributors_name || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Distributors Details</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{contactPersonDetail[0]?.contact_person_name || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Contact Person</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{customerDetail?.mobile || '--'}}</span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Contact Details</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center me-2 flex-wrap">
+                                <div>
+                                    <span class="block font-medium text-primay">{{customerDetail?.full_address || '--'}}
+                                    </span>
+                                    <span class="text-textmuted dark:text-textmuted/50">Address</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <app-showcode-card [title]="'Order Detail'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'"  [titleView]="true">
+            <ul class="ti-list-group list-group-flush border-0">
+                <li>
+                    <div class="flex items-center gap-5 flex-wrap text-[12px]">
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay">{{orderDetail?.created_at ? (orderDetail?.created_at | date:'d MMM yyyy, hh:mm a') : '--'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Date Created</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay">{{orderDetail?.created_name || '--'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Created By</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay">{{orderDetail?.order_no || '--'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Order No.</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay">{{orderDetail?.total_item_count || 0}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Total Items</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay">{{orderDetail?.total_item_quantity || 0}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Total Items Qty</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay text-right">
+                                    {{ CURRENCY_SYMBOLS.RUPEE }}   {{orderDetail?.net_amount_before_tax || 0 | number:'1.2-2' }}
+                                </span>
+                                <span class="text-textmuted dark:text-textmuted/50 text-right">Total Order Amount</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay">{{orderDetail?.gst_type || '--'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">GST Type</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div>
+                                <span class="flex items-center block font-medium badge bg-info/10 text-info">{{orderDetail?.status || '--'}}
+                                    <a class="text-info font-medium" (click)="updateOrderStatus('update-order-status')" *ngIf="accessRight?.approveRight"><i class="material-icons ms-1">edit</i></a>
+                                </span>
+                                <span class="text-xs text-textmuted dark:text-textmuted/50">Order Status</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center me-2 flex-wrap">
+                            <div>
+                                <span class="block font-medium text-primay">{{orderDetail?.order_create_remark || '--'}}</span>
+                                <span class="text-textmuted dark:text-textmuted/50">Order Remark</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </app-showcode-card>
+        
+        <app-showcode-card [title]="'Product Details'" [class]="'text-primarytint1color'" [boxHeader]="'pt-3'" [classbody]="'pt-0'" [titleView]="true" [iconClass]="'ti-btn btn-wave ti-btn-sm ti-btn-soft-primary waves-effect waves-light'" >
+            <div class="table-responsive overflow-auto table-bordered-default">
+                <spk-reusable-tables [columns]="cartColumn" tableClass="ti-custom-table ti-custom-table-head ti-custom-table-hover ti-head-primary whitespace-nowrap" [showAction]="orderDetail.status === 'Pending' ? true : false">
+                    <tr class="product-list border-b !border-defaultborder dark:!border-defaultborder/10" *ngFor="let row of orderDetail.item; let i = index;">
+                        <td class="text-center">{{ i + 1 }}</td>
+                        <td class="cart-items01">
+                            <div class="flex items-center">
+                                <div class="flex-auto">
+                                    <div class="text-[12px] font-semibold">{{row?.category_name || '--'}}</div>
+                                    <div class="flex-wrap items-center">
+                                        <div>
+                                            <span>Product Name : </span><span
+                                            class="font-normal text-textmuted dark:text-textmuted/50">{{row?.product_name || '--'}}</span>
+                                        </div>
+                                        <div>
+                                            <span>Code : </span><span
+                                            class="font-normal text-textmuted dark:text-textmuted/50">{{row?.product_code || '--'}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-right">{{CURRENCY_SYMBOLS.RUPEE}} {{row?.mrp || 0  | number:'1.2-2' }}</td>
+                        <td>
+                            <div>
+                                {{ row.discount_percent || 0}} % ({{CURRENCY_SYMBOLS.RUPEE}}{{row.discount_amount  || 0  | number:'1.2-2' }})
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-right">
+                                {{CURRENCY_SYMBOLS.RUPEE}} {{row.unit_price  || 0 | number:'1.2-2' }}
+                            </div>
+                        </td>
+                        <td class="text-center">{{row?.total_quantity || 0}}</td>
+                        <td>{{row?.uom || '--'}}</td>
+                        <td>
+                            <div class="text-right">
+                                {{CURRENCY_SYMBOLS.RUPEE}} {{row.gross_amount  || 0  | number:'1.2-2' }}
+                            </div>
+                        </td>
+                        <td class="text-right">{{CURRENCY_SYMBOLS.RUPEE}} {{row?.gst_amount || 0 | number:'1.2-2' }}</td>
+                        <td class="text-right font-medium">{{CURRENCY_SYMBOLS.RUPEE}} {{row?.net_amount_with_tax || 0 | number:'1.2-2'}}</td>
+                        <td class="!text-center" *ngIf="orderDetail.status === 'Pending'">
+                            <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'"
+                            (clickEvent)="onDeleteRow(row._id)" matTooltip="Delete" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                        </td>
+                    </tr>
+                </spk-reusable-tables>
+                <ng-container *ngIf="!orderDetail.item.length">
+                    <app-data-not-found></app-data-not-found>
+                </ng-container>
+                <div class="grid grid-cols-12 sm:gap-x-6">
+                    <div class="xl:col-span-8 col-span-12">
+                    </div>
+                    <div class="xl:col-span-4 col-span-12" *ngIf="orderDetail.item.length > 0">
+                        <table class="ti-custom-table text-nowrap" >
+                            <tbody>
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                    <td>
+                                        <div class="font-semibold">Total Item :</div>
+                                    </td>
+                                    <td><span class="font-medium">{{orderDetail?.total_item_count || 0}}</span></td>
+                                </tr>
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                    <td>
+                                        <div class="font-semibold">Total Item Qty:</div>
+                                    </td>
+                                    <td><span class="font-medium">{{orderDetail?.total_item_quantity || 0}}</span></td>
+                                </tr>
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                    <td>
+                                        <div class="font-semibold">Total Order Value</div>
+                                    </td>
+                                    <td><span class="text-right font-medium">{{ CURRENCY_SYMBOLS.RUPEE }} {{ orderDetail?.net_amount_before_tax | number:'1.2-2' }}</span></td>
+                                </tr>
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                    <td>
+                                        <div class="font-semibold">Total Discount Amount :</div>
+                                    </td>
+                                    <td><span class="text-right font-medium">{{ CURRENCY_SYMBOLS.RUPEE }} {{ orderDetail?.discount_amount | number:'1.2-2' }}</span></td>
+                                </tr>
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                    <td>
+                                        <div class="font-semibold">Sub Total :</div>
+                                    </td>
+                                    <td><span class="text-right font-medium">{{ CURRENCY_SYMBOLS.RUPEE }} {{ orderDetail?.gross_amount | number:'1.2-2' }}</span></td>
+                                </tr>
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                    <td>
+                                        <div class="font-semibold">Total GST Amount :</div>
+                                    </td>
+                                    <td><span class="text-right font-medium">{{ CURRENCY_SYMBOLS.RUPEE }} {{ orderDetail?.gst_amount | number:'1.2-2' }}</span></td>
+                                </tr>
+                                <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                    <td>
+                                        <div class="font-semibold">Total Grand Amount :</div>
+                                    </td>
+                                    <td><span class="text-right font-medium">{{ CURRENCY_SYMBOLS.RUPEE }} {{ orderDetail?.net_amount_with_tax | number:'1.2-2' }}</span></td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </app-showcode-card>
+    </div>
+    
+    <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-5 col-span-12">
+        <div>
+            <app-logs [logList]="logList" [scrollHeight]="'305'" [closeBtn]="false"></app-logs>
+        </div>
+    </div>
+    
+</div>
+
+<!-- Sk Loading Start -->
+<div class="grid grid-cols-12 sm:gap-x-6" *ngIf="skLoading">
+    <div class="xl:col-span-9 col-span-12">
+        <div class="grid grid-cols-12 sm:gap-x-6">
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <div >
+                        <div class="flex gap-2 mb-1 flex-wrap">
+                            <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                <app-skeleton [class]="'w180'"></app-skeleton>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+            <div class="xl:col-span-12 col-span-12">
+                <app-showcode-card [titleView]="false"  [view]="false">
+                    <div >
+                        <div class="flex gap-2 mb-1 flex-wrap">
+                            <div class="flex items-center" *ngFor="let card of [].constructor(10)">
+                                <app-skeleton [class]="'w180'"></app-skeleton>
+                            </div>
+                        </div>
+                    </div>
+                </app-showcode-card>
+            </div>
+        </div>
+    </div>
+    <div class="xl:col-span-3 col-span-12">
+        <app-showcode-card [titleView]="false"  [view]="false">
+            <app-skeleton [class]="'wp100 h35 mb-3'" *ngFor="let card of [].constructor(5)"></app-skeleton>
+        </app-showcode-card>
+    </div>
+</div>
+<!-- Sk Loading End -->

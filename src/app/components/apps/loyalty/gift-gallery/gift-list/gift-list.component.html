@@ -1,0 +1,246 @@
+<app-page-header [title]="'IRP'" [title1]="['Gift Gallery']" [activeitem]="'Gift list'" [btnShow1]="false"></app-page-header>
+
+<div class="box py-3 px-4">
+    <nav class="sm:flex sm:space-x-2 sm:rtl:space-x-reverse gap-1" aria-label="Tabs" role="tablist">
+        <app-listing-tab *ngFor="let tab of mainTabs"
+        [tabs]="[{ name: tab.name, label: tab.label,count: tab.count}]"
+        [activeTab]="activeTab"
+        (tabChange)="onTabChange($event.tab)">
+    </app-listing-tab>
+</nav>
+
+<!-- Start::row-1 -->
+<div class="row">
+    <div class="col-xl-12">
+        <app-page-sub-header [pageTitle]="'Gift List'"  [refreshLabel]="'Refresh'" [btnShow]="true" [btnShow2]="accessRight?.addRight"  [addBtnLabel]="'Add Gift'" [class]="'p-0 pt-3'"  (onRefresh)="onRefresh()" (button1)="goToGiftAdd()"></app-page-sub-header>
+        <div class="table-responsive overflow-auto table-bordered-default">
+            <div
+            class="table-responsive overflow-auto table-bordered-default">
+            <spk-reusable-tables
+            tableClass="ti-custom-table ti-custom-table-hover ti-head-primary whitespace-nowrap"
+            [tableHead]="'border-b'"
+            [tableHeadColumn]="'!text-center'" [showCheckbox]="false"
+            [columns]="filteredListColumns">
+            <tr
+            class="border-b !border-defaultborder dark:!border-defaultborder/10">
+            <td class="!text-center">&nbsp;</td>
+            <td *ngIf="activeTab === 'Gift' || activeTab === 'Voucher'" class="!text-center">&nbsp;</td>
+            <td>
+                <div class="table-search-filters">
+                    <mat-form-field class="table-input">
+                        <input matInput  [matDatepicker]="picker" [(ngModel)]="filter.created_at" name="createdAt" placeholder="Date Created" (ngModelChange)="onDateChange('created_at', $event)">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>  
+                </div>
+            </td>
+            <td class="!text-center">
+                <div class="table-search-filters">
+                    <mat-form-field class="table-input">
+                        <input matInput type="text"
+                        [(ngModel)]="filter.created_name"
+                        placeholder="Search..."
+                        (keyup.enter)="getGiftList()">
+                        @if (filter.created_name) {
+                            <button matSuffix mat-icon-button
+                            aria-label="Clear"
+                            (click)="filter.created_name='';getGiftList()">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    }
+                </mat-form-field>
+            </div>
+        </td>
+        <td class="!text-center">
+            <div class="table-search-filters">
+                <mat-form-field class="table-input">
+                    <input matInput type="text"
+                    [(ngModel)]="filter.title"
+                    placeholder="Search..."
+                    (keyup.enter)="getGiftList()">
+                    @if (filter.title) {
+                        <button matSuffix mat-icon-button
+                        aria-label="Clear"
+                        (click)="filter.title='';getGiftList()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                }
+            </mat-form-field>
+        </div>
+    </td>
+    <td class="!text-center">
+        <div class="table-search-filters">
+            <mat-form-field class="table-input">
+                <input matInput type="text"
+                [(ngModel)]="filter.customer_type"
+                placeholder="Search..."
+                (keyup.enter)="getGiftList()">
+                @if (filter.customer_type) {
+                    <button matSuffix mat-icon-button
+                    aria-label="Clear"
+                    (click)="filter.customer_type='';getGiftList()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </mat-form-field>
+    </div>
+</td>
+<td class="!text-center" *ngIf="activeTab === 'Cash'">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.range_start"
+            placeholder="Search..."
+            (keyup.enter)="getGiftList()">
+            @if (filter.range_start) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.range_start='';getGiftList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="!text-center" *ngIf="activeTab === 'Cash'">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.range_end"
+            placeholder="Search..."
+            (keyup.enter)="getGiftList()">
+            @if (filter.range_end) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.range_end='';getGiftList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="!text-center" *ngIf="activeTab === 'Gift' || activeTab === 'Voucher'">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.gift_point"
+            placeholder="Search..."
+            (keyup.enter)="getGiftList()">
+            @if (filter.gift_point) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.gift_point='';getGiftList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="!text-center" *ngIf="activeTab === 'Cash'">
+    <div class="table-search-filters">
+        <mat-form-field class="table-input">
+            <input matInput type="text"
+            [(ngModel)]="filter.point_value"
+            placeholder="Search..."
+            (keyup.enter)="getGiftList()">
+            @if (filter.point_value) {
+                <button matSuffix mat-icon-button
+                aria-label="Clear"
+                (click)="filter.point_value='';getGiftList()">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+    </mat-form-field>
+</div>
+</td>
+<td class="!text-center" *ngIf="activeTab === 'Gift' || activeTab === 'Voucher'">&nbsp;</td>
+<td class="!text-center">&nbsp;</td>
+<td class="!text-center">&nbsp;</td>
+</tr>
+<ng-container *ngIf="!skLoading">
+    <tr
+    class="border-b !border-defaultborder dark:!border-defaultborder/10"
+    *ngFor="let list of giftMasterList; let i = index;"  [class.bg-gray-400]="isHighlighted(list._id)">
+    <td class="!text-center">{{
+        (pagination.cur_page - 1) *
+        pagination.limit + i + 1 }}</td>
+        <td *ngIf="activeTab === 'Gift' || activeTab === 'Voucher'">
+            <div class="flex items-center">
+                <span class="avatar avatar-sm me-2 avatar-rounded">
+                    <ng-container *ngFor="let row of list.files">
+                        <img  [src]="row.signed_url" alt="Gift Image" (click)="comanFuncation.zoom(row._id, 'gift-gallery/get-doc')">
+                    </ng-container>
+                </span>
+            </div>
+        </td>                
+        <td>{{list.created_at ? (list.created_at | date : 'dd MMM yyyy hh:mm a') : '---'}}</td>
+        <td>{{list.created_name ? list.created_name : '---'}}</td>
+        <td>
+            <ng-container *ngIf="activeTab !=='Voucher'">
+                {{list.title || '--'}}
+            </ng-container>
+            <a class="link-primary underline"  (click)="goToDetail(list._id)"   matTooltip="View Detail"  *ngIf="activeTab ==='Voucher'">
+                {{list.title || '--'}}
+            </a>
+        </td>
+        <td *ngIf="activeTab === 'Gift' || activeTab === 'Voucher'">{{list.customer_type_name || '--'}}</td>
+        <td *ngIf="activeTab === 'Cash'">{{list.customer_type_name || '--'}}</td>
+        <td *ngIf="activeTab === 'Cash'">{{list.range_start || '--'}}</td>
+        <td *ngIf="activeTab === 'Cash'">{{list.range_end || '--'}}</td>
+        <td *ngIf="activeTab === 'Gift' || activeTab === 'Voucher'">{{ list.point_value ? list.point_value + ' PT' : '--' }}</td>
+        <td *ngIf="activeTab === 'Cash'">{{ list.point_value ? list.point_value + ' PT' : '--' }}</td>
+        <td >
+            <span [innerHTML]="list.description || '--'"></span></td>
+            <td>
+                <span class="badge">
+                    <app-toggle [checked]="list.isChecked" (checkedChange)="onToggleChange($event, list._id, list.status)"></app-toggle>
+                </span>
+            </td>
+            <td>
+                <div>
+                    <app-icon-button [icon]="'ri-file-list-line'" [buttonClass]="'ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light'"matTooltip="View Logs" (clickEvent)="openMainLogModal(list._id)"> </app-icon-button>
+                    
+                    <app-icon-button [icon]="'ri-delete-bin-line'" [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'" matTooltip="Delete" (clickEvent)="
+                    delete(list._id, 'gift-gallery/delete', list.gift_type)" *ngIf="accessRight?.deleteRight"> </app-icon-button>
+                    
+                    
+                    <!-- onDeleteRow(list._id,'Gift')" -->
+                </div>
+            </td>
+        </tr>
+    </ng-container>
+    
+    <!-- //--skeleton--// -->
+    <ng-container *ngIf="skLoading">
+        <tr
+        class="border-b !border-defaultborder dark:!border-defaultborder/10"
+        *ngFor="let row of [].constructor(9)">
+        <td *ngFor="let row of [].constructor(10)">
+            <app-skeleton
+            [class]="'h20 bg-skeleton'"></app-skeleton>
+        </td>
+    </tr>
+</ng-container>
+<!-- //--skeleton--// -->
+</spk-reusable-tables>
+
+<ng-container *ngIf="!giftMasterList.length && !skLoading">
+    <app-data-not-found></app-data-not-found>
+</ng-container>
+</div>
+<app-pagination-footer
+[currentPage]="pagination.cur_page"
+[totalPage]="pagination.total_pages"
+[pageLimit]="pagination.limit"
+[listLength]="giftMasterList.length"
+[preBtn]="!pagination.prev"
+[nextBtn]="!pagination.next"
+(preButtonClick)="changeToPagination('Previous')"
+(nextButtonClick)="changeToPagination('Next')"
+(pageChange)="changeToPage($event)"></app-pagination-footer>
+</div>
+</div>
+</div>
+<!--End::row-1 -->
+</div>
+

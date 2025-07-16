@@ -1,0 +1,214 @@
+<app-page-header [title]="'Quotation'" [activeitem]="(pageType.formType | titlecase) + ' Quotation'"
+    [title1]="['Create Quotation']" [activeitem]="'Create Quotation'"></app-page-header>
+
+<div class="box" *ngIf="skLoading">
+    <div class="p-4">
+        <div class="grid grid-cols-12 gap-x-6">
+            <div class="xl:col-span-3 col-span-12 mb-4" *ngFor="let card of [].constructor(10)">
+                <app-skeleton></app-skeleton>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Start::row-1 -->
+<div class="grid grid-cols-12 gap-x-6" *ngIf="!skLoading">
+    <div class="xl:col-span-12 col-span-12">
+        <form [formGroup]="quotationForm" (ngSubmit)="onSubmit()">
+            <div class="box">
+                <div class="box-body">
+                    <div class="grid grid-cols-12 sm:gap-x-6 gap-y-3">
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Title" formControlName="title" class="remove-default-class" type="text"
+                                [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-ng-select formControlName="quotation_type" label="Quotation Type"
+                                [options]="Quotation_Type" [multiple]="false" [fieldReq]="true"
+                                (selectedChange)=" ($event === 'Customer' && CommonApiService.getCustomerTypeData()) || ($event === 'Site' && getSiteData()) || ($event === 'Enquiry' && getEnquiryData())">
+                            </spk-ng-select>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12"
+                            *ngIf="quotationForm.get('quotation_type')?.value === 'Customer' ">
+                            <spk-ng-select formControlName="customer_type_id" label="Customer Type"
+                                [options]="commonApi.customerTypeData" [multiple]="false" [fieldReq]="true"
+                                (selectedChange)="commonApi.getCustomerData($event);">
+                            </spk-ng-select>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12"
+                            *ngIf="quotationForm.get('quotation_type')?.value">
+                            <spk-ng-select formControlName="customer_id" label="Customer Details"
+                                [options]="quotationForm.get('quotation_type')?.value === 'Customer' ? CommonApiService.customerData : quotationForm.get('quotation_type')?.value === 'Site' ? site_data : enquiry_data"
+                                [multiple]="false" [fieldReq]="true">
+                            </spk-ng-select>
+                        </div>
+                        <div class="xl:col-span-3 col-span-12">
+                            <label class="form-label">Follow Up Date<span class="text-red-500">*</span></label>
+                            <mat-form-field class="mat-custom-field">
+                                <input matInput [matDatepicker]="picker" [min]="today" formControlName="followup_date"
+                                    placeholder="Select Follow Up Date">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="xl:col-span-3 col-span-12">
+                            <label class="form-label">Valid Upto<span class="text-red-500">*</span></label>
+                            <mat-form-field class="mat-custom-field">
+                                <input matInput [matDatepicker]="picker2" [min]="today" formControlName="valid_upto"
+                                    placeholder="Select Valid Upto Date">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                                <mat-datepicker #picker2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="xxl:col-span-3 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12">
+                            <spk-input label="Payment Term" formControlName="payment_term" class="remove-default-class"
+                                type="text" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xl:col-span-3 col-span-12 mb-3">
+                            <label class="form-label mb-0">Note<span class="text-red-500">*</span></label>
+                            <textarea matInput class="form-control h60" placeholder="Type Here ..."
+                                formControlName="note"></textarea>
+                            <div *ngIf="quotationForm.get('note')?.invalid && quotationForm.get('note')?.touched"
+                                class="error">
+                                This field is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-12 sm:gap-x-6">
+                        <div class="xxl:col-span-4 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12 mb-3">
+                            <spk-ng-select formControlName="product_name" label="Select Product" [fieldReq]="true"
+                                [options]="commonApi.productList" [fieldReq]="true">
+                            </spk-ng-select>
+                        </div>
+                        <div class="xxl:col-span-2 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12 mb-3">
+                            <spk-input label="MRP" formControlName="price" class="remove-default-class" type="number"
+                                [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xxl:col-span-2 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12 mb-3">
+                            <spk-input label="Discount (%)" formControlName="discount_percent"
+                                class="remove-default-class" type="number" [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="xxl:col-span-2 xl:col-span-3 lg:col-span-3 md:col-span-4 col-span-12 mb-3">
+                            <spk-input label="Qty" formControlName="qty" class="remove-default-class" type="number"
+                                [fieldReq]="true"></spk-input>
+                        </div>
+                        <div class="flex justify-start mt-6">
+                            <button type="button" aria-label="button" class="ti-btn ti-btn-icon ti-btn-primary btn-wave"
+                                (click)="addToList()">
+                                <i class="ri-add-line"></i>
+                            </button>
+                        </div>
+                        <div class="xl:col-span-12 col-span-12">
+                            <div class="table-responsive" *ngIf="quotationList.length">
+                                <spk-reusable-tables tableClass="ti-custom-table ti-custom-table-hover ti-head-primary"
+                                    [tableHead]="'border-b'" [columns]="createQuotationColumns" [showCheckbox]="false">
+                                    <tr *ngFor="let row of quotationList; let i = index;">
+                                        <td>
+                                            <div class="font-medium text-center">{{i + 1}}</div>
+                                        </td>
+                                        <td>
+                                            <div class="font-medium">{{row.product_name || '---'}}</div>
+                                        </td>
+                                        <td class="w140 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row.price || '---'}}
+                                        </td>
+                                        <td class="w120 text-center">{{row.qty || '---'}}</td>
+                                        <td class="w120 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row.discount_amount ||
+                                            '---'}} &nbsp; ({{row.discount_percent || '---'}}%)</td>
+                                        <td class="w120 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row.sub_total || '---'}}
+                                        </td>
+                                        <td class="w120 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row.gst_amount ||
+                                            '---'}} &nbsp; ({{row.gst_percent || '---'}})%</td>
+                                        <td class="w120 text-right">{{CURRENCY_SYMBOLS.RUPEE}}{{row.net_amount ||
+                                            '---'}}</td>
+                                        <td class="w60 relative">
+                                            <div class="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                                <app-icon-button [icon]="'ri-delete-bin-line'"
+                                                    [buttonClass]="'ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light'"
+                                                    (clickEvent)="deleteQuotation(i)">
+                                                </app-icon-button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </spk-reusable-tables>
+                            </div>
+                            <div class="table-responsive">
+                                <spk-reusable-tables
+                                    tableClass="ti-custom-table ti-custom-table-head mt-3 border border-defaultborder dark:border-defaultborder/10">
+                                    <tr class="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                        <td colspan="5">
+                                            <div class="xl:col-span-12 col-span-12">
+                                                <label class="form-label">Terms & Conditions<span
+                                                        class="text-red-500">*</span></label>
+                                                <div id="product-features" class="ngx-editor-custom editor-height500">
+                                                    <ngx-editor-menu [editor]="editor"
+                                                        [toolbar]="toolbar"></ngx-editor-menu>
+                                                    <ngx-editor [editor]="editor" formControlName="answer"
+                                                        class="overflow-auto"></ngx-editor>
+                                                </div>
+                                                <div *ngIf="quotationForm.get('answer')?.invalid && quotationForm.get('answer')?.touched"
+                                                    class="text-red-500">
+                                                    Terms & Conditions is required.
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td colspan="4">
+                                            <spk-reusable-tables
+                                                tableClass="table table-sm text-nowrap mb-0 table-borderless"
+                                                [showCheckbox]="false">
+                                    <tr class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <div class="text-[14px] font-medium" readonly>Sub Total :</div>
+                                        </th>
+                                        <td>
+                                            <p class="mb-0 font-medium text-[15px] text-right">
+                                                {{CURRENCY_SYMBOLS.RUPEE}}{{ subTotal }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <div class="text-[14px] font-medium">Total Discount Amount :
+                                            </div>
+                                        </th>
+                                        <td>
+                                            <p class="mb-0 font-medium text-[15px] text-right">
+                                                {{CURRENCY_SYMBOLS.RUPEE}}{{ totalDiscount }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <div class="text-[14px] font-medium">Total GST Amount :
+                                            </div>
+                                        </th>
+                                        <td>
+                                            <p class="mb-0 font-medium text-[15px] text-right">
+                                                {{CURRENCY_SYMBOLS.RUPEE}}{{ totalGst }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b !border-transparent">
+                                        <th scope="row">
+                                            <div class="text-[14px] font-medium">Net Amount :
+                                            </div>
+                                        </th>
+                                        <td>
+                                            <p class="mb-0 font-medium text-[1rem] text-success text-right">
+                                                {{CURRENCY_SYMBOLS.RUPEE}}{{ grandTotal }}</p>
+                                        </td>
+                                    </tr>
+                                </spk-reusable-tables>
+                                </td>
+                                </tr>
+                                </spk-reusable-tables>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer border-t border-block-start-dashed sm:flex justify-end">
+                    <app-button [buttonType]="'submit'" [buttonClass]="'ti-btn ti-btn-primary m-0'"
+                        [disabled]="api.disabled" [formType]="pageType" [iconClass]="'ri-save-line'"
+                        [loadingIconClass]="'ri-loader-2-fill'"></app-button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!--End::row-1 -->
