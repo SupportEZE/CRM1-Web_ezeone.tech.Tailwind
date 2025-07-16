@@ -1,11 +1,69 @@
-name: Minimal Test
+name: Angular CI & Deploy to GitHub Pages
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  test-runner:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: ✅ Runner check
-        run: echo "GitHub Actions runner is working"
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 🧹 Remove macOS-only package from package.json and lockfile
+        run: |
+          jq 'del(.dependencies["@rollup/rollup-darwin-arm64"])' package.json > temp.json && mv temp.json package.json
+          sed -i '/"@rollup\/rollup-darwin-arm64"/,+5d' package-lock.json
+
+      - name: 📦 Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: ➕ Install missing peer dependencies
+        run: npm install filepond flatpickr overlayscrollbars --save
+
+      - name: ⚠️ Skipping lint step
+        run: echo "Skipping lint step - no lint script in package.json"
+
+      - name: ❌ Skip unit tests
+        run: echo "Skipping unit tests for now"
+
+      - name: 🧼 Clean preview folder
+        run: rm -rf preview
+
+      - name: 🏗️ Build Angular App
+        run: npm run build -- --configuration=production
+
+      - name: 📦 Upload Build Artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: angular-build
+          path: preview/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write  # Required to push to gh-pages
+
+    steps:
+      - name: 📥 Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: angular-build
+          path: build/preview
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/preview/browser
