@@ -86,7 +86,9 @@
                   "maximumError": "6mb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "baseHref": "/CRM1-Web_Tailwind/",
+              "deployURL": "/CRM1-Web_Tailwind"
             },
             "development": {
               "optimization": false,
