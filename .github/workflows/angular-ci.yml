@@ -32,6 +32,12 @@ jobs:
       - name: Build Angular app
         run: npm run build -- --output-path=preview
 
+      - name: 🔗 Print artifact download URL
+        run: |
+            echo "🔗 GitHub Artifact Download URL:"
+            echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo "⏬ You'll find the 'angular-build' artifact at the bottom of that page."
+
       - name: 🔐 Setup SSH Key
         run: |
             mkdir -p ~/.ssh
