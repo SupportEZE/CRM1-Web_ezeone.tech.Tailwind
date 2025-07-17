@@ -1,7 +1,7 @@
 name: Build and Upload to Server's /tmp Folder
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger only
 
 jobs:
   build-and-upload:
@@ -11,18 +11,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: 🔧 Fix macOS-only package (optional if already removed)
+      - name: 🧹 Remove macOS-only package
         run: |
-          jq 'del(.dependencies["@rollup/rollup-darwin-arm64"])' package.json > temp.json && mv temp.json package.json || true
-          sed -i '/"@rollup\/rollup-darwin-arm64"/,+5d' package-lock.json || true
+          jq 'del(.dependencies["@rollup/rollup-darwin-arm64"])' package.json > temp.json && mv temp.json package.json
+          sed -i '/"@rollup\/rollup-darwin-arm64"/,+5d' package-lock.json
 
-      - name: 📦 Install dependencies
+      - name: 📦 Install core dependencies
         run: npm ci --legacy-peer-deps
+
+      - name: 📦 Install third-party UI dependencies
+        run: |
+          npm install sortablejs flatpickr apexcharts filepond luxon overlayscrollbars --save
+          npm install @types/sortablejs @types/flatpickr @types/luxon --save-dev || true
 
       - name: Build Angular app
         run: npm run build -- --output-path=preview
@@ -34,7 +39,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 52.66.51.37 >> ~/.ssh/known_hosts
 
-      - name: Upload build to EC2 `/tmp/my-angular-build`
+      - name: Upload build to /tmp/my-angular-build
         run: |
           ssh ec2-user@52.66.51.37 "mkdir -p /tmp/my-angular-build"
           scp -r preview/* ec2-user@52.66.51.37:/tmp/my-angular-build/
