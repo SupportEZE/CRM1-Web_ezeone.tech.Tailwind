@@ -1,40 +1,40 @@
 name: Build and Upload to Server's /tmp Folder
 
 on:
-  workflow_dispatch:  # Run manually
+  workflow_dispatch:
 
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ✅ Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🔧 Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: 🧹 Remove macOS-only package
+      - name: 🔧 Fix macOS-only package (optional if already removed)
         run: |
-          jq 'del(.dependencies["@rollup/rollup-darwin-arm64"])' package.json > temp.json && mv temp.json package.json
-          sed -i '/"@rollup\/rollup-darwin-arm64"/,+5d' package-lock.json
+          jq 'del(.dependencies["@rollup/rollup-darwin-arm64"])' package.json > temp.json && mv temp.json package.json || true
+          sed -i '/"@rollup\/rollup-darwin-arm64"/,+5d' package-lock.json || true
 
       - name: 📦 Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: 🏗️ Build Angular app
+      - name: Build Angular app
         run: npm run build -- --output-path=preview
 
-      - name: 🔐 Setup SSH key
+      - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p 22786 52.66.51.37 >> ~/.ssh/known_hosts
+          ssh-keyscan 52.66.51.37 >> ~/.ssh/known_hosts
 
-      - name: 📤 Upload build to EC2 /tmp/my-angular-build
+      - name: Upload build to EC2 `/tmp/my-angular-build`
         run: |
-          ssh -p 22786 ec2-user@52.66.51.37 "mkdir -p /tmp/my-angular-build"
-          scp -P 22786 -r preview/* ec2-user@52.66.51.37:/tmp/my-angular-build/
+          ssh ec2-user@52.66.51.37 "mkdir -p /tmp/my-angular-build"
+          scp -r preview/* ec2-user@52.66.51.37:/tmp/my-angular-build/
