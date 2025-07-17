@@ -38,14 +38,4 @@ jobs:
             echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             echo "⏬ You'll find the 'angular-build' artifact at the bottom of that page."
 
-      - name: 🔐 Setup SSH Key
-        run: |
-            mkdir -p ~/.ssh
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan 52.66.51.37 >> ~/.ssh/known_hosts
-            
-      - name: 🚀 Upload build to /tmp/my-angular-build
-        run: |
-          ssh -p 22786 ec2-user@52.66.51.37 "mkdir -p /tmp/my-angular-build"
-          scp -P 22786 -r preview/* ec2-user@52.66.51.37:/tmp/my-angular-build/
+      
