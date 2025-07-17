@@ -40,11 +40,4 @@ jobs:
         with:
           name: angular-build
           path: build.zip
-
-      - name: 🔗 Print artifact download URL
-        run: |
-            echo "🔗 GitHub Artifact Download URL:"
-            echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            echo "⏬ You'll find the 'angular-build' artifact at the bottom of that page."
-
       
