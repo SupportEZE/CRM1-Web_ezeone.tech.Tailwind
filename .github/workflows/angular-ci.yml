@@ -31,6 +31,15 @@ jobs:
 
       - name: Build Angular app
         run: npm run build -- --output-path=preview
+        
+      - name: 📦 Zip build output
+        run: zip -r build.zip preview/
+
+      - name: ☁️ Upload artifact to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: angular-build
+          path: build.zip
 
       - name: 🔗 Print artifact download URL
         run: |
