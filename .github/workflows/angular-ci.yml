@@ -43,9 +43,20 @@ jobs:
             -Dsonar.host.url=http://13.203.181.169:9000 \
             -Dsonar.login=$SONAR_TOKEN
 
+      - name: 🛡️ Run Bearer Scan
+        uses: bearer/bearer-action@v2
+        with:
+          format: sarif
+          output: bearer-report.sarif
+
+      - name: 📤 Upload Bearer Report to GitHub Security Tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: bearer-report.sarif
+
       - name: Build Angular app
         run: npm run build -- --output-path=preview
-        
+
       - name: 📦 Zip build output
         run: zip -r build.zip preview/
 
