@@ -51,22 +51,17 @@ jobs:
           chmod +x bearer
           ./bearer scan . --format sarif --output bearer-report.sarif || true
 
-      - name: 📤 Upload Bearer SARIF Report
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: bearer-report.sarif
-
       - name: 📧 Email scan reports before build
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
-          server_port: 587
+          server_port: 587              # For STARTTLS
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: Code Scan Reports - Sonar & Bearer
           to: ${{ secrets.EMAIL_TO }}
           from: ${{ secrets.EMAIL_FROM }}
-          secure: true
+          secure: false                 
           body: |
             Hello,
 
