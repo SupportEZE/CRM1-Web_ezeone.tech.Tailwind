@@ -40,7 +40,7 @@ jobs:
           sonar-scanner \
             -Dsonar.projectKey=CRM-Tailwind \
             -Dsonar.sources=src \
-            -Dsonar.host.url=http://http://13.203.181.169:9000 \
+            -Dsonar.host.url=http://13.203.181.169:9000 \
             -Dsonar.login=$SONAR_TOKEN
 
       - name: Build Angular app
