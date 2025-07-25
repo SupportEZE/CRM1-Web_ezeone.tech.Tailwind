@@ -41,27 +41,26 @@ jobs:
             -Dsonar.projectKey=CRM-Tailwind \
             -Dsonar.sources=src \
             -Dsonar.host.url=http://13.203.181.169:9000 \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.report.export.path=sonar-report.txt
+            -Dsonar.login=$SONAR_TOKEN | tee sonar-report.txt
 
       - name: 🛡️ Run Bearer scan
         run: |
           curl -sSLo bearer.tar.gz https://github.com/Bearer/bearer/releases/download/v1.49.0/bearer_1.49.0_linux_amd64.tar.gz
           tar -xzf bearer.tar.gz
-          chmod +x bearer
-          ./bearer scan . --format sarif --output bearer-report.sarif || true
+          chmod +x bearer_1.49.0_linux_amd64/bearer
+          bearer_1.49.0_linux_amd64/bearer scan . --format sarif --output bearer-report.sarif || true
 
       - name: 📧 Email scan reports before build
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
-          server_port: 587              # For STARTTLS
+          server_port: 587
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: Code Scan Reports - Sonar & Bearer
           to: ${{ secrets.EMAIL_TO }}
           from: ${{ secrets.EMAIL_FROM }}
-          secure: false                 
+          secure: false
           body: |
             Hello,
 
