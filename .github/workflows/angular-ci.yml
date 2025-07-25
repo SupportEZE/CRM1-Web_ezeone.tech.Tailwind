@@ -41,7 +41,8 @@ jobs:
             -Dsonar.projectKey=CRM-Tailwind \
             -Dsonar.sources=src \
             -Dsonar.host.url=http://13.203.181.169:9000 \
-            -Dsonar.login=$SONAR_TOKEN
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.report.export.path=sonar-report.txt
 
       - name: 🛡️ Run Bearer scan
         run: |
@@ -53,9 +54,32 @@ jobs:
       - name: 📤 Upload Bearer SARIF Report
         uses: github/codeql-action/upload-sarif@v3
         with:
-         sarif_file: bearer-report.sarif
+          sarif_file: bearer-report.sarif
 
-      - name: Build Angular app
+      - name: 📧 Email scan reports before build
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Code Scan Reports - Sonar & Bearer
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_FROM }}
+          secure: true
+          body: |
+            Hello,
+
+            Please find attached the code scan reports from the latest GitHub Action run.
+
+            - sonar-report.txt
+            - bearer-report.sarif
+
+            Regards,
+            GitHub CI/CD Bot
+          attachments: sonar-report.txt, bearer-report.sarif
+
+      - name: 🛠️ Build Angular app
         run: npm run build -- --output-path=preview
 
       - name: 📦 Zip build output
