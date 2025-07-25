@@ -43,12 +43,13 @@ jobs:
             -Dsonar.host.url=http://13.203.181.169:9000 \
             -Dsonar.login=$SONAR_TOKEN | tee sonar-report.txt
 
-      - name: 🛡️ Run Bearer scan
+      - name: 🛡️Run Bearer scan
         run: |
           curl -sSLo bearer.tar.gz https://github.com/Bearer/bearer/releases/download/v1.49.0/bearer_1.49.0_linux_amd64.tar.gz
           tar -xzf bearer.tar.gz
           chmod +x bearer_1.49.0_linux_amd64/bearer
-          bearer_1.49.0_linux_amd64/bearer scan . --format sarif --output bearer-report.sarif || true
+          ./bearer_1.49.0_linux_amd64/bearer scan . --format sarif --output bearer-report.sarif || true
+
           
       - name: 📤 Upload Bearer SARIF Report
         uses: github/codeql-action/upload-sarif@v3
@@ -75,7 +76,7 @@ jobs:
             - bearer-report.sarif
 
             Regards,
-            GitHub CI/CD Bot
+            Nitin
           attachments: sonar-report.txt, bearer-report.sarif
 
       - name: 🛠️ Build Angular app
