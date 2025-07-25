@@ -41,8 +41,8 @@ jobs:
             -Dsonar.projectKey=CRM-Tailwind \
             -Dsonar.sources=src \
             -Dsonar.host.url=http://13.203.181.169:9000 \
-            -Dsonar.login=$SONAR_TOKEN | tee sonar-report.txt
-
+            -Dsonar.login=$SONAR_TOKEN
+            
       - name: 🛡️ Run Bearer scan
         run: |
           curl -sSLo bearer.tar.gz https://github.com/Bearer/bearer/releases/download/v1.49.0/bearer_1.49.0_linux_amd64.tar.gz
@@ -52,10 +52,11 @@ jobs:
 
 
           
-      - name: 📤 Upload Bearer SARIF Report
-        uses: github/codeql-action/upload-sarif@v3
+      - name: 📤 Upload Bearer Report
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: bearer-report.sarif
+          name: bearer-report
+          path: bearer-report.sarif
           
       - name: 📧 Email scan reports before build
         uses: dawidd6/action-send-mail@v3
@@ -71,14 +72,12 @@ jobs:
           body: |
             Hello,
 
-            Please find attached the code scan reports from the latest GitHub Action run.
-
-            - sonar-report.txt
-            - bearer-report.sarif
+            Please Code Quality and Security scan has been done.Please into generated reports
+            For Code Quality : http://13.203.181.169:9000/dashboard?id=CRM-Tailwind
+            For Security : 
 
             Regards,
             Nitin
-          attachments: sonar-report.txt, bearer-report.sarif
 
       - name: 🛠️ Build Angular app
         run: npm run build -- --output-path=preview
