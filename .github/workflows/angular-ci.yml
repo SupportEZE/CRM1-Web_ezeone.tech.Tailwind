@@ -1,4 +1,4 @@
-name: Build and Upload to Server's /tmp Folder
+name: Build and Testing
 
 on:
   workflow_dispatch:  # Manual trigger only
@@ -29,6 +29,20 @@ jobs:
           npm install sortablejs flatpickr apexcharts filepond luxon overlayscrollbars --save
           npm install @types/sortablejs @types/flatpickr @types/luxon --save-dev || true
 
+      - name: 🔍 Run SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip sonar-scanner.zip
+          export PATH="$PWD/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
+
+          sonar-scanner \
+            -Dsonar.projectKey=CRM-Tailwind \
+            -Dsonar.sources=src \
+            -Dsonar.host.url=http://http://13.203.181.169:9000 \
+            -Dsonar.login=$SONAR_TOKEN
+
       - name: Build Angular app
         run: npm run build -- --output-path=preview
         
@@ -40,4 +54,3 @@ jobs:
         with:
           name: angular-build
           path: build.zip
-      
