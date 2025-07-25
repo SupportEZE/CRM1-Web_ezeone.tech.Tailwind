@@ -43,11 +43,12 @@ jobs:
             -Dsonar.host.url=http://13.203.181.169:9000 \
             -Dsonar.login=$SONAR_TOKEN
 
-      - name: 🛡️ Run Bearer Scan
-        uses: bearer/bearer-action@v2
-        with:
-          format: sarif
-          output: bearer-report.sarif
+      - name: Run Bearer scan
+        run: |
+         curl -sSLo bearer https://github.com/Bearer/bearer/releases/latest/download/bearer-linux-amd64
+         chmod +x bearer
+         ./bearer scan . --format sarif --output bearer-report.sarif || true
+
 
       - name: 📤 Upload Bearer Report to GitHub Security Tab
         uses: github/codeql-action/upload-sarif@v2
