@@ -67,6 +67,7 @@ jobs:
           to: ${{ secrets.EMAIL_TO }}
           from: ${{ secrets.EMAIL_FROM }}
           secure: false
+          attachments: bearer-report.sarif
           body: |
             Hello,
 
