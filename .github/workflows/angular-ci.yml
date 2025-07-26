@@ -42,7 +42,7 @@ jobs:
             -Dsonar.sources=src \
             -Dsonar.host.url=http://13.203.181.169:9000 \
             -Dsonar.login=$SONAR_TOKEN
-            
+
       - name: 🛡️ Run Bearer scan
         run: |
           curl -sSLo bearer.tar.gz https://github.com/Bearer/bearer/releases/download/v1.49.0/bearer_1.49.0_linux_amd64.tar.gz
@@ -50,14 +50,12 @@ jobs:
           chmod +x bearer
           ./bearer scan . --format sarif --output bearer-report.sarif || true
 
-
-          
       - name: 📤 Upload Bearer Report
         uses: actions/upload-artifact@v4
         with:
           name: bearer-report
           path: bearer-report.sarif
-          
+
       - name: 📧 Email scan reports before build
         uses: dawidd6/action-send-mail@v3
         with:
@@ -72,9 +70,9 @@ jobs:
           body: |
             Hello,
 
-            Please Code Quality and Security scan has been done.Please into generated reports
-            For Code Quality : http://13.203.181.169:9000/dashboard?id=CRM-Tailwind
-            For Security : 
+            Code Quality and Security scan has been done. Please check the reports:
+            - Code Quality: http://13.203.181.169:9000/dashboard?id=CRM-Tailwind
+            - Security: Bearer report attached.
 
             Regards,
             Nitin
@@ -91,7 +89,7 @@ jobs:
           name: angular-build
           path: build.zip
 
-        - name: 📦 Copy build.zip to remote server
+      - name: 📦 Copy build.zip to remote server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: 43.204.204.109
@@ -111,5 +109,3 @@ jobs:
           script: |
             cd /home/ec2-user/code
             unzip -o build.zip
-
-
