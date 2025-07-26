@@ -90,3 +90,14 @@ jobs:
         with:
           name: angular-build
           path: build.zip
+
+          name: SSH into server and unzip build
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 43.204.204.109
+          username: ec2-user
+          port: 22786
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ec2-user/code
+            unzip -o build.zip
