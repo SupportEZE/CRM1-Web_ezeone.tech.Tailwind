@@ -91,15 +91,28 @@ jobs:
           name: angular-build
           path: build.zip
 
-          name: Copy & Deploy build.zip to remote server
-  uses: appleboy/scp-action@v0.1.7
-  with:
-    host: 43.204.204.109
-    username: ec2-user
-    port: 22786
-    key: ${{ secrets.SSH_PRIVATE_KEY }}
-    source: build.zip
-    target: /home/ec2-user/code
-    script: |
-      cd /home/ec2-user/code
-      unzip -o build.zip
+                - name: 🔐 Copy build.zip to remote server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 43.204.204.109
+          username: ec2-user
+          port: 22786
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: build.zip
+          target: /home/ec2-user/code
+
+      - name: 🖥️ SSH into server and unzip build
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 43.204.204.109
+          username: ec2-user
+          port: 22786
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ec2-user/code
+            unzip -o build.zip
+            # Optional: clean old build before unzip
+            # rm -rf preview && unzip -o build.zip
+            # Optional: restart PM2, Nginx, etc.
+            # pm2 restart my-app || echo "No PM2 config"
+
